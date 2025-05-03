@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Project Data Entry</title>
+</head>
+<body>
+  <h2>Submit Project Entry</h2>
+  <form id="data-form">
+    <label>Name:</label><br>
+    <input type="text" name="name" required><br><br>
+    
+    <label>Email:</label><br>
+    <input type="email" name="email" required><br><br>
+    
+    <label>Task:</label><br>
+    <input type="text" name="task" required><br><br>
+    
+    <label>Status:</label><br>
+    <select name="status">
+      <option value="Pending">Pending</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Completed">Completed</option>
+    </select><br><br>
+    
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="response"></p>
+
+  <script>
+    document.getElementById('data-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((value, key) => data[key] = value);
+
+      fetch('https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      })
+      .then(res => res.text())
+      .then(response => {
+        document.getElementById('response').innerText = "Submitted successfully!";
+        document.getElementById('data-form').reset();
+      })
+      .catch(err => {
+        document.getElementById('response').innerText = "Error submitting data.";
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>

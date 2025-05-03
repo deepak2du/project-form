@@ -2,6 +2,15 @@
 <html>
 <head>
   <title>Project Data Entry</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+    }
+  </style>
 </head>
 <body>
   <h2>Submit Project Entry</h2>
@@ -27,27 +36,56 @@
 
   <p id="response"></p>
 
+  <h3>Submitted Data</h3>
+  <table id="sheet-data">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+
   <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
+
+    // Form Submission
     document.getElementById('data-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const formData = new FormData(this);
       const data = {};
       formData.forEach((value, key) => data[key] = value);
 
-      fetch('https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec', {
+      fetch(scriptURL, {
         method: 'POST',
         body: JSON.stringify(data)
       })
       .then(res => res.text())
       .then(response => {
         document.getElementById('response').innerText = "Submitted successfully!";
-        document.getElementById('data-form').reset();
+        this.reset();
+        loadSheetData(); // Refresh table
       })
       .catch(err => {
         document.getElementById('response').innerText = "Error submitting data.";
         console.error(err);
       });
     });
+
+    // Fetch and Display Sheet Data
+    function loadSheetData() {
+      fetch(scriptURL)
+        .then(response => response.json())
+        .then(data => {
+          const [headers, ...rows] = data;
+          const thead = document.querySelector("#sheet-data thead");
+          const tbody = document.querySelector("#sheet-data tbody");
+          
+          thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "</tr>";
+          tbody.innerHTML = rows.map(row =>
+            "<tr>" + row.map(cell => `<td>${cell}</td>`).join('') + "</tr>"
+          ).join('');
+        });
+    }
+
+    // Load data when page loads
+    window.onload = loadSheetData;
   </script>
 </body>
 </html>

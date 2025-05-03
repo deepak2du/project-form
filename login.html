@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #login-box {
+      border: 1px solid #ccc;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    input {
+      width: 100%;
+      margin: 10px 0;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div id="login-box">
+    <h3>Login</h3>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="error" style="color:red;"></p>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+
+      // Hardcoded credentials
+      if (user === 'admin' && pass === '1234') {
+        sessionStorage.setItem('loggedIn', 'true');
+        window.location.href = 'form.html';
+      } else {
+        document.getElementById('error').innerText = "Invalid credentials";
+      }
+    }
+  </script>
+</body>
+</html>

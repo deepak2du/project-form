@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,15 +24,6 @@
     }
   </script>
 
-  <button onclick="logout()">Logout</button>
-
-  <script>
-    function logout() {
-      sessionStorage.removeItem('loggedIn');
-      window.location.href = 'login.html';
-    }
-  </script>
-
   <h2>Submit or Edit Project Entry</h2>
   <form id="data-form">
     <input type="hidden" name="row">
@@ -50,6 +42,7 @@
     <button type="submit">Submit</button>
   </form>
 
+  <button onclick="logout()">Logout</button>
   <p id="response"></p>
 
   <h3>Current Entries</h3>
@@ -61,6 +54,11 @@
   <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
 
+    function logout() {
+      sessionStorage.removeItem('loggedIn');
+      window.location.href = 'login.html';
+    }
+
     function loadSheetData() {
       fetch(scriptURL)
         .then(response => response.json())
@@ -70,7 +68,7 @@
           const tbody = document.querySelector("#sheet-data tbody");
           thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th>Actions</th></tr>";
           tbody.innerHTML = rows.map((row, idx) => {
-            const rowNumber = idx + 2; // Adjust for header row
+            const rowNumber = idx + 2;
             return `
               <tr>
                 ${row.map(cell => `<td>${cell}</td>`).join('')}

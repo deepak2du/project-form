@@ -106,7 +106,6 @@
     <form id="meeting-form">
       <h3>Meeting Agenda and Discussions</h3>
       <div id="meeting-mode" style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">Mode: Add New Meeting</div>
-
       <input type="hidden" name="row">
       <div class="form-grid">
         <div><label>Meeting ID:</label><input type="text" name="meetingId" id="meetingId" readonly></div>
@@ -149,7 +148,7 @@
             <option>Mukuna</option>
             <option>Tikarapada</option>
             <option>Nuagaon (Narsinghpur)</option>
-            <option>Baradapala</option>
+            <option>Baradapala,</option>
             <option>Ratanpur</option>
             <option>Tulasichaura</option>
             <option>Kathakaranjia</option>
@@ -201,7 +200,6 @@
       <h3>Meeting Action Items</h3>
       <div id="action-mode" style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">Mode: Add New Action Item
       </div>
-
       <input type="hidden" name="row">
       <div class="form-grid">
         <div><label>Meeting ID:</label><input type="text" name="meetingId" id="action-meetingId" readonly required>
@@ -271,44 +269,27 @@
       fetch(scriptURL + '?sheet=Action Items').then(res => res.json()).then(data => renderTable(data, 'action-table', false));
     }
 
-
     function editMeeting(row, data) {
-  const form = document.forms['meeting-form'];
-  form.reset();
       const form = document.forms['meeting-form'];
+      form.reset();
       form.row.value = row;
-      ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'agendaSummary', 'remarks']
-        .forEach((k, i) => form[k].value = data[i]);
+      const keys = ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'agendaSummary', 'remarks'];
+      keys.forEach((k, i) => form[k].value = data[i]);
       document.getElementById('action-meetingId').value = data[0];
       document.getElementById('meeting-mode').innerText = "Mode: Editing Meeting (Row " + row + ")";
-    }
-
-    const form = document.forms['meeting-form'];
-    form.row.value = row;
-    ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'agendaSummary', 'remarks']
-      .forEach((k, i) => form[k].value = data[i]);
-    document.getElementById('action-meetingId').value = data[0];
-    document.getElementById('agendaItem').value = data[8];
     }
 
     function deleteMeeting(row) {
       if (confirm("Delete this meeting?")) postData({ action: "delete_meeting", row }, fetchData);
     }
 
-
     function editAction(row, data) {
-  const form = document.forms['action-form'];
-  form.reset();
       const form = document.forms['action-form'];
+      form.reset();
       form.row.value = row;
-      ['meetingId', 'actionItem', 'assignedTo', 'deadline', 'status'].forEach((k, i) => form[k].value = data[i]);
+      const keys = ['meetingId', 'actionItem', 'assignedTo', 'deadline', 'status'];
+      keys.forEach((k, i) => form[k].value = data[i]);
       document.getElementById('action-mode').innerText = "Mode: Editing Action Item (Row " + row + ")";
-    }
-
-    const form = document.forms['action-form'];
-    form.row.value = row;
-    ['meetingId', 'agendaItem', 'actionItem', 'assignedTo', 'deadline', 'status']
-      .forEach((k, i) => form[k].value = data[i]);
     }
 
     function deleteAction(row) {
@@ -332,9 +313,9 @@
         alert("Meeting saved.");
         document.getElementById('meetingId').value = meetingId;
         document.getElementById('action-meetingId').value = meetingId;
-        document.getElementById('agendaItem').value = form.agendaSummary.value;
         fetchData();
-        form.reset(); document.getElementById('action-mode').innerText = 'Mode: Add New Action Item'; document.getElementById('meeting-mode').innerText = 'Mode: Add New Meeting';
+        form.reset();
+        document.getElementById('meeting-mode').innerText = 'Mode: Add New Meeting';
       });
     });
 
@@ -348,9 +329,10 @@
         body: JSON.stringify(data)
       }).then(res => res.text()).then(msg => {
         alert("Action item processed.");
-        form.reset(); document.getElementById('action-mode').innerText = 'Mode: Add New Action Item'; document.getElementById('meeting-mode').innerText = 'Mode: Add New Meeting';
+        form.reset();
         fetchData();
         document.getElementById('action-meetingId').value = data.meetingId;
+        document.getElementById('action-mode').innerText = 'Mode: Add New Action Item';
       });
     });
 

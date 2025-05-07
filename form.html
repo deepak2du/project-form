@@ -1,145 +1,185 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Project Data Entry</title>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
+  <title>Minutes of Meeting Entry</title>
   <style>
-    table, th, td {
-      border: 1px solid black;
-      border-collapse: collapse;
-      padding: 8px;
-    }
-    input, select {
-      margin-bottom: 10px;
-    }
-    .edit-row {
-      background-color: #eef;
-    }
+    body { font-family: Arial; padding: 20px; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 6px; margin-top: 4px; }
+    textarea { resize: vertical; }
+    button { margin-top: 15px; padding: 10px 20px; }
   </style>
 </head>
 <body>
-  <script>
-    if (sessionStorage.getItem('loggedIn') !== 'true') {
-      window.location.href = 'login.html';
-    }
+  <h2>Minutes of Meeting Entry Form</h2>
+  <form id="mom-form">
+    <label>Meeting Date:</label>
+    <input type="date" name="meetingDate" required>
 
-    window.addEventListener("pageshow", function(event) {
-      if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
-        if (sessionStorage.getItem('loggedIn') !== 'true') {
-          window.location.href = 'login.html';
-        }
-      }
-    });
-  </script>
+    <label>Zone:</label>
+    <select name="zone" required>
+      <option value="">Select Zone</option>
+      <option>Zone 1</option>
+      <option>Zone 2</option>
+      <option>Zone 3</option>
+    </select>
 
-  <h2>Submit or Edit Project Entry</h2>
-  <form id="data-form">
-    <input type="hidden" name="row">
-    <label>Name:</label><br>
-    <input type="text" name="name" required><br>
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br>
-    <label>Task:</label><br>
-    <input type="text" name="task" required><br>
-    <label>Status:</label><br>
-    <select name="status">
-      <option value="Pending">Pending</option>
-      <option value="In Progress">In Progress</option>
-      <option value="Completed">Completed</option>
-    </select><br>
+    <label>District:</label>
+    <select name="district" required>
+      <option value="">Select District</option>
+      <option>Balangir</option>
+      <option>Bargarh</option>
+      <option>Cuttack</option>
+      <option>Ganjam</option>
+      <option>Kendujhar</option>
+      <option>Koraput</option>
+      <option>Mayurbhanj</option>
+      <option>Sambalpur</option>
+      <option>Sundargarh</option>
+    </select>
+
+    <label>Cold Room Location (optional):</label>
+    <select name="coldRoom">
+      <option value="">Select Cold Room Location</option>
+<option>Cold Room 1</option>
+<option>Cold Room 2</option>
+<option>Cold Room 3</option>
+<option>Cold Room 4</option>
+<option>Cold Room 5</option>
+<option>Cold Room 6</option>
+<option>Cold Room 7</option>
+<option>Cold Room 8</option>
+<option>Cold Room 9</option>
+<option>Cold Room 10</option>
+<option>Cold Room 11</option>
+<option>Cold Room 12</option>
+<option>Cold Room 13</option>
+<option>Cold Room 14</option>
+<option>Cold Room 15</option>
+<option>Cold Room 16</option>
+<option>Cold Room 17</option>
+<option>Cold Room 18</option>
+<option>Cold Room 19</option>
+<option>Cold Room 20</option>
+<option>Cold Room 21</option>
+<option>Cold Room 22</option>
+<option>Cold Room 23</option>
+<option>Cold Room 24</option>
+<option>Cold Room 25</option>
+<option>Cold Room 26</option>
+<option>Cold Room 27</option>
+<option>Cold Room 28</option>
+<option>Cold Room 29</option>
+<option>Cold Room 30</option>
+<option>Cold Room 31</option>
+<option>Cold Room 32</option>
+<option>Cold Room 33</option>
+<option>Cold Room 34</option>
+<option>Cold Room 35</option>
+<option>Cold Room 36</option>
+<option>Cold Room 37</option>
+<option>Cold Room 38</option>
+<option>Cold Room 39</option>
+<option>Cold Room 40</option>
+<option>Cold Room 41</option>
+    </select>
+
+    <label>Meeting Title / Topic:</label>
+    <input type="text" name="meetingTitle" required>
+
+    <label>Conducted By:</label>
+    <select name="conductedBy" required>
+      <option value="">Select Name</option>
+      <option>Akshay</option>
+      <option>Vicky</option>
+      <option>K C Parida</option>
+      <option>Mary</option>
+      <option>Hemanti</option>
+      <option>Amlan</option>
+      <option>Asutosh</option>
+      <option>Pratham</option>
+      <option>Rashmi</option>
+      <option>Minati</option>
+      <option>Sunita</option>
+      <option>Deepak</option>
+      <option>Swati</option>
+    </select>
+
+    <label>Attendees:</label>
+    <textarea name="attendees" placeholder="Comma-separated names" required></textarea>
+
+    <label>Agenda Item:</label>
+    <input type="text" name="agendaItem" required>
+
+    <label>Discussion Summary:</label>
+    <textarea name="discussionSummary" required></textarea>
+
+    <label>Decision Taken:</label>
+    <textarea name="decisionTaken" required></textarea>
+
+    <label>Action Item:</label>
+    <input type="text" name="actionItem" required>
+
+    <label>Assigned To:</label>
+    <select name="assignedTo" required>
+      <option value="">Select Name</option>
+      <option>Akshay</option>
+      <option>Vicky</option>
+      <option>K C Parida</option>
+      <option>Mary</option>
+      <option>Hemanti</option>
+      <option>Amlan</option>
+      <option>Asutosh</option>
+      <option>Pratham</option>
+      <option>Rashmi</option>
+      <option>Minati</option>
+      <option>Sunita</option>
+      <option>Deepak</option>
+      <option>Swati</option>
+    </select>
+
+    <label>Deadline:</label>
+    <input type="date" name="deadline" required>
+
+    <label>Status:</label>
+    <select name="status" required>
+      <option value="">Select Status</option>
+      <option>Pending</option>
+      <option>In Progress</option>
+      <option>Completed</option>
+    </select>
+
+    <label>Remarks / Follow-up:</label>
+    <textarea name="remarks"></textarea>
+
     <button type="submit">Submit</button>
+    <button type="reset">Clear Form</button>
   </form>
-
-  <button onclick="logout()">Logout</button>
-  <p id="response"></p>
-
-  <h3>Current Entries</h3>
-  <table id="sheet-data">
-    <thead></thead>
-    <tbody></tbody>
-  </table>
 
   <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
 
-    function logout() {
-      sessionStorage.removeItem('loggedIn');
-      location.replace('login.html');
-    }
-
-    function loadSheetData() {
-      fetch(scriptURL)
-        .then(response => response.json())
-        .then(data => {
-          const [headers, ...rows] = data;
-          const thead = document.querySelector("#sheet-data thead");
-          const tbody = document.querySelector("#sheet-data tbody");
-          thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th>Actions</th></tr>";
-          tbody.innerHTML = rows.map((row, idx) => {
-            const rowNumber = idx + 2;
-            return `
-              <tr>
-                ${row.map(cell => `<td>${cell}</td>`).join('')}
-                <td>
-                  <button onclick="editRow(${rowNumber}, '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}')">Edit</button>
-                  <button onclick="deleteRow(${rowNumber})">Delete</button>
-                </td>
-              </tr>`;
-          }).join('');
-        });
-    }
-
-    document.getElementById('data-form').addEventListener('submit', function(e) {
+    document.getElementById('mom-form').addEventListener('submit', function(e) {
       e.preventDefault();
-      const form = this;
-      const formData = new FormData(form);
-      const payload = {
-        action: form.row.value ? "edit" : "add",
-        row: form.row.value,
-        name: form.name.value,
-        email: form.email.value,
-        task: form.task.value,
-        status: form.status.value
-      };
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((value, key) => data[key] = value);
 
       fetch(scriptURL, {
         method: 'POST',
-        body: JSON.stringify(payload)
+        body: JSON.stringify(data)
       })
       .then(res => res.text())
       .then(response => {
-        document.getElementById('response').innerText = response;
-        form.reset();
-        loadSheetData();
+        alert("Submitted successfully!");
+        this.reset();
+      })
+      .catch(err => {
+        alert("Error submitting form.");
+        console.error(err);
       });
     });
-
-    function editRow(row, name, email, task, status) {
-      const form = document.getElementById('data-form');
-      form.row.value = row;
-      form.name.value = name;
-      form.email.value = email;
-      form.task.value = task;
-      form.status.value = status;
-    }
-
-    function deleteRow(row) {
-      if (!confirm("Are you sure you want to delete this entry?")) return;
-
-      fetch(scriptURL, {
-        method: 'POST',
-        body: JSON.stringify({ action: "delete", row })
-      })
-      .then(res => res.text())
-      .then(response => {
-        document.getElementById('response').innerText = response;
-        loadSheetData();
-      });
-    }
-
-    window.onload = loadSheetData;
   </script>
 </body>
 </html>

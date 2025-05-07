@@ -13,6 +13,7 @@
     }
 
     h2 {
+      text-align: center;
       margin-top: 40px;
       background-color: #003366;
       color: #fff;
@@ -103,9 +104,11 @@
 <body>
   <h2>Bloomberg Cities Idea Exchange || India || Meeting & Action Tracker</h2>
   <div class="form-container">
-    <form id="meeting-form">
+    <form id="meeting-form" style="margin-top: 0; border: 1px solid #ccc;">
       <h3>Meeting Agenda and Discussions</h3>
-      <div id="meeting-mode" style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">Mode: Add New Meeting</div>
+      <div id="meeting-mode"
+        style="margin: 10px 0; padding: 5px; border: 1px solid #aaa; border-radius: 4px; background-color: #f5f5f5;"
+        style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">Mode: Add New Meeting</div>
       <input type="hidden" name="row">
       <div class="form-grid">
         <div><label>Meeting ID:</label><input type="text" name="meetingId" id="meetingId" readonly></div>
@@ -233,13 +236,13 @@
     </form>
   </div>
 
-  <h2>All Meetings</h2>
+  <h2 style="text-align: center;">All Meetings</h2>
   <table id="meeting-table">
     <thead></thead>
     <tbody></tbody>
   </table>
 
-  <h2>All Action Items</h2>
+  <h2 style="text-align: center;">All Action Items</h2>
   <table id="action-table">
     <thead></thead>
     <tbody></tbody>
@@ -254,16 +257,16 @@
       const tbody = document.querySelector(`#${tableId} tbody`);
       thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th>Actions</th></tr>";
       tbody.innerHTML = rows.map((row, i) => {
-  const rowIndex = i + 2;
-  const rowData = encodeURIComponent(JSON.stringify(row));
-  return `<tr>` +
-    row.map(c => `<td>${c}</td>`).join('') +
-    `<td>
+        const rowIndex = i + 2;
+        const rowData = encodeURIComponent(JSON.stringify(row));
+        return `<tr>` +
+          row.map(c => `<td>${c}</td>`).join('') +
+          `<td>
       <button onclick="${isMeeting ? 'editMeeting' : 'editAction'}(${rowIndex}, this)">Edit</button>
       <button onclick="${isMeeting ? 'deleteMeeting' : 'deleteAction'}(${rowIndex})">Delete</button>
       <input type="hidden" value="${rowData}">
     </td></tr>`;
-}).join('');
+      }).join('');
     }
 
     function fetchData() {
@@ -272,29 +275,29 @@
     }
 
     function editMeeting(row, btn) {
-  const data = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input').value));
-  const form = document.forms['meeting-form'];
-  form.reset();
-  form.row.value = row;
-  const keys = ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'agendaSummary', 'remarks'];
-  keys.forEach((k, i) => form[k].value = data[i]);
-  document.getElementById('action-meetingId').value = data[0];
-  document.getElementById('meeting-mode').innerText = "Mode: Editing Meeting (Row " + row + ")";
-}
+      const data = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input').value));
+      const form = document.forms['meeting-form'];
+      form.reset();
+      form.row.value = row;
+      const keys = ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'agendaSummary', 'remarks'];
+      keys.forEach((k, i) => form[k].value = data[i]);
+      document.getElementById('action-meetingId').value = data[0];
+      document.getElementById('meeting-mode').innerText = "Mode: Editing Meeting (Row " + row + ")";
+    }
 
     function deleteMeeting(row) {
       if (confirm("Delete this meeting?")) postData({ action: "delete_meeting", row }, fetchData);
     }
 
     function editAction(row, btn) {
-  const data = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input').value));
-  const form = document.forms['action-form'];
-  form.reset();
-  form.row.value = row;
-  const keys = ['meetingId', 'actionItem', 'assignedTo', 'deadline', 'status'];
-  keys.forEach((k, i) => form[k].value = data[i]);
-  document.getElementById('action-mode').innerText = "Mode: Editing Action Item (Row " + row + ")";
-}
+      const data = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input').value));
+      const form = document.forms['action-form'];
+      form.reset();
+      form.row.value = row;
+      const keys = ['meetingId', 'actionItem', 'assignedTo', 'deadline', 'status'];
+      keys.forEach((k, i) => form[k].value = data[i]);
+      document.getElementById('action-mode').innerText = "Mode: Editing Action Item (Row " + row + ")";
+    }
 
     function deleteAction(row) {
       if (confirm("Delete this action item?")) postData({ action: "delete_action", row }, fetchData);

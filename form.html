@@ -4,83 +4,20 @@
 <head>
   <title>BCIEP India Meeting & Action Tracker</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0 auto;
-      padding: 20px;
-      max-width: 1300px;
-      background: #f9f9f9;
-    }
-    h2 {
-      margin-top: 40px;
-      background-color: #003366;
-      color: #fff;
-      padding: 10px;
-      border-radius: 5px;
-    }
-    .form-container {
-      display: flex;
-      gap: 30px;
-      justify-content: space-between;
-    }
-    form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 6px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      flex: 1;
-    }
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    .full-width {
-      grid-column: 1 / -1;
-    }
-    label {
-      font-weight: bold;
-      margin-bottom: 5px;
-      display: block;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 8px;
-      font-size: 14px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    textarea {
-      resize: vertical;
-    }
-    button {
-      padding: 8px 16px;
-      font-size: 14px;
-      border: none;
-      border-radius: 4px;
-      background-color: #003366;
-      color: white;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-    button:hover {
-      background-color: #005299;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 30px;
-      background: white;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      font-size: 13px;
-    }
-    th {
-      background-color: #e0e0e0;
-    }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0 auto; padding: 20px; max-width: 1300px; background: #f9f9f9; }
+    h2 { margin-top: 40px; background-color: #003366; color: #fff; padding: 10px; border-radius: 5px; }
+    .form-container { display: flex; gap: 30px; justify-content: space-between; }
+    form { background: #fff; padding: 20px; border-radius: 6px; box-shadow: 0 0 5px rgba(0,0,0,0.1); flex: 1; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .full-width { grid-column: 1 / -1; }
+    label { font-weight: bold; margin-bottom: 5px; display: block; }
+    input, select, textarea { width: 100%; padding: 8px; font-size: 14px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; }
+    textarea { resize: vertical; }
+    button { padding: 8px 16px; font-size: 14px; border: none; border-radius: 4px; background-color: #003366; color: white; cursor: pointer; margin-right: 10px; }
+    button:hover { background-color: #005299; }
+    table { width: 100%; border-collapse: collapse; margin-top: 30px; background: white; }
+    th, td { border: 1px solid #ccc; padding: 8px; font-size: 13px; }
+    th { background-color: #e0e0e0; }
   </style>
 </head>
 <body>
@@ -91,17 +28,8 @@
       <div class="form-grid">
         <div><label>Meeting ID:</label><input type="text" name="meetingId" id="meetingId" readonly></div>
         <div><label>Meeting Date:</label><input type="date" name="meetingDate" required></div>
-        <div><label>Zone:</label>
-          <select name="zone" required>
-            <option value="">Select Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option>
-          </select></div>
-        <div><label>District:</label>
-          <select name="district" required>
-            <option value="">Select District</option>
-            <option>Balangir</option><option>Bargarh</option><option>Cuttack</option><option>Ganjam</option>
-            <option>Kendujhar</option><option>Koraput</option><option>Mayurbhanj</option>
-            <option>Sambalpur</option><option>Sundargarh</option>
-          </select></div>
+        <div><label>Zone:</label><select name="zone" required><option value="">Select Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select></div>
+        <div><label>District:</label><select name="district" required><option value="">Select District</option><option>Balangir</option><option>Bargarh</option><option>Cuttack</option><option>Ganjam</option><option>Kendujhar</option><option>Koraput</option><option>Mayurbhanj</option><option>Sambalpur</option><option>Sundargarh</option></select></div>
         <div class="full-width"><label>Cold Room Location:</label><select name="coldRoom"><option value="">None</option>
           <option>Besil</option>
           <option>RMC Behera Market</option>
@@ -145,12 +73,7 @@
           <option>Rajpur</option>
           <option>Kansar</option></select></div>
         <div class="full-width"><label>Meeting Title:</label><input type="text" name="meetingTitle" required></div>
-        <div><label>Conducted By:</label><select name="conductedBy" required>
-<option>Akshaya Kumar Pallai</option><option>Vicky Vikram Das</option><option>Krushna Chandra Parida</option>
-<option>Mary Helena Kujur</option><option>Hemanti Sabar</option><option>Amlan Abhinav</option>
-<option>Asutosh Nayak</option><option>Pratham Parida</option><option>Rashmi Prava Nayak</option>
-<option>Minati Mallick</option><option>Sunita Patra</option><option>Deepak Kumar Tudu</option><option>Swati Rani Achary</option>
-        </select></div>
+        <div><label>Conducted By:</label><select name="conductedBy" required><option>Akshaya Kumar Pallai</option><option>Vicky Vikram Das</option><option>Krushna Chandra Parida</option><option>Mary Helena Kujur</option><option>Hemanti Sabar</option><option>Amlan Abhinav</option><option>Asutosh Nayak</option><option>Pratham Parida</option><option>Rashmi Prava Nayak</option><option>Minati Mallick</option><option>Sunita Patra</option><option>Deepak Kumar Tudu</option><option>Swati Rani Achary</option></select></div>
         <div><label>Attendees:</label><textarea name="attendees" required></textarea></div>
         <div class="full-width"><label>Agenda Summary:</label><textarea name="agendaSummary" required></textarea></div>
         <div class="full-width"><label>Remarks:</label><textarea name="remarks"></textarea></div>
@@ -164,17 +87,9 @@
         <div><label>Meeting ID:</label><input type="text" name="meetingId" id="action-meetingId" readonly required></div>
         <div><label>Agenda Item:</label><input type="text" name="agendaItem" id="agendaItem" required></div>
         <div class="full-width"><label>Action Item:</label><input type="text" name="actionItem" required></div>
-        <div><label>Assigned To:</label><select name="assignedTo" required>
-<option>Akshaya Kumar Pallai</option><option>Vicky Vikram Das</option><option>Krushna Chandra Parida</option>
-<option>Mary Helena Kujur</option><option>Hemanti Sabar</option><option>Amlan Abhinav</option>
-<option>Asutosh Nayak</option><option>Pratham Parida</option><option>Rashmi Prava Nayak</option>
-<option>Minati Mallick</option><option>Sunita Patra</option><option>Deepak Kumar Tudu</option><option>Swati Rani Achary</option>
-        </select></div>
+        <div><label>Assigned To:</label><select name="assignedTo" required><option>Akshaya Kumar Pallai</option><option>Vicky Vikram Das</option><option>Krushna Chandra Parida</option><option>Mary Helena Kujur</option><option>Hemanti Sabar</option><option>Amlan Abhinav</option><option>Asutosh Nayak</option><option>Pratham Parida</option><option>Rashmi Prava Nayak</option><option>Minati Mallick</option><option>Sunita Patra</option><option>Deepak Kumar Tudu</option><option>Swati Rani Achary</option></select></div>
         <div><label>Deadline:</label><input type="date" name="deadline" required></div>
-        <div class="full-width"><label>Status:</label>
-          <select name="status" required>
-            <option value="">Select Status</option><option>Pending</option><option>In Progress</option><option>Completed</option>
-          </select></div>
+        <div class="full-width"><label>Status:</label><select name="status" required><option value="">Select Status</option><option>Pending</option><option>In Progress</option><option>Completed</option></select></div>
       </div>
       <button type="submit">Add Action Item</button>
       <button type="reset">Clear</button>
@@ -190,109 +105,71 @@
   <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
 
-    
-// Update renderTable with edit/delete buttons
-function renderTable(data, tableId, isMeeting) {
-  const [headers, ...rows] = data;
-  const thead = document.querySelector(`#${tableId} thead`);
-  const tbody = document.querySelector(`#${tableId} tbody`);
-  thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th>Actions</th></tr>";
-  tbody.innerHTML = rows.map((row, i) => {
-    const rowIndex = i + 2; // +2 because row 1 = headers
-    return `<tr>` +
-      row.map(c => `<td>${c}</td>`).join('') +
-      `<td>
-         <button onclick="${isMeeting ? 'editMeeting' : 'editAction'}(${rowIndex}, ${JSON.stringify(row)})">Edit</button>
-         <button onclick="${isMeeting ? 'deleteMeeting' : 'deleteAction'}(${rowIndex})">Delete</button>
-       </td></tr>`;
-  }).join('');
-}
-
-function editMeeting(row, data) {
-  const form = document.forms['meeting-form'];
-  form.row.value = row;
-  const keys = ['meetingId','meetingDate','zone','district','coldRoom','meetingTitle','conductedBy','attendees','agendaSummary','remarks'];
-  keys.forEach((k, i) => form[k].value = data[i]);
-  document.getElementById('action-meetingId').value = data[0];
-  document.getElementById('agendaItem').value = data[8];
-}
-
-function deleteMeeting(row) {
-  if (confirm("Delete this meeting?")) {
-    postData({ action: "delete_meeting", row }, fetchData);
-  }
-}
-
-function editAction(row, data) {
-  const form = document.forms['action-form'];
-  form.row.value = row;
-  const keys = ['meetingId','agendaItem','actionItem','assignedTo','deadline','status'];
-  keys.forEach((k, i) => form[k].value = data[i]);
-}
-
-function deleteAction(row) {
-  if (confirm("Delete this action item?")) {
-    postData({ action: "delete_action", row }, fetchData);
-  }
-}
-
-function postData(data, callback) {
-  fetch(scriptURL, {
-    method: 'POST',
-    body: JSON.stringify(data)
-  }).then(res => res.text()).then(msg => {
-    alert(msg);
-    callback();
-  });
-}
-
-// Replace fetchData() call
-function fetchData() {
-  fetch(scriptURL + '?sheet=Meetings')
-    .then(res => res.json())
-    .then(data => renderTable(data, 'meeting-table', true));
-
-  fetch(scriptURL + '?sheet=Action Items')
-    .then(res => res.json())
-    .then(data => renderTable(data, 'action-table', false));
-}
-
-function fetchData() {
-      fetch(scriptURL + '?sheet=Meetings')
-        .then(res => res.json())
-        .then(data => renderTable(data, 'meeting-table'));
-
-      fetch(scriptURL + '?sheet=Action Items')
-        .then(res => res.json())
-        .then(data => renderTable(data, 'action-table'));
-    }
-
-    function renderTable(data, tableId) {
+    function renderTable(data, tableId, isMeeting) {
       const [headers, ...rows] = data;
       const thead = document.querySelector(`#${tableId} thead`);
       const tbody = document.querySelector(`#${tableId} tbody`);
-      thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "</tr>";
-      tbody.innerHTML = rows.map(row =>
-        `<tr>` + row.map(c => `<td>${c}</td>`).join('') + `</tr>`
-      ).join('');
+      thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th>Actions</th></tr>";
+      tbody.innerHTML = rows.map((row, i) => {
+        const rowIndex = i + 2;
+        return `<tr>` +
+          row.map(c => `<td>${c}</td>`).join('') +
+          `<td>
+            <button onclick="${isMeeting ? 'editMeeting' : 'editAction'}(${rowIndex}, ${JSON.stringify(row)})">Edit</button>
+            <button onclick="${isMeeting ? 'deleteMeeting' : 'deleteAction'}(${rowIndex})">Delete</button>
+          </td></tr>`;
+      }).join('');
+    }
+
+    function fetchData() {
+      fetch(scriptURL + '?sheet=Meetings').then(res => res.json()).then(data => renderTable(data, 'meeting-table', true));
+      fetch(scriptURL + '?sheet=Action Items').then(res => res.json()).then(data => renderTable(data, 'action-table', false));
+    }
+
+    function editMeeting(row, data) {
+      const form = document.forms['meeting-form'];
+      form.row.value = row;
+      ['meetingId','meetingDate','zone','district','coldRoom','meetingTitle','conductedBy','attendees','agendaSummary','remarks']
+        .forEach((k, i) => form[k].value = data[i]);
+      document.getElementById('action-meetingId').value = data[0];
+      document.getElementById('agendaItem').value = data[8];
+    }
+
+    function deleteMeeting(row) {
+      if (confirm("Delete this meeting?")) postData({ action: "delete_meeting", row }, fetchData);
+    }
+
+    function editAction(row, data) {
+      const form = document.forms['action-form'];
+      form.row.value = row;
+      ['meetingId','agendaItem','actionItem','assignedTo','deadline','status']
+        .forEach((k, i) => form[k].value = data[i]);
+    }
+
+    function deleteAction(row) {
+      if (confirm("Delete this action item?")) postData({ action: "delete_action", row }, fetchData);
+    }
+
+    function postData(data, callback) {
+      fetch(scriptURL, { method: 'POST', body: JSON.stringify(data) })
+        .then(res => res.text()).then(msg => { alert(msg); callback(); });
     }
 
     document.getElementById('meeting-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const form = this;
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
-      data.action = "add_meeting";
-
+      const data = Object.fromEntries(new FormData(form).entries());
+      data.action = data.row ? "edit_meeting" : "add_meeting";
       fetch(scriptURL, {
         method: 'POST',
         body: JSON.stringify(data)
       }).then(res => res.text()).then(meetingId => {
-        alert("Meeting saved. You can now add action items.");
+        alert("Meeting saved.");
         document.getElementById('meetingId').value = meetingId;
         document.getElementById('action-meetingId').value = meetingId;
         document.getElementById('agendaItem').value = form.agendaSummary.value;
         fetchData();
+        form.reset();
       });
     });
 
@@ -300,17 +177,15 @@ function fetchData() {
       e.preventDefault();
       const form = this;
       const data = Object.fromEntries(new FormData(form).entries());
-      data.action = "add_action";
-
+      data.action = data.row ? "edit_action" : "add_action";
       fetch(scriptURL, {
         method: 'POST',
         body: JSON.stringify(data)
       }).then(res => res.text()).then(msg => {
-        alert("Action item added.");
+        alert("Action item processed.");
         form.reset();
-        document.getElementById('action-meetingId').value = data.meetingId;
-        document.getElementById('agendaItem').value = '';
         fetchData();
+        document.getElementById('action-meetingId').value = data.meetingId;
       });
     });
 

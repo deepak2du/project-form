@@ -252,22 +252,27 @@
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
 
     function renderTable(data, tableId, isMeeting) {
-      const [headers, ...rows] = data;
-      const thead = document.querySelector(`#${tableId} thead`);
-      const tbody = document.querySelector(`#${tableId} tbody`);
-      thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th>Actions</th></tr>";
-      tbody.innerHTML = rows.map((row, i) => {
-        const rowIndex = i + 2;
-        const rowData = encodeURIComponent(JSON.stringify(row));
-        return `<tr>` +
-          row.map(c => `<td>${c}</td>`).join('') +
-          `<td>
+  const [headers, ...rows] = data;
+  const thead = document.querySelector(`#${tableId} thead`);
+  const tbody = document.querySelector(`#${tableId} tbody`);
+  thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th>Actions</th></tr>";
+  tbody.innerHTML = rows.map((row, i) => {
+    const rowIndex = i + 2;
+    const rowData = encodeURIComponent(JSON.stringify(row));
+    const cells = row.map((c, j) => {
+      // If it's a meeting row and the last column is a URL, show "View Photo"
+      if (isMeeting && j === row.length - 1 && typeof c === "string" && c.startsWith("http")) {
+        return `<td><a href="${c}" target="_blank">View Photo</a></td>`;
+      }
+      return `<td>${c}</td>`;
+    }).join('');
+    return `<tr>${cells}<td>
       <button onclick="${isMeeting ? 'editMeeting' : 'editAction'}(${rowIndex}, this)">Edit</button>
       <button onclick="${isMeeting ? 'deleteMeeting' : 'deleteAction'}(${rowIndex})">Delete</button>
       <input type="hidden" value="${rowData}">
     </td></tr>`;
-      }).join('');
-    }
+  }).join('');
+}
 
     function fetchData() {
       fetch(scriptURL + '?sheet=Meetings').then(res => res.json()).then(data => renderTable(data, 'meeting-table', true));
@@ -311,11 +316,12 @@
     document.getElementById('meeting-form').addEventListener('submit', function (e) {
       e.preventDefault();
       const form = this;
-      const data = Object.fromEntries(new FormData(form).entries());
-      data.action = data.row && data.row.trim() !== "" ? "edit_meeting" : "add_meeting";
+      const formData = new FormData(form);
+      const isEdit = form.row.value && form.row.value.trim() !== "";
+      formData.append("action", isEdit ? "edit_meeting" : "add_meeting");
       fetch(scriptURL, {
         method: 'POST',
-        body: JSON.stringify(data)
+        body: formData
       }).then(res => res.text()).then(meetingId => {
         alert("Meeting saved.");
         document.getElementById('meetingId').value = meetingId;

@@ -269,7 +269,23 @@
       fetch(scriptURL + '?sheet=Action Items').then(res => res.json()).then(data => renderTable(data, 'action-table', false));
     }
 
-    function editMeeting(row, data) {
+    
+function editMeeting(row, data) {
+  console.log("Edit Meeting Data:", data);
+  const form = document.forms['meeting-form'];
+  form.reset();
+  form.row.value = row;
+  const keys = ['meetingId','meetingDate','zone','district','coldRoom','meetingTitle','conductedBy','attendees','agendaSummary','remarks'];
+  if (data.length >= keys.length) {
+    keys.forEach((k, i) => { form[k].value = data[i]; });
+    document.getElementById('meetingId').value = data[0];
+    document.getElementById('action-meetingId').value = data[0];
+  } else {
+    alert("Error: Incomplete data for meeting edit.");
+  }
+  document.getElementById('meeting-mode').innerText = "Mode: Editing Meeting (Row " + row + ")";
+}
+
       const form = document.forms['meeting-form'];
       form.reset();
       form.row.value = row;
@@ -283,7 +299,21 @@
       if (confirm("Delete this meeting?")) postData({ action: "delete_meeting", row }, fetchData);
     }
 
-    function editAction(row, data) {
+    
+function editAction(row, data) {
+  console.log("Edit Action Data:", data);
+  const form = document.forms['action-form'];
+  form.reset();
+  form.row.value = row;
+  const keys = ['meetingId','actionItem','assignedTo','deadline','status'];
+  if (data.length >= keys.length) {
+    keys.forEach((k, i) => { form[k].value = data[i]; });
+  } else {
+    alert("Error: Incomplete data for action item edit.");
+  }
+  document.getElementById('action-mode').innerText = "Mode: Editing Action Item (Row " + row + ")";
+}
+
       const form = document.forms['action-form'];
       form.reset();
       form.row.value = row;

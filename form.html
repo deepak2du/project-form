@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bloomberg Cities Idea Exchange || India || Meeting & Action Tracker</title>
+  <title>BCIEP India Meeting & Action Tracker</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -190,7 +190,74 @@
   <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
 
-    function fetchData() {
+    
+// Update renderTable with edit/delete buttons
+function renderTable(data, tableId, isMeeting) {
+  const [headers, ...rows] = data;
+  const thead = document.querySelector(`#${tableId} thead`);
+  const tbody = document.querySelector(`#${tableId} tbody`);
+  thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th>Actions</th></tr>";
+  tbody.innerHTML = rows.map((row, i) => {
+    const rowIndex = i + 2; // +2 because row 1 = headers
+    return `<tr>` +
+      row.map(c => `<td>${c}</td>`).join('') +
+      `<td>
+         <button onclick="${isMeeting ? 'editMeeting' : 'editAction'}(${rowIndex}, ${JSON.stringify(row)})">Edit</button>
+         <button onclick="${isMeeting ? 'deleteMeeting' : 'deleteAction'}(${rowIndex})">Delete</button>
+       </td></tr>`;
+  }).join('');
+}
+
+function editMeeting(row, data) {
+  const form = document.forms['meeting-form'];
+  form.row.value = row;
+  const keys = ['meetingId','meetingDate','zone','district','coldRoom','meetingTitle','conductedBy','attendees','agendaSummary','remarks'];
+  keys.forEach((k, i) => form[k].value = data[i]);
+  document.getElementById('action-meetingId').value = data[0];
+  document.getElementById('agendaItem').value = data[8];
+}
+
+function deleteMeeting(row) {
+  if (confirm("Delete this meeting?")) {
+    postData({ action: "delete_meeting", row }, fetchData);
+  }
+}
+
+function editAction(row, data) {
+  const form = document.forms['action-form'];
+  form.row.value = row;
+  const keys = ['meetingId','agendaItem','actionItem','assignedTo','deadline','status'];
+  keys.forEach((k, i) => form[k].value = data[i]);
+}
+
+function deleteAction(row) {
+  if (confirm("Delete this action item?")) {
+    postData({ action: "delete_action", row }, fetchData);
+  }
+}
+
+function postData(data, callback) {
+  fetch(scriptURL, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }).then(res => res.text()).then(msg => {
+    alert(msg);
+    callback();
+  });
+}
+
+// Replace fetchData() call
+function fetchData() {
+  fetch(scriptURL + '?sheet=Meetings')
+    .then(res => res.json())
+    .then(data => renderTable(data, 'meeting-table', true));
+
+  fetch(scriptURL + '?sheet=Action Items')
+    .then(res => res.json())
+    .then(data => renderTable(data, 'action-table', false));
+}
+
+function fetchData() {
       fetch(scriptURL + '?sheet=Meetings')
         .then(res => res.json())
         .then(data => renderTable(data, 'meeting-table'));

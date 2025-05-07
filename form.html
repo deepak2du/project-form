@@ -131,7 +131,7 @@
             <option>Sambalpur</option>
             <option>Sundargarh</option>
           </select></div>
-        <div class="full-width"><label>Cold Room Location (Optional):</label><select name="coldRoom">
+        <div><label>Cold Room Location (Optional):</label><select name="coldRoom">
             <option value="">None</option>
             <option>Besil</option>
             <option>RMC Behera Market</option>
@@ -175,6 +175,7 @@
             <option>Rajpur</option>
             <option>Kansar</option>
           </select></div>
+        <div><label>Upload Meeting Photo:</label><input type="file" name="meetingPhoto" accept="image/*" style="padding: 5px 0px;"></div>
         <div class="full-width"><label>Meeting Title:</label><input type="text" name="meetingTitle" required style="padding: 8px 0px;"></div>
         <div><label>Conducted By:</label><select name="conductedBy" required>
             <option>Akshaya Kumar Pallai</option>
@@ -192,8 +193,8 @@
             <option>Swati Rani Achary</option>
           </select></div>
         <div><label>Attendees:</label><textarea name="attendees" required style="padding: 1px 0px;"></textarea></div>
-        <div class="full-width"><label>Agenda Summary:</label><textarea name="agendaSummary" required style="padding: 8px 0px;"></textarea></div>
-        <div class="full-width"><label>What points were discussed during the meeting?</label><textarea name="remarks" style="padding: 8px 0px;"></textarea></div>
+        <div class="full-width"><label>Meeting Agenda:</label><textarea name="meetingAgenda" required style="padding: 8px 0px;"></textarea></div>
+        <div class="full-width"><label>What points were discussed during the meeting?</label><textarea name="meetingDiscussion" style="padding: 8px 0px;"></textarea></div>
       </div>
       <button type="submit">Save Meeting</button>
     </form>
@@ -278,7 +279,7 @@
       const form = document.forms['meeting-form'];
       form.reset();
       form.row.value = row;
-      const keys = ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'agendaSummary', 'remarks'];
+      const keys = ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'meetingAgenda', 'meetingDiscussion', 'fileUrl'];
       keys.forEach((k, i) => form[k].value = data[i]);
       document.getElementById('action-meetingId').value = data[0];
       document.getElementById('meeting-mode').innerText = "Mode: Editing Meeting (Row " + row + ")";

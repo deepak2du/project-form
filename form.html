@@ -4,136 +4,228 @@
 <head>
   <title>Meeting & Action Tracker</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    input, select, textarea { width: 100%; padding: 6px; margin-top: 4px; }
-    textarea { resize: vertical; }
-    button { margin-top: 15px; padding: 10px 20px; }
-    hr { margin-top: 30px; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0 auto;
+      padding: 20px;
+      max-width: 960px;
+      background: #f9f9f9;
+    }
+
+    h2 {
+      margin-top: 40px;
+      background-color: #003366;
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      margin-top: 10px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      background-color: #003366;
+      color: white;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background-color: #005299;
+    }
+
+    hr {
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
   <h2>Meeting Entry</h2>
   <form id="meeting-form">
-    <label>Meeting ID:</label>
-    <input type="text" name="meetingId" required placeholder="e.g., M-001">
+    <div class="form-grid">
+      <div>
+        <label>Meeting ID:</label>
+        <input type="text" name="meetingId" required placeholder="e.g., M-001">
+      </div>
+      <div>
+        <label>Meeting Date:</label>
+        <input type="date" name="meetingDate" required>
+      </div>
 
-    <label>Meeting Date:</label>
-    <input type="date" name="meetingDate" required>
+      <div>
+        <label>Zone:</label>
+        <select name="zone" required>
+          <option value="">Select Zone</option>
+          <option>Zone 1</option>
+          <option>Zone 2</option>
+          <option>Zone 3</option>
+        </select>
+      </div>
+      <div>
+        <label>District:</label>
+        <select name="district" required>
+          <option value="">Select District</option>
+          <option>Balangir</option>
+          <option>Bargarh</option>
+          <option>Cuttack</option>
+          <option>Ganjam</option>
+          <option>Kendujhar</option>
+          <option>Koraput</option>
+          <option>Mayurbhanj</option>
+          <option>Sambalpur</option>
+          <option>Sundargarh</option>
+        </select>
+      </div>
 
-    <label>Zone:</label>
-    <select name="zone" required>
-      <option value="">Select Zone</option>
-      <option>Zone 1</option>
-      <option>Zone 2</option>
-      <option>Zone 3</option>
-    </select>
+      <div class="full-width">
+        <label>Cold Room Location (optional):</label>
+        <select name="coldRoom">
+          <option value="">Select Cold Room Location</option>
+          <option>Besil</option>
+          <option>RMC Behera Market</option>
+          <option>RMC Sarandapali</option>
+          <option>Athagarh NAC</option>
+          <option>Nistipur</option>
+          <option>Dudhianali</option>
+          <option>RMC Kalabada Market Yard</option>
+          <option>RMC Digapahandi Market Yard</option>
+          <option>RMC Bhanjanagar Market Yard</option>
+          <option>Bahadapada</option>
+          <option>RMC Buguda Market Yard</option>
+          <option>Chatrapur Market</option>
+          <option>Kolasingi</option>
+          <option>Raisuan</option>
+          <option>Madarangajodi</option>
+          <option>Mukuna</option>
+          <option>Tikarapada</option>
+          <option>Nuagaon (Narsinghpur)</option>
+          <option>Baradapala</option>
+          <option>Ratanpur</option>
+          <option>Tulasichaura</option>
+          <option>Kathakaranjia</option>
+          <option>Ghatabhagra</option>
+          <option>Malimarla</option>
+          <option>Baghiatangar</option>
+          <option>Chapaldihi</option>
+          <option>Akhapolan</option>
+          <option>Sandhenkia</option>
+          <option>Tikhia</option>
+          <option>Kuchinda</option>
+          <option>Bhojpur</option>
+          <option>T.Niktimal</option>
+          <option>Charmal</option>
+          <option>Khetrajpur</option>
+          <option>Kardega</option>
+          <option>Kadalidhipa</option>
+          <option>Khariapada</option>
+          <option>Bhelluadihi</option>
+          <option>Domposh</option>
+          <option>Rajpur</option>
+          <option>Kansar</option>
+        </select>
+      </div>
 
-    <label>District:</label>
-    <select name="district" required>
-      <option value="">Select District</option>
-      <option>Balangir</option>
-      <option>Bargarh</option>
-      <option>Cuttack</option>
-      <option>Ganjam</option>
-      <option>Kendujhar</option>
-      <option>Koraput</option>
-      <option>Mayurbhanj</option>
-      <option>Sambalpur</option>
-      <option>Sundargarh</option>
-    </select>
+      <div class="full-width">
+        <label>Meeting Title / Topic:</label>
+        <input type="text" name="meetingTitle" required>
+      </div>
 
-    <label>Cold Room Location (optional):</label>
-    <select name="coldRoom">
-      <option value="">Select Cold Room Location</option>
-      <option>Besil</option>
-      <option>RMC Behera Market</option>
-      <option>RMC Sarandapali</option>
-      <option>Athagarh NAC</option>
-      <option>Nistipur</option>
-      <option>Dudhianali</option>
-      <option>RMC Kalabada Market Yard</option>
-      <option>RMC Digapahandi Market Yard</option>
-      <option>RMC Bhanjanagar Market Yard</option>
-      <option>Bahadapada</option>
-      <option>RMC Buguda Market Yard</option>
-      <option>Chatrapur Market</option>
-      <option>Kolasingi</option>
-      <option>Raisuan</option>
-      <option>Madarangajodi</option>
-      <option>Mukuna</option>
-      <option>Tikarapada</option>
-      <option>Nuagaon (Narsinghpur)</option>
-      <option>Baradapala</option>
-      <option>Ratanpur</option>
-      <option>Tulasichaura</option>
-      <option>Kathakaranjia</option>
-      <option>Ghatabhagra</option>
-      <option>Malimarla</option>
-      <option>Baghiatangar</option>
-      <option>Chapaldihi</option>
-      <option>Akhapolan</option>
-      <option>Sandhenkia</option>
-      <option>Tikhia</option>
-      <option>Kuchinda</option>
-      <option>Bhojpur</option>
-      <option>T.Niktimal</option>
-      <option>Charmal</option>
-      <option>Khetrajpur</option>
-      <option>Kardega</option>
-      <option>Kadalidhipa</option>
-      <option>Khariapada</option>
-      <option>Bhelluadihi</option>
-      <option>Domposh</option>
-      <option>Rajpur</option>
-      <option>Kansar</option>
-    </select>
+      <div>
+        <label>Conducted By:</label>
+        <input type="text" name="conductedBy" required>
+      </div>
+      <div>
+        <label>Attendees:</label>
+        <textarea name="attendees" placeholder="Comma-separated names" required></textarea>
+      </div>
 
-    <label>Meeting Title / Topic:</label>
-    <input type="text" name="meetingTitle" required>
+      <div class="full-width">
+        <label>Agenda Summary:</label>
+        <textarea name="agendaSummary" required></textarea>
+      </div>
 
-    <label>Conducted By:</label>
-    <input type="text" name="conductedBy" required>
-
-    <label>Attendees:</label>
-    <textarea name="attendees" placeholder="Comma-separated names" required></textarea>
-
-    <label>Agenda Summary:</label>
-    <textarea name="agendaSummary" required></textarea>
-
-    <label>Remarks:</label>
-    <textarea name="remarks"></textarea>
-
+      <div class="full-width">
+        <label>Remarks:</label>
+        <textarea name="remarks"></textarea>
+      </div>
+    </div>
     <button type="submit">Submit Meeting Info</button>
   </form>
 
-  <hr>
-
   <h2>Action Items for this Meeting</h2>
   <form id="action-form">
-    <label>Meeting ID:</label>
-    <input type="text" name="meetingId" id="action-meetingId" readonly required>
+    <div class="form-grid">
+      <div>
+        <label>Meeting ID:</label>
+        <input type="text" name="meetingId" id="action-meetingId" readonly required>
+      </div>
+      <div>
+        <label>Agenda Item:</label>
+        <input type="text" name="agendaItem" required>
+      </div>
 
-    <label>Agenda Item:</label>
-    <input type="text" name="agendaItem" required>
+      <div class="full-width">
+        <label>Action Item:</label>
+        <input type="text" name="actionItem" required>
+      </div>
 
-    <label>Action Item:</label>
-    <input type="text" name="actionItem" required>
+      <div>
+        <label>Assigned To:</label>
+        <input type="text" name="assignedTo" required>
+      </div>
+      <div>
+        <label>Deadline:</label>
+        <input type="date" name="deadline" required>
+      </div>
 
-    <label>Assigned To:</label>
-    <input type="text" name="assignedTo" required>
-
-    <label>Deadline:</label>
-    <input type="date" name="deadline" required>
-
-    <label>Status:</label>
-    <select name="status" required>
-      <option value="">Select Status</option>
-      <option>Pending</option>
-      <option>In Progress</option>
-      <option>Completed</option>
-    </select>
-
+      <div class="full-width">
+        <label>Status:</label>
+        <select name="status" required>
+          <option value="">Select Status</option>
+          <option>Pending</option>
+          <option>In Progress</option>
+          <option>Completed</option>
+        </select>
+      </div>
+    </div>
     <button type="submit">Add Action Item</button>
     <button type="reset">Clear Action</button>
   </form>

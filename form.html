@@ -371,6 +371,7 @@
       }).then(res => res.text()).then(msg => {
         alert("Action item processed.");
         form.reset();
+        form.row.value = ""; // ✅ Reset the row value to avoid re-editing
         fetchData();
         document.getElementById('action-meetingId').value = data.meetingId;
         document.getElementById('action-mode').innerText = 'Mode: Add New Action Item';

@@ -1,473 +1,424 @@
 /**
- * Utility to add CORS headers to any TextOutput
- */
-function withCors(output) {
-  return output
-    .setHeader('Access-Control-Allow-Origin', '*')
-    .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-    .setHeader('Access-Control-Allow-Headers', 'Content-Type');
-}
-
-/**
- * Handle CORS preflight requests.
- */
-function doOptions(e) {
-  return withCors(
-    ContentService.createTextOutput('')
-      .setMimeType(ContentService.MimeType.JSON)
-  );
-}
-
-/**
- * Handle POST requests for all actions, with relaxed JSON detection and CORS.
+ * Main function to handle HTTP POST requests.
+ * Routes requests to specific handlers based on the 'action' parameter.
+ * Handles both JSON and FormData (multipart/form-data) content types.
+ *
+ * @param {GoogleAppsScript.Events.DoPost} e The event object containing request parameters and post data.
+ * @returns {GoogleAppsScript.Content.TextOutput} A JSON response indicating success or error.
  */
 function doPost(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var data, action;
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let params = {};
+  let action;
 
-  // 1. Detect JSON vs. form-encoded
-  if (e.postData && e.postData.type && e.postData.type.indexOf('application/json') === 0) {
-    data = JSON.parse(e.postData.contents);
-    action = data.action;
-  } else {
-    data = e.parameter;
-    action = data.action;
-  }
+  console.log("--- doPost Started (V9 - Base64 Upload Attempt) ---");
+  console.log("e.postData.type:", e.postData ? e.postData.type : "N/A");
 
-  // 2. Dispatch to the correct handler
-  var output;
   try {
+    if (e.postData && e.postData.type === 'application/json') {
+      params = JSON.parse(e.postData.contents);
+      action = params.action;
+      console.log("doPost: JSON request detected. Action:", action);
+    } else {
+      // For FormData (multipart/form-data which includes Base64 text fields)
+      console.log("doPost: Multipart/form-data or www-form-urlencoded request detected.");
+      console.log("e.parameters (RAW for FormData):", JSON.stringify(e.parameters));
+
+      for (const key in e.parameters) {
+        if (e.parameters.hasOwnProperty(key)) {
+          const valueArray = e.parameters[key]; // Values are always arrays
+          if (Array.isArray(valueArray) && valueArray.length > 0) {
+            params[key] = valueArray[0]; // Take the first value for simple fields
+          } else {
+            params[key] = ""; // Or handle as needed if valueArray might be empty
+          }
+        }
+      }
+      action = params.action;
+      console.log("doPost: Params from FormData:", JSON.stringify(params)); // Base64 will be very long if logged
+      console.log("doPost: Derived action for routing:", action);
+    }
+
+    if (!action) {
+      console.error("doPost: Action parameter is missing.");
+      return ContentService.createTextOutput(JSON.stringify({ error: "Action parameter is missing." }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    let output;
     switch (action) {
       case 'add_meeting':
-        output = handleAddMeeting({ parameter: data }, ss);
+        output = handleAddMeeting(params, ss);
         break;
       case 'edit_meeting':
-        output = handleEditMeeting({ parameter: data }, ss);
+        output = handleEditMeeting(params, ss);
         break;
       case 'delete_meeting':
-        output = handleDeleteMeeting({ parameter: data }, ss);
+        output = handleDeleteMeeting(params, ss);
         break;
       case 'add_action':
-        output = handleAddAction({ parameter: data }, ss);
+        output = handleAddAction(params, ss);
         break;
       case 'edit_action':
-        output = handleEditAction({ parameter: data }, ss);
+        output = handleEditAction(params, ss);
         break;
       case 'delete_action':
-        output = handleDeleteAction({ parameter: data }, ss);
+        output = handleDeleteAction(params, ss);
         break;
       case 'add_status':
-        output = handleAddStatus({ parameter: data }, ss);
+        output = handleAddStatus(params, ss);
         break;
       case 'edit_status':
-        output = handleEditStatus({ parameter: data }, ss);
+        output = handleEditStatus(params, ss);
         break;
       case 'delete_status':
-        output = handleDeleteStatus({ parameter: data }, ss);
+        output = handleDeleteStatus(params, ss);
         break;
-      case 'upload_media':
-        output = handleUploadMediaJson(data, ss);
+      case 'upload_media_base64': // New action for Base64 upload
+        output = handleMediaUploadBase64(params, ss);
         break;
+      // case 'upload_media': // Old direct blob upload - keep commented or remove
+      //   output = handleMediaFileUpload(params, ss); 
+      //   break;
       default:
-        output = ContentService
-          .createTextOutput(JSON.stringify({ error: 'Unknown action' }))
+        console.error("doPost: Unknown action detected:", action);
+        output = ContentService.createTextOutput(JSON.stringify({ error: `Unknown action: ${action}` }))
           .setMimeType(ContentService.MimeType.JSON);
     }
+    return output;
+
   } catch (err) {
-    output = ContentService
-      .createTextOutput(JSON.stringify({ error: err.message }))
-      .setMimeType(ContentService.MimeType.JSON);
+    console.error(`Critical Error in doPost for action '${action || "N/A"}': ${err.message} Stack: ${err.stack}`);
+    return ContentService.createTextOutput(
+      JSON.stringify({ error: `Server error processing action '${action || "N/A"}': ${err.message}` })
+    ).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    console.log("--- doPost Finished ---");
   }
-
-  // 3. Always wrap with CORS headers
-  return withCors(output);
 }
 
-/**
- * Optional: Handle CORS preflight requests.
- */
-function doOptions(e) {
-  return ContentService
-    .createTextOutput('')
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeader('Access-Control-Allow-Origin', '*')
-    .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-    .setHeader('Access-Control-Allow-Headers', 'Content-Type');
-}
 
-/**
- * Add a new meeting, auto‐incrementing Meeting ID with prefix "BCIEINM"
- */
-function handleAddMeeting(e, ss) {
+function handleAddMeeting(params, ss) {
   try {
-    // 1. Ensure the “Meetings” sheet exists and has headers
-    var sheet = ss.getSheetByName("Meetings") || ss.insertSheet("Meetings");
+    const sheet = ss.getSheetByName("Meetings") || ss.insertSheet("Meetings");
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
-        "Meeting ID",
-        "Meeting Date",
-        "Zone",
-        "District",
-        "Cold Room",
-        "Meeting Title",
-        "Conducted By",
-        "Attendees",
-        "Meeting Agenda",
-        "Meeting Discussion",
-        "Photo URL"
+        "Meeting ID", "Meeting Date", "Zone", "District", "Cold Room",
+        "Meeting Title", "Conducted By", "Attendees", "Meeting Agenda",
+        "Meeting Discussion", "Photo URL"
       ]);
     }
 
-    // 2. Load existing IDs and extract numeric suffixes
-    var headerRows = 1;
-    var lastRow = sheet.getLastRow();
-    var idRange = sheet.getRange(headerRows + 1, 1, Math.max(0, lastRow - headerRows), 1);
-    var rawIds = idRange.getValues().flat().map(String);
-    var prefix = "BCIEINM";
-    var nums = rawIds
-      .filter(id => id.startsWith(prefix))
-      .map(id => {
-        var suffix = id.slice(prefix.length);
-        return parseInt(suffix, 10) || 0;
-      });
+    const prefix = "BCIEINM";
+    const lastRow = sheet.getLastRow();
+    let nextId = prefix + "001";
 
-    // 3. Compute next numeric suffix
-    var maxNum = nums.length ? Math.max.apply(null, nums) : 0;
-    var nextNum = maxNum + 1;
-    // Pad to same length as the longest existing suffix (or 3 digits minimum)
-    var padLength = Math.max(3, Math.max(...nums.map(n => String(n).length)));
-    var nextId = prefix + String(nextNum).padStart(padLength, "0");
+    if (lastRow >= 1) {
+      const idColumnRange = sheet.getRange(2, 1, Math.max(1, lastRow - 1), 1);
+      const rawIds = idColumnRange.getValues().flat().map(String);
+      const nums = rawIds
+        .filter(id => id && String(id).startsWith(prefix))
+        .map(id => {
+          const suffix = String(id).slice(prefix.length);
+          return parseInt(suffix, 10) || 0;
+        });
 
-    // 4. Build the new row
-    var data = e.parameter;
-    var newRow = [
-      nextId,
-      data.meetingDate || "",
-      data.zone || "",
-      data.district || "",
-      data.coldRoom || "",
-      data.meetingTitle || "",
-      data.conductedBy || "",
-      data.attendees || "",
-      data.meetingAgenda || "",
-      data.meetingDiscussion || "",
-      data.photoUrl || ""
+      const maxNum = nums.length > 0 ? Math.max(...nums) : 0;
+      const nextNum = maxNum + 1;
+      const padLength = 3;
+      nextId = prefix + String(nextNum).padStart(padLength, "0");
+    }
+
+    const newRow = [
+      nextId, params.meetingDate || "", params.zone || "", params.district || "", params.coldRoom || "",
+      params.meetingTitle || "", params.conductedBy || "", params.attendees || "", params.meetingAgenda || "",
+      params.meetingDiscussion || "", params.photoUrl || ""
     ];
-
-    // 5. Append to sheet
     sheet.appendRow(newRow);
 
-    // 6. Return success + the generated Meeting ID
-    return ContentService
-      .createTextOutput(JSON.stringify({
-        message: "Meeting added successfully!",
-        meetingId: nextId
-      }))
+    return ContentService.createTextOutput(JSON.stringify({ message: "Meeting added successfully!", meetingId: nextId }))
       .setMimeType(ContentService.MimeType.JSON);
-
   } catch (error) {
-    console.error("Error in handleAddMeeting:", error);
-    return ContentService
-      .createTextOutput(JSON.stringify({
-        error: "Error adding meeting: " + error.message
-      }))
+    console.error(`Error in handleAddMeeting: ${error.message} Stack: ${error.stack}`);
+    return ContentService.createTextOutput(JSON.stringify({ error: `Error adding meeting: ${error.message}` }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-
-function handleEditMeeting(e, ss) {
+function handleEditMeeting(params, ss) {
   try {
     const sheet = ss.getSheetByName("Meetings");
-    const data = e.parameter;
-    const row = parseInt(data.row);
-    const meetingDate = data.meetingDate;
+    if (!sheet) throw new Error("Meetings sheet not found.");
+    const row = parseInt(params.row);
+    if (isNaN(row) || row <= 1) throw new Error("Invalid or header row number for editing meeting.");
 
-    const updateRow = [
-      data.meetingId,
-      meetingDate,
-      data.zone,
-      data.district,
-      data.coldRoom,
-      data.meetingTitle,
-      data.conductedBy,
-      data.attendees,
-      data.meetingAgenda,
-      data.meetingDiscussion,
-      data.photoUrl || ""
+    const updateRowData = [
+      params.meetingId || "", params.meetingDate || "", params.zone || "", params.district || "", params.coldRoom || "",
+      params.meetingTitle || "", params.conductedBy || "", params.attendees || "", params.meetingAgenda || "",
+      params.meetingDiscussion || "", params.photoUrl || ""
     ];
-
-    sheet.getRange(row, 1, 1, updateRow.length).setValues([
-      updateRow
-    ]);
-
-    return ContentService.createTextOutput(
-      JSON.stringify({ message: "Meeting updated successfully" })
-    ).setMimeType(ContentService.MimeType.JSON);
-
+    sheet.getRange(row, 1, 1, updateRowData.length).setValues([updateRowData]);
+    return ContentService.createTextOutput(JSON.stringify({ message: "Meeting updated successfully" }))
+      .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
-    console.error("Error updating meeting: ", error);
-    return ContentService.createTextOutput(
-      JSON.stringify({ error: "Error updating meeting: " + error.message })
-    ).setMimeType(ContentService.MimeType.JSON);
+    console.error(`Error updating meeting: ${error.message} Stack: ${error.stack}`);
+    return ContentService.createTextOutput(JSON.stringify({ error: `Error updating meeting: ${error.message}` }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-function handleDeleteMeeting(e, ss) {
+function handleDeleteMeeting(params, ss) {
   try {
     const sheet = ss.getSheetByName("Meetings");
-    const row = parseInt(e.parameter.row);
+    if (!sheet) throw new Error("Meetings sheet not found.");
+    const row = parseInt(params.row);
+    if (isNaN(row) || row <= 1 || row > sheet.getLastRow()) {
+      throw new Error("Invalid row number for deleting meeting or attempting to delete header.");
+    }
     sheet.deleteRow(row);
-
-    return ContentService.createTextOutput(
-      JSON.stringify({ message: "Meeting deleted successfully" })
-    ).setMimeType(ContentService.MimeType.JSON);
-
+    return ContentService.createTextOutput(JSON.stringify({ message: "Meeting deleted successfully" }))
+      .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
-    console.error("Error deleting meeting: ", error);
-    return ContentService.createTextOutput(
-      JSON.stringify({ error: "Error deleting meeting: " + error.message })
-    ).setMimeType(ContentService.MimeType.JSON);
+    console.error(`Error deleting meeting: ${error.message} Stack: ${error.stack}`);
+    return ContentService.createTextOutput(JSON.stringify({ error: `Error deleting meeting: ${error.message}` }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-function handleAddAction(e, ss) {
+function handleAddAction(params, ss) {
   try {
     const sheet = ss.getSheetByName("Action Items") || ss.insertSheet("Action Items");
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(["Meeting ID", "Action Item", "Assigned To", "Deadline", "Status"]);
     }
-
-    const data = e.parameter;
     sheet.appendRow([
-      data.meetingId,
-      data.actionItem,
-      data.assignedTo,
-      data.deadline,
-      data.status
+      params.meetingId || "", params.actionItem || "", params.assignedTo || "",
+      params.deadline || "", params.status || ""
     ]);
-
-    return ContentService.createTextOutput(
-      JSON.stringify({ message: "Action item added successfully" })
-    ).setMimeType(ContentService.MimeType.JSON);
-
+    return ContentService.createTextOutput(JSON.stringify({ message: "Action item added successfully" }))
+      .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
-    console.error("Error adding action item: ", error);
-    return ContentService.createTextOutput(
-      JSON.stringify({ error: "Error adding action item: " + error.message })
-    ).setMimeType(ContentService.MimeType.JSON);
+    console.error(`Error adding action item: ${error.message} Stack: ${error.stack}`);
+    return ContentService.createTextOutput(JSON.stringify({ error: `Error adding action item: ${error.message}` }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-function handleEditAction(e, ss) {
+function handleEditAction(params, ss) {
   try {
     const sheet = ss.getSheetByName("Action Items");
-    const data = e.parameter;
-    const row = parseInt(data.row);
+    if (!sheet) throw new Error("Action Items sheet not found.");
+    const row = parseInt(params.row);
+    if (isNaN(row) || row <= 1) throw new Error("Invalid or header row number for editing action item.");
 
-    sheet.getRange(row, 1, 1, 5).setValues([
-      [
-        data.meetingId,
-        data.actionItem,
-        data.assignedTo,
-        data.deadline,
-        data.status
-      ]
-    ]);
-
-    return ContentService.createTextOutput(
-      JSON.stringify({ message: "Action item updated successfully" })
-    ).setMimeType(ContentService.MimeType.JSON);
-
+    sheet.getRange(row, 1, 1, 5).setValues([[
+      params.meetingId || "", params.actionItem || "", params.assignedTo || "",
+      params.deadline || "", params.status || ""
+    ]]);
+    return ContentService.createTextOutput(JSON.stringify({ message: "Action item updated successfully" }))
+      .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
-    console.error("Error updating action item: ", error);
-    return ContentService.createTextOutput(
-      JSON.stringify({ error: "Error updating action item: " + error.message })
-    ).setMimeType(ContentService.MimeType.JSON);
+    console.error(`Error updating action item: ${error.message} Stack: ${error.stack}`);
+    return ContentService.createTextOutput(JSON.stringify({ error: `Error updating action item: ${error.message}` }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-function handleDeleteAction(e, ss) {
+function handleDeleteAction(params, ss) {
   try {
     const sheet = ss.getSheetByName("Action Items");
-    const row = parseInt(e.parameter.row);
+    if (!sheet) throw new Error("Action Items sheet not found.");
+    const row = parseInt(params.row);
+    if (isNaN(row) || row <= 1 || row > sheet.getLastRow()) {
+      throw new Error("Invalid row number for deleting action item or attempting to delete header.");
+    }
     sheet.deleteRow(row);
-
-    return ContentService.createTextOutput(
-      JSON.stringify({ message: "Action item deleted successfully" })
-    ).setMimeType(ContentService.MimeType.JSON);
-
+    return ContentService.createTextOutput(JSON.stringify({ message: "Action item deleted successfully" }))
+      .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
-    console.error("Error deleting action item: ", error);
-    return ContentService.createTextOutput(
-      JSON.stringify({ error: "Error deleting action item: " + error.message })
-    ).setMimeType(ContentService.MimeType.JSON);
+    console.error(`Error deleting action item: ${error.message} Stack: ${error.stack}`);
+    return ContentService.createTextOutput(JSON.stringify({ error: `Error deleting action item: ${error.message}` }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-function handleAddStatus(e, ss) {
+function handleAddStatus(params, ss) {
   try {
     const sheet = ss.getSheetByName("Weekly Status") || ss.insertSheet("Weekly Status");
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(["Week", "Zone", "District", "Summary of This Week Activities", "Activities Planned for Next Week"]);
     }
-
-    const data = e.parameter;
     sheet.appendRow([
-      data.weekInfo,
-      data.zone,
-      data.district,
-      data.currentWeekUpdate,
-      data.nextWeekUpdate
+      params.weekInfo || "", params.zone || "", params.district || "",
+      params.currentWeekUpdate || "", params.nextWeekUpdate || ""
     ]);
-
-    return ContentService.createTextOutput(
-      JSON.stringify({ message: "Weekly status added successfully" })
-    ).setMimeType(ContentService.MimeType.JSON);
-
+    return ContentService.createTextOutput(JSON.stringify({ message: "Weekly status added successfully" }))
+      .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
-    console.error("Error adding weekly status: ", error);
-    return ContentService.createTextOutput(
-      JSON.stringify({ error: "Error adding weekly status: " + error.message })
-    ).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-function handleEditStatus(e, ss) {
-  try {
-    const sheet = ss.getSheetByName("Weekly Status");
-    const data = e.parameter;
-    const row = parseInt(data.row);
-
-    sheet.getRange(row, 1, 1, 5).setValues([
-      [
-        data.weekInfo,
-        data.zone,
-        data.district,
-        data.currentWeekUpdate,
-        data.nextWeekUpdate
-      ]
-    ]);
-
-    return ContentService.createTextOutput(
-      JSON.stringify({ message: "Weekly status updated successfully" })
-    ).setMimeType(ContentService.MimeType.JSON);
-
-  } catch (error) {
-    console.error("Error updating weekly status: ", error);
-    return ContentService.createTextOutput(
-      JSON.stringify({ error: "Error updating weekly status: " + error.message })
-    ).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-function handleDeleteStatus(e, ss) {
-  try {
-    const sheet = ss.getSheetByName("Weekly Status");
-    const row = parseInt(e.parameter.row);
-    sheet.deleteRow(row);
-
-    return ContentService.createTextOutput(
-      JSON.stringify({ message: "Weekly status deleted successfully" })
-    ).setMimeType(ContentService.MimeType.JSON);
-
-  } catch (error) {
-    console.error("Error deleting weekly status: ", error);
-    return ContentService.createTextOutput(
-      JSON.stringify({ error: "Error deleting weekly status: " + error.message })
-    ).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-/**
- * Decode a Base64 JSON upload and store it in Drive + your “Media” sheet.
- */
-function handleUploadMediaJson(data, ss) {
-  var sheet = ss.getSheetByName('Media') || ss.insertSheet('Media');
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      'Week', 'Zone', 'District', 'File Name', 'File URL', 'File Type', 'Uploaded On'
-    ]);
-  }
-
-  var folder = DriveApp.getFolderById('1Yz4uaedg3Ako_KPP9FKqCuZq1kiGLo1p');
-  var b64 = data.dataBase64;
-  var name = data.fileName;
-  var mime = data.mimeType;
-  var weekInfo = data.weekInfo;
-  var zone = data.zone;
-  var district = data.district;
-
-  if (!b64 || !name || !mime) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ error: 'Missing file data.' }))
+    console.error(`Error adding weekly status: ${error.message} Stack: ${error.stack}`);
+    return ContentService.createTextOutput(JSON.stringify({ error: `Error adding weekly status: ${error.message}` }))
       .setMimeType(ContentService.MimeType.JSON);
   }
-
-  // decode + upload
-  var blob = Utilities.newBlob(Utilities.base64Decode(b64), mime, name);
-  var file = folder.createFile(blob);
-  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-
-  // log into sheet
-  sheet.appendRow([
-    weekInfo,
-    zone,
-    district,
-    file.getName(),
-    file.getUrl(),
-    file.getMimeType(),
-    new Date()
-  ]);
-
-  return ContentService
-    .createTextOutput(JSON.stringify({ message: 'Upload successful.' }))
-    .setMimeType(ContentService.MimeType.JSON);
 }
 
-/**
- * Serve sheet data for your gallery and tables.
- */
-function doGet(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheetName = e.parameter.sheet;
-  var sheet = ss.getSheetByName(sheetName);
-  var data = sheet ? sheet.getDataRange().getValues() : [];
+function handleEditStatus(params, ss) {
+  try {
+    const sheet = ss.getSheetByName("Weekly Status");
+    if (!sheet) throw new Error("Weekly Status sheet not found.");
+    const row = parseInt(params.row);
+    if (isNaN(row) || row <= 1) throw new Error("Invalid or header row number for editing status.");
 
-  return withCors(
-    ContentService
-      .createTextOutput(JSON.stringify(data))
-      .setMimeType(ContentService.MimeType.JSON)
-  );
-}
-
-/**
- * Optional: Handle OPTIONS preflight for CORS
- */
-function doOptions(e) {
-  return ContentService
-    .createTextOutput('')
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeader('Access-Control-Allow-Origin', '*')
-    .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-    .setHeader('Access-Control-Allow-Headers', 'Content-Type');
-}
-
-
-function generateNextMeetingID(sheet) {
-  const prefix = "BCIEINM";
-  const lastRow = sheet.getLastRow();
-  if (lastRow < 2) return prefix + "001";
-
-  const data = sheet.getRange(2, 1, lastRow - 1).getValues().reverse();
-  for (let i = 0; i < data.length; i++) {
-    const id = data[i][0];
-    if (id && typeof id === 'string' && id.startsWith(prefix)) {
-      const num = parseInt(id.replace(prefix, ""));
-      if (!isNaN(num)) {
-        return prefix + (num + 1).toString().padStart(3, '0');
-      }
-    }
+    sheet.getRange(row, 1, 1, 5).setValues([[
+      params.weekInfo || "", params.zone || "", params.district || "",
+      params.currentWeekUpdate || "", params.nextWeekUpdate || ""
+    ]]);
+    return ContentService.createTextOutput(JSON.stringify({ message: "Weekly status updated successfully" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    console.error(`Error updating weekly status: ${error.message} Stack: ${error.stack}`);
+    return ContentService.createTextOutput(JSON.stringify({ error: `Error updating weekly status: ${error.message}` }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
-  return prefix + "001";
+}
+
+function handleDeleteStatus(params, ss) {
+  try {
+    const sheet = ss.getSheetByName("Weekly Status");
+    if (!sheet) throw new Error("Weekly Status sheet not found.");
+    const row = parseInt(params.row);
+    if (isNaN(row) || row <= 1 || row > sheet.getLastRow()) {
+      throw new Error("Invalid row number for deleting status or attempting to delete header.");
+    }
+    sheet.deleteRow(row);
+    return ContentService.createTextOutput(JSON.stringify({ message: "Weekly status deleted successfully" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    console.error(`Error deleting weekly status: ${error.message} Stack: ${error.stack}`);
+    return ContentService.createTextOutput(JSON.stringify({ error: `Error deleting weekly status: ${error.message}` }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Handles file uploads sent as Base64 encoded strings.
+ * Expects params.dataBase64, params.fileName, params.mimeType, 
+ * params.weekInfo, params.zone, params.district.
+ */
+function handleMediaUploadBase64(params, ss) {
+  console.log("--- handleMediaUploadBase64 Started ---");
+  // Avoid logging full Base64 string if too long for logs
+  let loggableParams = Object.assign({}, params);
+  if (loggableParams.dataBase64 && loggableParams.dataBase64.length > 100) {
+    loggableParams.dataBase64 = loggableParams.dataBase64.substring(0, 100) + "... (truncated)";
+  }
+  console.log("Received params (Base64 potentially truncated for log):", JSON.stringify(loggableParams));
+
+  try {
+    const dataBase64 = params.dataBase64;
+    const fileName = params.fileName;
+    const mimeType = params.mimeType; // Make sure this is the actual MIME type e.g. "image/png"
+    const weekInfo = params.weekInfo;
+    const zone = params.zone;
+    const district = params.district;
+
+    if (!dataBase64 || !fileName || !mimeType) {
+      let missing = [];
+      if (!dataBase64) missing.push("dataBase64");
+      if (!fileName) missing.push("fileName");
+      if (!mimeType) missing.push("mimeType");
+      console.warn("handleMediaUploadBase64: Missing required parameters:", missing.join(", "));
+      return ContentService
+        .createTextOutput(JSON.stringify({ error: "Upload failed: Missing required data (base64 string, filename, or mimetype). Missing: " + missing.join(", ") }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    console.log(`handleMediaUploadBase64: Processing file: ${fileName}, type: ${mimeType}, base64 length (approx): ${dataBase64.length}`);
+
+    const decodedBytes = Utilities.base64Decode(dataBase64, Utilities.Charset.UTF_8); // Using UTF-8, ensure this is appropriate. For binary, it might not matter.
+    const blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
+
+    console.log("handleMediaUploadBase64: Blob created. Name:", blob.getName(), "Type:", blob.getContentType(), "Size:", blob.getBytes().length);
+
+    let sheet = ss.getSheetByName('Media');
+    if (!sheet) {
+      sheet = ss.insertSheet('Media');
+      sheet.appendRow(['Week', 'Zone', 'District', 'File Name', 'File URL', 'File Type', 'Uploaded On']);
+    }
+
+    const folderId = '1Yz4uaedg3Ako_KPP9FKqCuZq1kiGLo1p'; // Your Google Drive Folder ID
+    const folder = DriveApp.getFolderById(folderId);
+
+    const file = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+    sheet.appendRow([
+      weekInfo || "",
+      zone || "",
+      district || "",
+      file.getName(),
+      file.getUrl(),
+      file.getMimeType(),
+      new Date()
+    ]);
+
+    console.log(`handleMediaUploadBase64: File ${file.getName()} uploaded and logged successfully.`);
+    return ContentService
+      .createTextOutput(JSON.stringify({ message: 'Upload successful (Base64).', fileName: file.getName(), fileUrl: file.getUrl() }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    console.error(`Error in handleMediaUploadBase64: ${error.message} Stack: ${error.stack}`);
+    // Log the params again if an error occurs to see what was received
+    console.error("Params at time of error in handleMediaUploadBase64 (Base64 potentially truncated):", JSON.stringify(loggableParams));
+    return ContentService.createTextOutput(
+      JSON.stringify({ error: `Upload failed (Base64) due to a server error: ${error.message}` })
+    ).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    console.log("--- handleMediaUploadBase64 Finished ---");
+  }
+}
+
+/*
+// Old direct blob upload handler - commented out as we are trying Base64
+function handleMediaFileUpload(params, ss) {
+  // ... (previous implementation expecting params.mediaFile as a direct blob array) ...
+}
+*/
+
+function doGet(e) {
+  console.log("--- doGet Started ---");
+  console.log("doGet: e.parameter:", JSON.stringify(e.parameter));
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheetName = e.parameter.sheet;
+
+    if (!sheetName) {
+      console.error(`doGet error: Sheet name parameter is missing. Parameters: ${JSON.stringify(e.parameter)}`);
+      return ContentService.createTextOutput(JSON.stringify({ error: "Sheet name parameter is missing." }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const sheet = ss.getSheetByName(sheetName);
+    let data = [];
+
+    if (sheet) {
+      if (sheet.getLastRow() > 0) {
+        data = sheet.getDataRange().getValues();
+      } else {
+        console.warn(`Sheet '${sheetName}' is empty. Returning empty data array (no headers).`);
+      }
+    } else {
+      console.warn(`Sheet not found: '${sheetName}'. Returning empty data for client handling.`);
+    }
+    console.log(`doGet: Returning data for sheet '${sheetName}'. Number of rows (including potential header): ${data.length}`);
+    return ContentService.createTextOutput(JSON.stringify(data))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    console.error(`Error in doGet: ${error.message} Stack: ${error.stack} Parameters: ${JSON.stringify(e.parameter)}`);
+    return ContentService.createTextOutput(
+      JSON.stringify({ error: `Error fetching data: ${error.message}`, sheet: e.parameter.sheet || "Unknown" })
+    ).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    console.log("--- doGet Finished ---");
+  }
 }

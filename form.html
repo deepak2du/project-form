@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>BCIEP India Meeting & Action Tracker</title>
+  <title>BCIEP Tracker</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -60,6 +60,7 @@
       margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
+      box-sizing: border-box;
     }
 
     textarea {
@@ -81,6 +82,11 @@
       background-color: #005299;
     }
 
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -93,35 +99,41 @@
       border: 1px solid #ccc;
       padding: 8px;
       font-size: 13px;
+      text-align: left;
     }
 
     th {
       background-color: #e0e0e0;
+    }
+
+    .error-message {
+      color: red;
+      font-weight: bold;
     }
   </style>
 </head>
 
 <body>
   <div style="text-align: center; margin-bottom: 20px;">
-    <button onclick="showSection('meetings')" style="padding:10px 20px; margin:5px;">Meetings</button>
-    <button onclick="showSection('weeklyStatus')" style="padding:10px 20px; margin:5px;">Weekly Status</button>
-    <button onclick="showSection('media')" style="padding:10px 20px; margin:5px;">Media</button>
-    <button onclick="showSection('dummy3')" style="padding:10px 20px; margin:5px;">Dummy 3</button>
-    <button onclick="showSection('dummy4')" style="padding:10px 20px; margin:5px;">Dummy 4</button>
+    <button onclick="showSection('meetings-section')" style="padding:10px 20px; margin:5px;">Meetings</button>
+    <button onclick="showSection('weeklyStatus-section')" style="padding:10px 20px; margin:5px;">Weekly Status</button>
+    <button onclick="showSection('media-section')" style="padding:10px 20px; margin:5px;">Media</button>
+    <button onclick="showSection('dummy3-section')" style="padding:10px 20px; margin:5px;">Dummy 3</button>
+    <button onclick="showSection('dummy4-section')" style="padding:10px 20px; margin:5px;">Dummy 4</button>
   </div>
+
   <div id="meetings-section" style="display: none;">
     <h2>Bloomberg Cities Idea Exchange || India || Meeting & Action Tracker</h2>
     <div class="form-container">
       <form id="meeting-form" style="margin-top: 0; border: 2px solid #ccc;">
         <h3 style="margin-top: 0px;">Meeting Agenda and Discussions</h3>
         <div id="meeting-mode"
-          style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5;"
-          style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">Mode: Add New Meeting</div>
+          style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5; font-weight: bold; color: #d9534f;">
+          Mode: Add New Meeting</div>
         <input type="hidden" name="row">
         <div class="form-grid">
-          <div><label>Meeting ID:</label><input type="text" name="meetingId" id="meetingId" readonly
-              style="padding: 8px 0px;"></div>
-          <div><label>Meeting Date:</label><input type="date" name="meetingDate" required style="padding: 7px 0px;">
+          <div><label>Meeting ID:</label><input type="text" name="meetingId" id="meetingId" readonly></div>
+          <div><label>Meeting Date:</label><input type="date" name="meetingDate" required>
           </div>
           <div><label>Zone:</label><select name="zone" required>
               <option value="">Select Zone</option>
@@ -185,10 +197,12 @@
               <option>Rajpur</option>
               <option>Kansar</option>
             </select></div>
-          <div><label>Upload Meeting Photo:</label><input type="file" name="photoUrl" accept="image/*"
-              style="padding: 5px 0px;"></div>
-          <div class="full-width"><label>Meeting Title:</label><input type="text" name="meetingTitle" required
-              style="padding: 8px 0px;"></div>
+          <div><label>Upload Meeting Photo (URL or select file):</label><input type="file" name="photoUrlFile"
+              id="photoUrlFile" accept="image/*" onchange="handleMeetingPhotoUpload(event)">
+            <input type="text" name="photoUrl" id="photoUrlText" placeholder="Or paste image URL here">
+            <div id="current-meeting-photo-url"></div>
+          </div>
+          <div class="full-width"><label>Meeting Title:</label><input type="text" name="meetingTitle" required></div>
           <div><label>Conducted By:</label><select name="conductedBy" required>
               <option>Akshaya Kumar Pallai</option>
               <option>Vicky Vikram Das</option>
@@ -204,11 +218,11 @@
               <option>Deepak Kumar Tudu</option>
               <option>Swati Rani Achary</option>
             </select></div>
-          <div><label>Attendees:</label><textarea name="attendees" required style="padding: 1px 0px;"></textarea></div>
-          <div class="full-width"><label>Meeting Agenda:</label><textarea name="meetingAgenda" required
-              style="padding: 8px 0px;"></textarea></div>
+          <div><label>Attendees:</label><textarea name="attendees" required></textarea></div>
+          <div class="full-width"><label>Meeting Agenda:</label><textarea name="meetingAgenda" required></textarea>
+          </div>
           <div class="full-width"><label>What points were discussed during the meeting?</label><textarea
-              name="meetingDiscussion" style="padding: 8px 0px;"></textarea></div>
+              name="meetingDiscussion"></textarea></div>
         </div>
         <button type="submit">Save Meeting</button>
       </form>
@@ -216,16 +230,14 @@
       <form id="action-form" style="margin-top: 0; border: 2px solid #ccc;">
         <h3 style="margin-top: 0px;">Meeting Action Items</h3>
         <div id="action-mode"
-          style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5;"
-          style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">Mode: Add New Action Item
+          style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5; font-weight: bold; color: #d9534f;">
+          Mode: Add New Action Item
         </div>
         <input type="hidden" name="row">
         <div class="form-grid">
-          <div><label>Meeting ID:</label><input type="text" name="meetingId" id="action-meetingId" readonly required
-              style="padding: 8px 0px;">
+          <div><label>Meeting ID:</label><input type="text" name="meetingId" id="action-meetingId" readonly required>
           </div>
-          <div class="full-width"><label>Action Item:</label><input type="text" name="actionItem" required
-              style="padding: 8px 0px;"></div>
+          <div class="full-width"><label>Action Item:</label><input type="text" name="actionItem" required></div>
           <div><label>Assigned To:</label><select name="assignedTo" required>
               <option>Akshaya Kumar Pallai</option>
               <option>Vicky Vikram Das</option>
@@ -241,7 +253,7 @@
               <option>Deepak Kumar Tudu</option>
               <option>Swati Rani Achary</option>
             </select></div>
-          <div><label>Deadline:</label><input type="date" name="deadline" required style="padding: 8px 0px;"></div>
+          <div><label>Deadline:</label><input type="date" name="deadline" required></div>
           <div class="full-width"><label>Status:</label><select name="status" required>
               <option value="">Select Status</option>
               <option>Pending</option>
@@ -265,18 +277,19 @@
       <tbody></tbody>
     </table>
   </div>
+
   <div id="weeklyStatus-section" style="display:none;">
     <h2 style="text-align:center; background:#0b2d64; color:white; padding:10px; border-radius:5px;">
       Bloomberg Cities Idea Exchange || India || Weekly Status
     </h2>
 
-    <form id="weekly-status-form" style=margin:0 auto; background:white; padding:20px; border-radius:6px; border:2px
-      solid #ccc;">
+    <form id="weekly-status-form"
+      style="margin:0 auto; background:white; padding:20px; border-radius:6px; border:2px solid #ccc;">
       <input type="hidden" name="row">
       <h3>Enter Weekly Status</h3>
       <div id="status-mode"
-        style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5;"
-        style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">Mode: Add New Status</div>
+        style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5; font-weight: bold; color: #d9534f;">
+        Mode: Add New Status</div>
       <label>Week Number:</label>
       <select name="weekInfo" required>
         <option value="">Select Week</option>
@@ -340,10 +353,10 @@
       </select>
 
       <label>Summary of This Week Activities:</label>
-      <textarea name="currentWeekUpdate" rows="3" required style="padding: 8px 0px;"></textarea>
+      <textarea name="currentWeekUpdate" rows="3" required></textarea>
 
       <label>Activities Planned for Next Week:</label>
-      <textarea name="nextWeekUpdate" rows="4" required style="padding: 8px 0px;"></textarea>
+      <textarea name="nextWeekUpdate" rows="4" required></textarea>
 
       <button type="submit">Save Status</button>
     </form>
@@ -353,9 +366,9 @@
       <tbody></tbody>
     </table>
   </div>
+
   <div id="media-section" style="display:none; text-align:center;">
     <h2>Upload Weekly Media Files</h2>
-
     <form id="media-upload-form" method="post" enctype="multipart/form-data"
       style="max-width: 800px; margin:0 auto; border:2px solid #ccc; padding:20px; border-radius:8px;">
       <div class="form-grid">
@@ -436,7 +449,6 @@
     </form>
     <h3>Uploaded Media Gallery</h3>
     <div id="media-gallery" style="margin-top: 40px;">
-      <!-- Uploaded media will be displayed here -->
     </div>
   </div>
 
@@ -448,76 +460,157 @@
   </div>
 
   <script>
+    // IMPORTANT: Ensure this URL points to your LATEST deployed Apps Script web app.
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
 
     function renderTable(data, tableId, sectionType) {
+      const tbody = document.querySelector(`#${tableId} tbody`);
+      const thead = document.querySelector(`#${tableId} thead`);
+
+      if (thead) thead.innerHTML = ""; else console.error(`Thead not found for ${tableId}`);
+      if (tbody) tbody.innerHTML = ""; else console.error(`Tbody not found for ${tableId}`);
+
+      if (!thead || !tbody) {
+        alert(`Table structure incomplete for ${sectionType}. Cannot render.`);
+        return;
+      }
+
+      if (!data || !Array.isArray(data) || (Array.isArray(data) && data.length > 0 && data[0] && data[0].error)) {
+        let errorMessage = `No data or invalid data format received for ${sectionType}.`;
+        if (Array.isArray(data) && data.length > 0 && data[0] && data[0].error) {
+          errorMessage = `Error from server for ${sectionType}: ${data[0].error}`;
+          if (data[0].sheet) errorMessage += ` (Sheet: ${data[0].sheet})`;
+        } else if (data && data.error) {
+          errorMessage = `Error from server for ${sectionType}: ${data.error}`;
+        }
+        console.warn(`Problematic data for ${tableId}:`, data);
+        thead.innerHTML = `<tr><th>Notice</th></tr>`;
+        tbody.innerHTML = `<tr><td class="error-message">${errorMessage}</td></tr>`;
+        return;
+      }
+
+      if (data.length === 0) {
+        console.warn(`Empty data array received for ${tableId}`);
+        thead.innerHTML = `<tr><th>Notice</th></tr>`;
+        tbody.innerHTML = `<tr><td class="error-message">No data available for ${sectionType}. The sheet might be empty or headers are missing.</td></tr>`;
+        return;
+      }
+
       const [headers, ...dataRows] = data;
-      // Pair each row with its original sheet index:
+
+      if (!headers || !Array.isArray(headers) || headers.length === 0) {
+        console.warn(`No headers or invalid headers format for ${tableId}:`, headers);
+        thead.innerHTML = `<tr><th>Error</th></tr>`;
+        tbody.innerHTML = `<tr><td class="error-message">No headers or invalid header format received for ${sectionType}. Cannot display table.</td></tr>`;
+        return;
+      }
+
+      thead.innerHTML = "<tr>" + headers.map(h => `<th>${h === undefined || h === null ? "" : h}</th>`).join('') + "<th>Actions</th></tr>";
+
+      if (dataRows.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='" + (headers.length + 1) + "'>No entries found.</td></tr>";
+        return;
+      }
+
       let rowsWithIndex = dataRows.map((row, idx) => ({
         row,
-        sheetRow: idx + 2    // +2 accounts for header row + 0-based idxsheetRow: idx + 2    // +2 accounts for header row + 0-based idx
+        sheetRow: idx + 2
       }));
-      const thead = document.querySelector(`#${tableId} thead`);
-      const tbody = document.querySelector(`#${tableId} tbody`);
-      thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th>Actions</th></tr>";
 
-      // 🗂️ Sort for Weekly Status Table
-      if (sectionType === 'weeklyStatus') {
-        rowsWithIndex.sort((a, b) => {
-          const weekA = parseInt(a.row[0].match(/\d+/)) || 0;
-          const weekB = parseInt(b.row[0].match(/\d+/)) || 0;
+      try {
+        if (sectionType === 'weeklyStatus' && headers.indexOf('Week') !== -1 && headers.indexOf('Zone') !== -1) {
+          rowsWithIndex.sort((a, b) => {
+            const weekIndex = headers.indexOf('Week');
+            const zoneIndex = headers.indexOf('Zone');
 
-          if (weekA !== weekB) return weekA - weekB;
+            const valA = a.row && typeof a.row[weekIndex] === 'string' ? String(a.row[weekIndex]).match(/\d+/) : null;
+            const weekA = valA ? parseInt(valA[0], 10) : 0;
+            const valB = b.row && typeof b.row[weekIndex] === 'string' ? String(b.row[weekIndex]).match(/\d+/) : null;
+            const weekB = valB ? parseInt(valB[0], 10) : 0;
 
-          // Zone at index 1
-          return a.row[1].localeCompare(b.row[1]);
-        });
+            if (weekA !== weekB) return weekA - weekB;
+
+            const zoneA = a.row && typeof a.row[zoneIndex] === 'string' ? a.row[zoneIndex] : "";
+            const zoneB = b.row && typeof b.row[zoneIndex] === 'string' ? b.row[zoneIndex] : "";
+            return zoneA.localeCompare(zoneB);
+          });
+        }
+
+        if (sectionType === 'meetings') {
+          const dateColumnIndex = headers.indexOf('Meeting Date');
+          if (dateColumnIndex !== -1) {
+            rowsWithIndex.sort((a, b) => {
+              const parseDate = (value) => {
+                if (value === undefined || value === null || String(value).trim() === "") return new Date(NaN);
+                if (value instanceof Date && !isNaN(value)) return value;
+                if (typeof value === 'number') return new Date(Math.round((value - 25569) * 86400 * 1000));
+                if (typeof value === 'string') {
+                  if (/^\d{4}-\d{2}-\d{2}T/.test(value)) return new Date(value);
+                  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(value + "T00:00:00");
+                  if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
+                    const [day, month, year] = value.split("-");
+                    return new Date(`${year}-${month}-${day}T00:00:00`);
+                  }
+                }
+                return new Date(value);
+              };
+
+              const valA = a.row && a.row.length > dateColumnIndex ? a.row[dateColumnIndex] : undefined;
+              const valB = b.row && b.row.length > dateColumnIndex ? b.row[dateColumnIndex] : undefined;
+
+              const dateA = parseDate(valA);
+              const dateB = parseDate(valB);
+
+              if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
+              if (isNaN(dateA.getTime())) return 1;
+              if (isNaN(dateB.getTime())) return -1;
+              return dateA - dateB;
+            });
+          } else {
+            console.warn(`'Meeting Date' column not found for sorting in ${tableId}. Table will not be sorted by date.`);
+          }
+        }
+      } catch (e) {
+        console.error(`Error during sorting for ${tableId}:`, e);
+        tbody.innerHTML = `<tr><td colspan="${headers.length + 1}" class="error-message">Error during data sorting. Entries may not be displayed correctly.</td></tr>`;
       }
 
-      // Sorting for Meetings by Date
-      if (sectionType === 'meetings') {
-        const dateColumnIndex = headers.indexOf('Meeting Date');
-        rowsWithIndex.sort((a, b) => {
-          const parseDate = (value) => {
-            if (value instanceof Date) return value;
-            if (typeof value === 'number') return new Date(Math.round((value - 25569) * 86400 * 1000));
-            if (typeof value === 'string') {
-              if (/^\d{4}-\d{2}-\d{2}T/.test(value)) return new Date(value);
-              if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
-                const [day, month, year] = value.split("-");
-                return new Date(`${year}-${month}-${day}`);
-              }
-            }
-            return new Date(value);
-          };
-
-          const dateA = parseDate(a.row[dateColumnIndex]);
-          const dateB = parseDate(b.row[dateColumnIndex]);
-          return dateA - dateB;
-        });
-      }
-
-      // Rebuild the table using the sorted (or original) rowsWithIndex
       tbody.innerHTML = rowsWithIndex.map(({ row, sheetRow }) => {
         const rowIndex = sheetRow;
+        if (!Array.isArray(row)) {
+          console.error("Encountered a non-array row object:", row, "at original sheet row (approx):", sheetRow);
+          return `<tr><td colspan="${headers.length + 1}" class="error-message">Error: Corrupted row data.</td></tr>`;
+        }
         const rowData = encodeURIComponent(JSON.stringify(row));
 
         const cells = row.map((c, j) => {
-          // Format date to DD-MM-YYYY
-          if (typeof c === "string" && /^\d{4}-\d{2}-\d{2}T/.test(c)) {
-            const dateObj = new Date(c);
-            const day = String(dateObj.getDate()).padStart(2, '0');
-            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const year = dateObj.getFullYear();
-            return `<td>${day}-${month}-${year}</td>`;
+          let cellValue = (c === null || c === undefined) ? "" : String(c);
+          const headerName = headers[j];
+
+          if ((headerName === 'Meeting Date' || headerName === 'Deadline')) {
+            if (c instanceof Date && !isNaN(c)) {
+              const day = String(c.getDate()).padStart(2, '0');
+              const month = String(c.getMonth() + 1).padStart(2, '0');
+              const year = c.getFullYear();
+              cellValue = `${day}-${month}-${year}`;
+            } else if (typeof c === "string" && /^\d{4}-\d{2}-\d{2}T/.test(c)) {
+              const dateObj = new Date(c);
+              if (!isNaN(dateObj.getTime())) {
+                const day = String(dateObj.getDate()).padStart(2, '0');
+                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const year = dateObj.getFullYear();
+                cellValue = `${day}-${month}-${year}`;
+              }
+            }
           }
 
-          // Photo URL display for meetings only
-          if (sectionType === 'meetings' && j === row.length - 1 && typeof c === "string" && c.startsWith("http")) {
+          const photoUrlHeaderName = 'Photo URL';
+          const photoUrlHeaderIndex = headers.findIndex(h => h && h.toLowerCase() === photoUrlHeaderName.toLowerCase());
+
+          if (sectionType === 'meetings' && j === photoUrlHeaderIndex && typeof c === "string" && c.startsWith("http")) {
             return `<td><a href="${c}" target="_blank">View Photo</a></td>`;
           }
 
-          // Multiline bullet formatting
           if (typeof c === "string" && c.includes('\n')) {
             const lines = c.split(/\r?\n/).filter(line => line.trim() !== '');
             const listItems = lines.map(item => {
@@ -526,175 +619,312 @@
             }).join('');
             return `<td><ol style="padding-left: 18px; margin: 0;">${listItems}</ol></td>`;
           }
-
-          return `<td>${c}</td>`;
+          return `<td>${cellValue}</td>`;
         }).join('');
 
         const editFunc = sectionType === 'meetings' ? 'editMeeting' :
           sectionType === 'weeklyStatus' ? 'editStatus' : 'editAction';
-        const deleteFunc =
-          sectionType === 'meetings' ? 'deleteMeeting' :
-            sectionType === 'weeklyStatus' ? 'deleteStatus' :
-              sectionType === 'actions' ? 'deleteAction' :
-                'deleteAction';
+        const deleteFunc = sectionType === 'meetings' ? 'deleteMeeting' :
+          sectionType === 'weeklyStatus' ? 'deleteStatus' : 'deleteAction';
 
         return `<tr>${cells}<td>
-      <button onclick="${editFunc}(${rowIndex}, this)">Edit</button>
-      <button onclick="${deleteFunc}(${rowIndex})">Delete</button>
-      <input type="hidden" value="${rowData}">
-    </td></tr>`;
+            <button onclick="${editFunc}(${rowIndex}, this)">Edit</button>
+            <button onclick="${deleteFunc}(${rowIndex})">Delete</button>
+            <input type="hidden" value="${rowData}">
+            </td></tr>`;
       }).join('');
     }
 
     function fetchData() {
-      fetch(scriptURL + '?sheet=Meetings').then(res => res.json()).then(data => renderTable(data, 'meeting-table', 'meetings'));
-      fetch(scriptURL + '?sheet=Action Items').then(res => res.json()).then(data => renderTable(data, 'action-table', 'actions'));
-      fetch(scriptURL + '?sheet=Weekly Status').then(res => res.json()).then(data => renderTable(data, 'weekly-status-table', 'weeklyStatus'));
-    }
+      const commonCatchHandler = (error, tableId, sectionName) => {
+        console.error(`Error fetching or processing ${sectionName} data:`, error);
+        const tableBody = document.querySelector(`#${tableId} tbody`);
+        const tableHead = document.querySelector(`#${tableId} thead`);
+        let colspan = 5;
+        if (tableHead) {
+          if (tableHead.rows.length > 0 && tableHead.rows[0].cells.length > 0) {
+            colspan = tableHead.rows[0].cells.length;
+          } else {
+            tableHead.innerHTML = `<tr><th>Error</th></tr>`;
+            colspan = 1;
+          }
+        }
+        if (tableBody) {
+          tableBody.innerHTML = `<tr><td colspan="${colspan}" class="error-message">Failed to load ${sectionName} entries. ${error.message}. See console for more details.</td></tr>`;
+        }
+      };
 
-    function editMeeting(row, btn) {
-      const data = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input').value));
-      const form = document.forms['meeting-form'];
-      form.reset();
-      form.row.value = row;
+      fetch(scriptURL + '?sheet=Meetings')
+        .then(res => {
+          if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! Status: ${res.status} for Meetings. Server says: ${text || res.statusText}`) });
+          return res.json();
+        })
+        .then(data => {
+          console.log('Meetings data received:', data);
+          if (data && data.error) {
+            commonCatchHandler(new Error(data.error + (data.sheet ? ` (Sheet: ${data.sheet})` : "")), 'meeting-table', 'Meetings');
+          } else {
+            renderTable(data, 'meeting-table', 'meetings');
+          }
+        })
+        .catch(error => commonCatchHandler(error, 'meeting-table', 'Meetings'));
 
-      const keys = ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'meetingAgenda', 'meetingDiscussion', 'photoUrl'];
-      keys.forEach((k, i) => form[k].value = data[i]);
+      fetch(scriptURL + '?sheet=Action Items')
+        .then(res => {
+          if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! Status: ${res.status} for Action Items. Server says: ${text || res.statusText}`) });
+          return res.json();
+        })
+        .then(data => {
+          console.log('Action Items data received:', data);
+          if (data && data.error) {
+            commonCatchHandler(new Error(data.error + (data.sheet ? ` (Sheet: ${data.sheet})` : "")), 'action-table', 'Action Items');
+          } else {
+            renderTable(data, 'action-table', 'actions');
+          }
+        })
+        .catch(error => commonCatchHandler(error, 'action-table', 'Action Items'));
 
-      document.getElementById('meeting-mode').innerText = "Mode: Editing Meeting (Row " + row + ")";
-      showSection('meetings'); // ✅ Ensure the correct section is displayed
-    }
-
-    function editStatus(row, btn) {
-      const data = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input').value));
-      const form = document.forms['weekly-status-form'];
-      form.reset();
-      form.row.value = row;
-
-      const keys = ['weekInfo', 'zone', 'district', 'currentWeekUpdate', 'nextWeekUpdate'];
-      keys.forEach((k, i) => form[k].value = data[i]);
-
-      document.getElementById('status-mode').innerText = "Mode: Editing Status (Row " + row + ")";
-    }
-
-
-    function deleteMeeting(row) {
-      if (confirm("Delete this meeting?")) postData({ action: "delete_meeting", row }, fetchData);
-    }
-
-    function deleteStatus(row) {
-      if (confirm("Delete this status entry?")) {
-        postData({ action: "delete_status", row }, fetchWeeklyStatus);
-      }
-    }
-
-    function deleteAction(row) {
-      if (confirm("Delete this action item?")) postData({ action: "delete_action", row }, fetchData);
-    }
-
-    function editAction(row, btn) {
-      const data = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input').value));
-      const form = document.forms['action-form'];
-      form.reset();
-      form.row.value = row;
-      const keys = ['meetingId', 'actionItem', 'assignedTo', 'deadline', 'status'];
-      keys.forEach((k, i) => form[k].value = data[i]);
-      document.getElementById('action-mode').innerText = "Mode: Editing Action Item (Row " + row + ")";
-    }
-
-    function deleteStatus(row) {
-      if (confirm("Delete this status entry?")) {
-        postData({ action: "delete_status", row }, fetchWeeklyStatus);
-      }
-    }
-
-    function postData(data, callback) {
-      const formData = new FormData();
-      for (const key in data) {
-        formData.append(key, data[key]);
-      }
-
-      fetch(scriptURL, {
-        method: 'POST',
-        body: formData
-      })
-        .then(res => res.text())
-        .then(msg => {
-          alert(msg);
-          callback();
-        });
-    }
-
-    function renderWeeklyStatus(data) {
-      const [headers, ...rows] = data;
-      const thead = document.querySelector("#weekly-status-table thead");
-      const tbody = document.querySelector("#weekly-status-table tbody");
-      thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "</tr>";
-      tbody.innerHTML = rows.map(row => "<tr>" + row.map(c => `<td>${c}</td>`).join('') + "</tr>").join('');
+      fetch(scriptURL + '?sheet=Weekly Status')
+        .then(res => {
+          if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! Status: ${res.status} for Weekly Status. Server says: ${text || res.statusText}`) });
+          return res.json();
+        })
+        .then(data => {
+          console.log('Weekly Status data received:', data);
+          if (data && data.error) {
+            commonCatchHandler(new Error(data.error + (data.sheet ? ` (Sheet: ${data.sheet})` : "")), 'weekly-status-table', 'Weekly Status');
+          } else {
+            renderTable(data, 'weekly-status-table', 'weeklyStatus');
+          }
+        })
+        .catch(error => commonCatchHandler(error, 'weekly-status-table', 'Weekly Status'));
     }
 
     function fetchWeeklyStatus() {
       fetch(scriptURL + "?sheet=Weekly Status")
-        .then(res => res.json())
-        .then(data => renderTable(data, 'weekly-status-table', 'weeklyStatus'));
-    }
-
-    function showSection(section) {
-      const sections = ['meetings', 'weeklyStatus', 'media', 'dummy3', 'dummy4'];
-      sections.forEach(s => {
-        const el = document.getElementById(`${s}-section`);
-        if (el) el.style.display = (s === section) ? 'block' : 'none';
-      });
-
-      if (section === 'media') fetchMediaGallery();
-    }
-
-
-    // Weekly Status Logic
-    const weeklyForm = document.getElementById('weekly-status-form');
-    const statusList = document.getElementById('weekly-status-list');
-
-    weeklyForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const weekInfo = weeklyForm.weekInfo.value;
-      const summary = weeklyForm.statusSummary.value;
-
-      const statusItem = document.createElement('div');
-      statusItem.className = 'status-item';
-      statusItem.style.border = '1px solid #ccc';
-      statusItem.style.padding = '10px';
-      statusItem.style.margin = '10px 0';
-      statusItem.style.borderRadius = '5px';
-      statusItem.style.textAlign = 'left';
-
-      statusItem.innerHTML = `<strong>${weekInfo}</strong><p>${summary.replace(/\n/g, '<br>')}</p>`;
-
-      statusList.prepend(statusItem);
-
-      weeklyForm.reset();
-    });
-
-    document.getElementById('weekly-status-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const form = this;
-      const formData = new FormData(form);
-      const isEdit = form.row.value && form.row.value.trim() !== "";
-      formData.append("action", isEdit ? "edit_status" : "add_status");
-
-      fetch(scriptURL, {
-        method: 'POST',
-        body: formData
-      })
-        .then(res => res.text())
-        .then(msg => {
-          alert(msg);
-          form.reset();
-          form.row.value = ""; // Clear row after save
-          document.getElementById('status-mode').innerText = 'Mode: Add New Status';
-          fetchWeeklyStatus();
+        .then(res => {
+          if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! Status: ${res.status} for Weekly Status (refresh). Server says: ${text || res.statusText}`) });
+          return res.json();
+        })
+        .then(data => {
+          console.log('Weekly Status data (re-fetched):', data);
+          if (data && data.error) {
+            console.error('Error refreshing Weekly Status:', data.error);
+            const tbody = document.querySelector('#weekly-status-table tbody');
+            if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="error-message">Failed to refresh. ${data.error}</td></tr>`;
+          } else {
+            renderTable(data, 'weekly-status-table', 'weeklyStatus');
+          }
+        })
+        .catch(error => {
+          console.error('Error in fetchWeeklyStatus function:', error);
+          const tbody = document.querySelector('#weekly-status-table tbody');
+          if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="error-message">Failed to refresh. ${error.message}</td></tr>`;
         });
-    });
+    }
+
+    function showSection(sectionIdToShow) {
+      const allSectionDivIds = ['meetings-section', 'weeklyStatus-section', 'media-section', 'dummy3-section', 'dummy4-section'];
+      allSectionDivIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = (id === sectionIdToShow) ? 'block' : 'none';
+        }
+      });
+      if (sectionIdToShow === 'media-section') {
+        fetchMediaGallery();
+      }
+    }
+
+    function getFormDataByIndex(keys, dataArray) {
+      const formData = {};
+      if (!Array.isArray(dataArray)) {
+        console.warn("getFormDataByIndex received non-array data:", dataArray);
+        keys.forEach(key => formData[key] = "");
+        return formData;
+      }
+      keys.forEach((key, index) => {
+        formData[key] = dataArray[index] !== undefined ? dataArray[index] : "";
+      });
+      return formData;
+    }
+
+    function formatDateForInput(dateStringOrObject) {
+      if (!dateStringOrObject) return "";
+      let dateObj;
+      if (dateStringOrObject instanceof Date && !isNaN(dateStringOrObject)) {
+        dateObj = dateStringOrObject;
+      } else if (typeof dateStringOrObject === 'string') {
+        if (dateStringOrObject.includes('T')) {
+          dateObj = new Date(dateStringOrObject.split('T')[0]);
+        } else if (dateStringOrObject.match(/^\d{2}-\d{2}-\d{4}$/)) {
+          const parts = dateStringOrObject.split('-');
+          dateObj = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        } else if (dateStringOrObject.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          dateObj = new Date(dateStringOrObject);
+        } else {
+          dateObj = new Date(dateStringOrObject);
+        }
+      } else if (typeof dateStringOrObject === 'number') {
+        dateObj = new Date(Math.round((dateStringOrObject - 25569) * 86400 * 1000));
+      } else {
+        return "";
+      }
+
+      if (isNaN(dateObj.getTime())) return "";
+
+      const tempDate = new Date(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate());
+      return tempDate.toISOString().split('T')[0];
+    }
+
+    function editMeeting(row, btn) {
+      const rawDataArray = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input[type="hidden"]').value));
+      const form = document.forms['meeting-form'];
+      form.reset();
+      document.getElementById('photoUrlFile').value = ''; // Clear file input
+      form.row.value = row;
+
+      const fieldKeys = ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'meetingAgenda', 'meetingDiscussion', 'photoUrl'];
+      const dataToPopulate = getFormDataByIndex(fieldKeys, rawDataArray);
+
+      form.meetingId.value = dataToPopulate.meetingId;
+      form.meetingDate.value = formatDateForInput(dataToPopulate.meetingDate);
+      form.zone.value = dataToPopulate.zone;
+      form.district.value = dataToPopulate.district;
+      form.coldRoom.value = dataToPopulate.coldRoom;
+      form.meetingTitle.value = dataToPopulate.meetingTitle;
+      form.conductedBy.value = dataToPopulate.conductedBy;
+      form.attendees.value = dataToPopulate.attendees;
+      form.meetingAgenda.value = dataToPopulate.meetingAgenda;
+      form.meetingDiscussion.value = dataToPopulate.meetingDiscussion;
+
+      // For photoUrl, if it's a URL, populate the text field. The file input cannot be pre-filled.
+      const photoUrlTextField = document.getElementById('photoUrlText');
+      photoUrlTextField.value = (dataToPopulate.photoUrl && String(dataToPopulate.photoUrl).startsWith('http')) ? dataToPopulate.photoUrl : "";
+
+      const photoUrlDisplay = document.getElementById('current-meeting-photo-url');
+      if (photoUrlDisplay) {
+        if (dataToPopulate.photoUrl && String(dataToPopulate.photoUrl).startsWith('http')) {
+          photoUrlDisplay.innerHTML = `Current photo: <a href="${dataToPopulate.photoUrl}" target="_blank">View</a> (To change, select new file or clear URL and select file)`;
+        } else {
+          photoUrlDisplay.innerHTML = "No current photo URL. Select file to upload.";
+        }
+      }
+
+
+      document.getElementById('meeting-mode').innerText = "Mode: Editing Meeting (Row " + row + ")";
+      showSection('meetings-section');
+    }
+
+    function editStatus(row, btn) {
+      const rawDataArray = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input[type="hidden"]').value));
+      const form = document.forms['weekly-status-form'];
+      form.reset();
+      form.row.value = row;
+
+      const fieldKeys = ['weekInfo', 'zone', 'district', 'currentWeekUpdate', 'nextWeekUpdate'];
+      const dataToPopulate = getFormDataByIndex(fieldKeys, rawDataArray);
+
+      form.weekInfo.value = dataToPopulate.weekInfo;
+      form.zone.value = dataToPopulate.zone;
+      form.district.value = dataToPopulate.district;
+      form.currentWeekUpdate.value = dataToPopulate.currentWeekUpdate;
+      form.nextWeekUpdate.value = dataToPopulate.nextWeekUpdate;
+
+      document.getElementById('status-mode').innerText = "Mode: Editing Status (Row " + row + ")";
+      showSection('weeklyStatus-section');
+    }
+
+    function editAction(row, btn) {
+      const rawDataArray = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input[type="hidden"]').value));
+      const form = document.forms['action-form'];
+      form.reset();
+      form.row.value = row;
+
+      const fieldKeys = ['meetingId', 'actionItem', 'assignedTo', 'deadline', 'status'];
+      const dataToPopulate = getFormDataByIndex(fieldKeys, rawDataArray);
+
+      form.meetingId.value = dataToPopulate.meetingId;
+      form.actionItem.value = dataToPopulate.actionItem;
+      form.assignedTo.value = dataToPopulate.assignedTo;
+      form.deadline.value = formatDateForInput(dataToPopulate.deadline);
+      form.status.value = dataToPopulate.status;
+
+      document.getElementById('action-mode').innerText = "Mode: Editing Action Item (Row " + row + ")";
+      showSection('meetings-section');
+    }
+
+    function postData(formDataObject, callback) {
+      const formData = new FormData();
+      for (const key in formDataObject) {
+        // Skip file input if it's for meeting photo and meant to be handled differently or is empty
+        if (key === 'photoUrlFile' && (!formDataObject[key] || formDataObject[key].size === 0)) {
+          continue;
+        }
+        formData.append(key, formDataObject[key]);
+      }
+
+      fetch(scriptURL, { method: 'POST', body: formData })
+        .then(res => {
+          if (!res.ok) {
+            return res.text().then(text => {
+              let errorMsg = `Server error: ${res.status} - ${res.statusText || 'Unknown error'}`;
+              try {
+                const errObj = JSON.parse(text);
+                errorMsg = errObj.error || errObj.message || errorMsg;
+              } catch (e) { /* Ignore if text is not JSON, use default */ }
+              throw new Error(errorMsg);
+            });
+          }
+          return res.json();
+        })
+        .then(response => {
+          if (response.error) {
+            throw new Error(response.error);
+          }
+          let successMessage = response.message || 'Operation successful.';
+          if (response.meetingId) {
+            successMessage += ' Meeting ID: ' + response.meetingId;
+            if (document.getElementById('meetingId')) document.getElementById('meetingId').value = response.meetingId;
+            if (document.getElementById('action-meetingId')) document.getElementById('action-meetingId').value = response.meetingId;
+          }
+          alert(successMessage);
+          if (callback) callback();
+        })
+        .catch(err => {
+          console.error('Error posting data:', err);
+          alert('Error: ' + err.message);
+        });
+    }
+
+    function deleteMeeting(row) {
+      if (confirm("Delete this meeting?")) postData({ action: "delete_meeting", row: row }, fetchData);
+    }
+    function deleteAction(row) {
+      if (confirm("Delete this action item?")) postData({ action: "delete_action", row: row }, fetchData);
+    }
+    function deleteStatus(row) {
+      if (confirm("Delete this status entry?")) postData({ action: "delete_status", row: row }, fetchWeeklyStatus);
+    }
+
+    // Helper function for meeting photo upload (if it's to be uploaded to Drive)
+    // This is currently NOT integrated with the main meeting form submission fully.
+    // It assumes 'photoUrl' in the sheet is a URL string.
+    function handleMeetingPhotoUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        // If you want to upload this file and get a URL to store:
+        // 1. Use a FileReader to get Base64 or send FormData directly.
+        // 2. Send to a specific 'action' in Apps Script (e.g., 'upload_meeting_photo_file').
+        // 3. Apps Script returns the Drive URL.
+        // 4. Populate the 'photoUrlText' input with this URL.
+        console.log("Meeting photo selected:", file.name);
+        // For now, let's just clear the text URL if a file is selected,
+        // assuming user will choose one or the other.
+        document.getElementById('photoUrlText').value = '';
+        // Or, you could immediately upload and populate photoUrlText with the Drive URL (more complex)
+      }
+    }
 
 
     document.getElementById('meeting-form').addEventListener('submit', function (e) {
@@ -702,51 +932,97 @@
       const form = this;
       const formData = new FormData(form);
       const isEdit = form.row.value && form.row.value.trim() !== "";
-      formData.append("action", isEdit ? "edit_meeting" : "add_meeting");
 
-      fetch(scriptURL, {
-        method: 'POST',
-        body: formData
-      })
-        .then(res => res.json())
-        .then(resData => {
-          alert(resData.message);
-          if (resData.meetingId) {
-            document.getElementById('meetingId').value = resData.meetingId;
-            document.getElementById('action-meetingId').value = resData.meetingId;
-          }
-          fetchData();
-          form.reset();
-          document.getElementById('meeting-mode').innerText = 'Mode: Add New Meeting';
-        });
+      // Determine action and add row if editing
+      formData.set("action", isEdit ? "edit_meeting" : "add_meeting"); // Use .set to ensure only one action
+      if (isEdit) formData.set("row", form.row.value);
+
+      // Handle photoUrl: if a file is selected in photoUrlFile, it needs to be uploaded separately
+      // or photoUrlText (URL) should be prioritized.
+      // Current backend (handleAddMeeting/handleEditMeeting) expects params.photoUrl as a string.
+      // If photoUrlFile has a file, we need a mechanism to upload it and get a URL.
+      // For simplicity, if photoUrlText is filled, use it. Otherwise, photoUrlFile would need handling.
+
+      const photoFile = formData.get('photoUrlFile');
+      const photoUrlFromText = formData.get('photoUrlText');
+
+      if (photoFile && photoFile.size > 0) {
+        // Option 1: Upload this file (e.g., using Base64 like media gallery, get URL, then submit meeting form)
+        // This makes the submission a two-step process or requires more complex client-side orchestration.
+        // Option 2: Send the file and have Apps Script handle it, returning the URL to save in the sheet.
+        // This requires `handleAddMeeting` etc. to be ableto handle a file.
+
+        // For now, let's alert the user this part is complex or clear photoUrlText if file is chosen.
+        // The simplest for existing backend: if file chosen, it implies 'photoUrlText' should be derived from it AFTER upload.
+        // The backend is NOT set up to receive 'photoUrlFile' as a blob for meeting forms.
+        // It expects 'params.photoUrl' as a string.
+
+        alert("Photo file selected for meeting. This demo form sends the text URL. To upload the file, a separate mechanism or backend adjustment for meeting photos is needed.");
+        // If we were to proceed, we might clear formData.get('photoUrlFile') and rely on a URL.
+        // Or, if photoUrlText is empty, this implies the file upload isn't fully integrated yet
+        // with the simple string URL storage in the sheet for meetings.
+        // We'll proceed by prioritizing photoUrlText.
+        if (!photoUrlFromText) {
+          formData.set('photoUrl', ''); // No text URL, and file isn't processed by this path
+        } else {
+          formData.set('photoUrl', photoUrlFromText);
+        }
+        formData.delete('photoUrlFile'); // Don't send the file object with current postData structure
+
+      } else if (photoUrlFromText) {
+        formData.set('photoUrl', photoUrlFromText); // Use the text URL
+        formData.delete('photoUrlFile');
+        formData.delete('photoUrlText'); // Clean up, photoUrl is now the primary
+      } else {
+        formData.set('photoUrl', ''); // No photo URL provided
+        formData.delete('photoUrlFile');
+        formData.delete('photoUrlText');
+      }
+
+
+      // Convert FormData to object for the generic postData (which rebuilds FormData)
+      // This loses file objects if any were intended to be passed as files.
+      const formObject = Object.fromEntries(formData.entries());
+
+      postData(formObject, () => {
+        fetchData();
+        form.reset();
+        document.getElementById('photoUrlFile').value = ''; // Clear file input
+        document.getElementById('photoUrlText').value = '';
+        const photoUrlDisplay = document.getElementById('current-meeting-photo-url');
+        if (photoUrlDisplay) photoUrlDisplay.innerHTML = "";
+        document.getElementById('meeting-mode').innerText = 'Mode: Add New Meeting';
+      });
     });
 
     document.getElementById('action-form').addEventListener('submit', function (e) {
       e.preventDefault();
       const form = this;
-
-      // Build a FormData payload so Apps Script sees it as a form post
       const formData = new FormData(form);
+      const formObject = Object.fromEntries(formData.entries());
       const isEdit = form.row.value && form.row.value.trim() !== '';
-      formData.append('action', isEdit ? 'edit_action' : 'add_action');
+      formObject.action = isEdit ? 'edit_action' : 'add_action';
+      if (isEdit) formObject.row = form.row.value;
+      postData(formObject, () => {
+        fetchData();
+        form.reset();
+        document.getElementById('action-mode').innerText = 'Mode: Add New Action Item';
+      });
+    });
 
-      fetch(scriptURL, {
-        method: 'POST',
-        body: formData
-      })
-        .then(res => res.json())
-        .then(resData => {
-          alert(resData.message || (isEdit ? 'Action updated successfully.' : 'Action item added.'));
-          form.reset();
-          form.row.value = '';                         // clear the hidden row index
-          fetchData();                                 // reload all tables
-          document.getElementById('action-mode').innerText =
-            'Mode: Add New Action Item';
-        })
-        .catch(err => {
-          console.error('Error processing action:', err);
-          alert('An error occurred while saving the action.');
-        });
+    document.getElementById('weekly-status-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const form = this;
+      const formData = new FormData(form);
+      const formObject = Object.fromEntries(formData.entries());
+      const isEdit = form.row.value && form.row.value.trim() !== "";
+      formObject.action = isEdit ? "edit_status" : "add_status";
+      if (isEdit) formObject.row = form.row.value;
+      postData(formObject, () => {
+        fetchWeeklyStatus();
+        form.reset();
+        document.getElementById('status-mode').innerText = 'Mode: Add New Status';
+      });
     });
 
     document.getElementById('media-upload-form').addEventListener('submit', function (e) {
@@ -754,177 +1030,205 @@
       const form = e.target;
       const fileInput = form.querySelector('input[name="mediaFile"]');
       const file = fileInput.files[0];
+      const submitButton = form.querySelector('button[type="submit"]');
 
       if (!file) {
         alert("Please select a file.");
         return;
       }
 
-      const formData = new FormData();
-      formData.append('action', 'upload_media');
-      formData.append('weekInfo', form.weekInfo.value);
-      formData.append('zone', form.zone.value);
-      formData.append('district', form.district.value);
-      formData.append('mediaFile', file); // ✅ This ensures correct upload
+      submitButton.disabled = true;
+      submitButton.textContent = 'Uploading...';
 
-      fetch(scriptURL, {
-        method: 'POST',
-        body: formData,
-      })
-        .then(res => res.json())
-        .then(response => {
-          if (response.error) throw new Error(response.error);
-          alert('Upload successful!');
-          form.reset();
-          fetchMediaGallery();
-        })
-        .catch(err => alert('Upload failed: ' + err.message));
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const base64DataWithPrefix = event.target.result;
+        const MimeTypeMatch = base64DataWithPrefix.match(/^data:(.+);base64,/);
+        if (!MimeTypeMatch || MimeTypeMatch.length < 2) {
+          alert("Could not determine file type for Base64 upload.");
+          submitButton.disabled = false;
+          submitButton.textContent = 'Upload Media';
+          return;
+        }
+        const mimeType = MimeTypeMatch[1];
+        const base64Data = base64DataWithPrefix.substring(base64DataWithPrefix.indexOf(',') + 1);
+        const fileName = file.name;
+
+        const formDataForMediaBase64 = new FormData(); // Use FormData to send base64 and other params
+        formDataForMediaBase64.append('action', 'upload_media_base64'); // Action for base64
+        formDataForMediaBase64.append('weekInfo', form.weekInfo.value);
+        formDataForMediaBase64.append('zone', form.zone.value);
+        formDataForMediaBase64.append('district', form.district.value);
+        formDataForMediaBase64.append('dataBase64', base64Data);
+        formDataForMediaBase64.append('fileName', fileName);
+        formDataForMediaBase64.append('mimeType', mimeType);
+
+        fetch(scriptURL, { method: 'POST', body: formDataForMediaBase64 })
+          .then(res => {
+            if (!res.ok) {
+              return res.json().then(err => {
+                throw new Error(err.error || err.message || `Media Upload HTTP error! Status: ${res.status}`);
+              }).catch(() => {
+                throw new Error(`Media Upload HTTP error! Status: ${res.status}. Check server logs for details.`);
+              });
+            }
+            return res.json();
+          })
+          .then(response => {
+            if (response.error) throw new Error(response.error);
+            alert(response.message || 'Upload successful!');
+            form.reset();
+            fetchMediaGallery();
+          })
+          .catch(err => {
+            console.error('Upload failed:', err);
+            alert('Upload failed: ' + err.message);
+          })
+          .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Upload Media';
+          });
+      };
+      reader.onerror = function (error) {
+        console.error("File reading error for Base64:", error);
+        alert("Error reading file for upload.");
+        submitButton.disabled = false;
+        submitButton.textContent = 'Upload Media';
+      };
+      reader.readAsDataURL(file);
     });
-
-
-    window.onload = function () {
-      fetchData(); // Load table data, but don't show any section by default
-      fetchWeeklyStatus(); // Load Weekly Status data on page load
-    };
-
-    function handleUploadMedia(e, ss) {
-      try {
-        const sheet = ss.getSheetByName("Media") || ss.insertSheet("Media");
-        if (sheet.getLastRow() === 0) {
-          sheet.appendRow(["Week", "Zone", "District", "File Name", "File URL", "File Type", "Uploaded On"]);
-        }
-
-        const folder = DriveApp.getFolderById("1Yz4uaedg3Ako_KPP9FKqCuZq1kiGLo1p");
-
-        const weekInfo = e.parameter.weekInfo;
-        const zone = e.parameter.zone;
-        const district = e.parameter.district;
-        const fileBlob = e.parameter.mediaFile;
-
-        if (!fileBlob) {
-          return ContentService.createTextOutput(JSON.stringify({ error: "No file uploaded." }))
-            .setMimeType(ContentService.MimeType.JSON);
-        }
-
-        // In Apps Script, fileBlob is a blob if uploaded via FormData
-        // But sometimes it's a string, so convert if needed
-        let blob;
-        if (typeof fileBlob.getBytes === 'function') {
-          blob = fileBlob;
-        } else {
-          blob = Utilities.newBlob(fileBlob, "application/octet-stream", "uploaded_file");
-        }
-
-        const uploadedFile = folder.createFile(blob);
-        uploadedFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-
-        sheet.appendRow([
-          weekInfo,
-          zone,
-          district,
-          uploadedFile.getName(),
-          uploadedFile.getUrl(),
-          uploadedFile.getMimeType(),
-          new Date()
-        ]);
-
-        return ContentService.createTextOutput(JSON.stringify({ message: "Upload successful." }))
-          .setMimeType(ContentService.MimeType.JSON);
-
-      } catch (error) {
-        return ContentService.createTextOutput(
-          JSON.stringify({ error: "Upload failed: " + error.message })
-        ).setMimeType(ContentService.MimeType.JSON);
-      }
-    }
 
     function fetchMediaGallery() {
       fetch(scriptURL + '?sheet=Media')
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! status: ${res.status} for Media Gallery. Server says: ${text || res.statusText}`) });
+          return res.json();
+        })
         .then(data => {
-          const [headers, ...rows] = data;
-          const grouped = {};
+          const gallery = document.getElementById("media-gallery");
+          if (!gallery) return;
 
+          if (data && data.error) {
+            gallery.innerHTML = `<p class="error-message">Error loading media: ${data.error}</p>`;
+            return;
+          }
+          if (!Array.isArray(data) || data.length < 1) {
+            gallery.innerHTML = "<p>No media data found or data in unexpected format.</p>";
+            return;
+          }
+
+          const [headers, ...rows] = data;
+          if (!Array.isArray(headers) || headers.length === 0) {
+            gallery.innerHTML = "<p>Media headers missing.</p>";
+            return;
+          }
+
+          if (rows.length === 0) {
+            gallery.innerHTML = "<p>No media found in the gallery.</p>";
+            return;
+          }
+
+          const weekIndex = headers.indexOf('Week');
+          const zoneIndex = headers.indexOf('Zone');
+          const districtIndex = headers.indexOf('District');
+          const fileNameIndex = headers.indexOf('File Name');
+          const urlIndex = headers.indexOf('File URL');
+          const typeIndex = headers.indexOf('File Type');
+
+          if ([weekIndex, zoneIndex, districtIndex, fileNameIndex, urlIndex, typeIndex].some(idx => idx === -1)) {
+            console.error("One or more required headers missing in Media sheet data:", headers);
+            gallery.innerHTML = "<p class='error-message'>Error: Media data is not in the expected column format.</p>";
+            return;
+          }
+
+          const grouped = {};
           rows.forEach(row => {
-            const week = row[0];
-            const zone = row[1];
-            const district = row[2];
-            const fileName = row[3];
-            const url = row[4];
-            const type = row[5] || (url.match(/\.(jpe?g|png|gif|webp)$/i) ? 'image' : url.match(/\.(mp4|mov|avi|webm)$/i) ? 'video' : 'file');
+            if (!Array.isArray(row)) return;
+            const week = row[weekIndex];
+            const zone = row[zoneIndex];
+            const district = row[districtIndex];
+            const fileName = row[fileNameIndex];
+            const url = row[urlIndex];
+            const typeFromServer = row[typeIndex];
+            const type = typeFromServer || (String(url).match(/\.(jpe?g|png|gif|webp)$/i) ? 'image' : String(url).match(/\.(mp4|mov|avi|webm)$/i) ? 'video' : 'file');
+
+            if (!week || !zone || !district) return;
 
             if (!grouped[week]) grouped[week] = {};
             if (!grouped[week][zone]) grouped[week][zone] = {};
             if (!grouped[week][zone][district]) grouped[week][zone][district] = [];
-
-            grouped[week][zone][district].push({ url, type, fileName });
+            grouped[week][zone][district].push({ url, type, fileName: fileName || "Untitled" });
           });
 
           let html = "";
-
           Object.keys(grouped).sort().forEach(week => {
-            html += `<div class="week-group" style="margin-bottom: 30px;">
-                   <h2 style="text-align:center; background:#0a2a5e; color:#fff; padding:8px; border-radius:5px;">${week}</h2>`;
-
-            Object.keys(grouped[week]).forEach(zone => {
+            html += `<div class="week-group" style="margin-bottom: 30px; border: 1px solid #eee; padding:10px; border-radius:5px;">
+                   <h2 style="text-align:center; background:#0a2a5e; color:#fff; padding:8px; border-radius:5px; margin-top:0;">${week}</h2>`;
+            Object.keys(grouped[week]).sort().forEach(zone => {
               html += `<div style="margin: 15px 0;">
                      <h3 style="background:#e0e0e0; padding:6px; border-radius:4px;">${zone}</h3>`;
-
-              Object.keys(grouped[week][zone]).forEach(district => {
+              Object.keys(grouped[week][zone]).sort().forEach(district => {
                 html += `<div style="margin: 10px 0;">
-                       <h4 style="color:#666; margin-bottom:8px;">${district}</h4>
+                       <h4 style="color:#333; margin-bottom:8px; border-bottom:1px solid #ddd; padding-bottom:5px;">${district}</h4>
                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">`;
-
                 grouped[week][zone][district].forEach(media => {
-                  const match = media.url.match(/\/d\/([a-zA-Z0-9_-]{25,})/);
+                  const match = String(media.url).match(/\/d\/([a-zA-Z0-9_-]{25,})/);
                   const fileId = match ? match[1] : '';
-                  const directLink = `https://drive.google.com/uc?export=view&id=${fileId}`;
-                  const thumbnailLink = `https://drive.google.com/thumbnail?id=${fileId}&sz=w300-h300`;
+                  const directLink = fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : media.url;
+                  const thumbnailLink = fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w200-h200` : directLink;
 
-                  if ((media.type || '').startsWith('image')) {
+                  if (String(media.type).startsWith('image')) {
                     html += `
                   <div style="position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <a href="${directLink}" target="_blank" style="display: block;">
+                    <a href="${directLink}" target="_blank" title="${media.fileName || 'View image'}" style="display: block;">
                       <img src="${thumbnailLink}" 
-                           style="width: 100%; height: 150px; object-fit: cover; transition: transform 0.2s;"
+                           style="width: 100%; height: 150px; object-fit: cover; transition: transform 0.2s; background-color: #f0f0f0;"
                            onmouseover="this.style.transform='scale(1.05)'" 
                            onmouseout="this.style.transform='scale(1)'"
-                           onerror="this.onerror=null; this.src='${directLink}'"
+                           onerror="this.onerror=null; this.src='https://via.placeholder.com/150?text=No+Preview';" 
                            alt="${media.fileName || 'Uploaded image'}">
                     </a>
-                    <div style="font-size: 0.85em; text-align: center; padding: 4px 0;">${media.fileName}</div>
+                    <div style="font-size: 0.8em; text-align: center; padding: 5px; background: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${media.fileName}">${media.fileName}</div>
                   </div>`;
-                  } else if ((media.type || '').startsWith('video')) {
+                  } else if (String(media.type).startsWith('video')) {
                     html += `
                   <div style="position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <video controls style="width: 100%; height: 150px; object-fit: cover;">
-                      <source src="${directLink}" type="video/mp4">
+                    <video controls preload="metadata" style="width: 100%; height: 150px; object-fit: cover; background:#000;">
+                      <source src="${directLink}" type="${media.type || 'video/mp4'}">
+                      Your browser does not support the video tag. <a href="${directLink}" target="_blank">Download video</a>
                     </video>
-                    <div style="font-size: 0.85em; text-align: center; padding: 4px 0;">${media.fileName}</div>
+                    <div style="font-size: 0.8em; text-align: center; padding: 5px; background: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${media.fileName}">${media.fileName}</div>
+                  </div>`;
+                  } else {
+                    html += `
+                  <div style="position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding:10px; background:#f0f0f0; height:150px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                    <a href="${directLink}" target="_blank" title="Download ${media.fileName}" style="word-break:break-all; text-decoration:none; color:#333; text-align:center;">
+                      <span style="font-size:2.5em; margin-bottom:10px; display:block;">📄</span>
+                      <div style="font-size: 0.8em;">${media.fileName}</div>
+                    </a>
                   </div>`;
                   }
                 });
-
                 html += `</div></div>`;
               });
               html += `</div>`;
             });
             html += `</div>`;
           });
-
-          document.getElementById("media-gallery").innerHTML = html;
+          gallery.innerHTML = html || "<p>No media to display after grouping.</p>";
         })
         .catch(error => {
-          console.error('Error fetching media:', error);
-          document.getElementById("media-gallery").innerHTML =
-            `<p style="color: red; text-align: center;">Error loading media gallery. Please try again later.</p>`;
+          console.error('Error fetching media gallery:', error);
+          const gallery = document.getElementById("media-gallery");
+          if (gallery) gallery.innerHTML = `<p class="error-message">Error loading media gallery: ${error.message}. Please try again later.</p>`;
         });
     }
 
-    if (document.getElementById('dummy2-section')) {
-      document.querySelector('button[onclick*="dummy2"]').textContent = 'Media';
-      document.querySelector('button[onclick*="dummy2"]').setAttribute('onclick', "showSection('media-section')");
-    }
+    window.onload = function () {
+      fetchData();
+      // showSection('meetings-section'); 
+    };
   </script>
 </body>
+
 </html>

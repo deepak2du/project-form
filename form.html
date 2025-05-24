@@ -23,6 +23,7 @@
 
     .form-container {
       display: flex;
+      flex-wrap: wrap;
       gap: 30px;
       justify-content: space-between;
     }
@@ -33,6 +34,7 @@
       border-radius: 6px;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       flex: 1;
+      min-width: 300px;
     }
 
     .form-grid {
@@ -65,6 +67,7 @@
 
     textarea {
       resize: vertical;
+      min-height: 100px;
     }
 
     button {
@@ -76,6 +79,7 @@
       color: white;
       cursor: pointer;
       margin-right: 10px;
+      margin-top: 5px;
     }
 
     button:hover {
@@ -110,16 +114,115 @@
       color: red;
       font-weight: bold;
     }
+
+    .presentation-upload-form-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .presentation-week-group,
+    .media-week-group {
+      margin-bottom: 30px;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .presentation-week-group h3,
+    .media-week-group h3 {
+      text-align: left;
+      background: #004a99;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 1.3em;
+    }
+
+    .presentation-week-group h4,
+    .media-week-group h4 {
+      margin-top: 15px;
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 1.1em;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+
+
+    .presentation-item {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px dashed #eee;
+    }
+
+    .presentation-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .presentation-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      padding-top: 56.25%;
+      height: 0;
+      overflow: hidden;
+      margin: 10px auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .presentation-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .navigation-buttons {
+      text-align: center;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .delete-button {
+      background-color: #d9534f;
+      color: white;
+      padding: 6px 12px;
+      font-size: 0.9em;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    .delete-button:hover {
+      background-color: #c9302c;
+    }
   </style>
 </head>
 
 <body>
-  <div style="text-align: center; margin-bottom: 20px;">
-    <button onclick="showSection('meetings-section')" style="padding:10px 20px; margin:5px;">Meetings</button>
-    <button onclick="showSection('weeklyStatus-section')" style="padding:10px 20px; margin:5px;">Weekly Status</button>
-    <button onclick="showSection('media-section')" style="padding:10px 20px; margin:5px;">Media</button>
-    <button onclick="showSection('dummy3-section')" style="padding:10px 20px; margin:5px;">Dummy 3</button>
-    <button onclick="showSection('dummy4-section')" style="padding:10px 20px; margin:5px;">Dummy 4</button>
+  <div class="navigation-buttons">
+    <button onclick="showSection('meetings-section')">Meetings</button>
+    <button onclick="showSection('weeklyStatus-section')">Weekly Status</button>
+    <button onclick="showSection('media-section')">Media</button>
+    <button onclick="showSection('presentations-section')">Presentation</button>
+    <button onclick="showSection('dummy4-section')">Dummy 4</button>
   </div>
 
   <div id="meetings-section" style="display: none;">
@@ -197,11 +300,6 @@
               <option>Rajpur</option>
               <option>Kansar</option>
             </select></div>
-          <div><label>Upload Meeting Photo (URL or select file):</label><input type="file" name="photoUrlFile"
-              id="photoUrlFile" accept="image/*" onchange="handleMeetingPhotoUpload(event)">
-            <input type="text" name="photoUrl" id="photoUrlText" placeholder="Or paste image URL here">
-            <div id="current-meeting-photo-url"></div>
-          </div>
           <div class="full-width"><label>Meeting Title:</label><input type="text" name="meetingTitle" required></div>
           <div><label>Conducted By:</label><select name="conductedBy" required>
               <option>Akshaya Kumar Pallai</option>
@@ -452,16 +550,175 @@
     </div>
   </div>
 
-  <div id="dummy3-section" style="display:none; text-align:center;">
-    <h2>Dummy Section 3 Content</h2>
+  <div id="presentations-section" style="display:none;">
+    <h2>Project Presentations</h2>
+    <div class="presentation-upload-form-container">
+      <h3>Add New Presentation</h3>
+      <form id="presentation-upload-form">
+        <div>
+          <label for="presentationWeekInfo">Week Number:</label>
+          <select name="weekInfo" id="presentationWeekInfo" required>
+            <option value="">Select Week</option>
+            <option value="Week 19 (May 05 - May 11)">Week 19 (May 05 - May 11)</option>
+            <option value="Week 20 (May 12 - May 18)">Week 20 (May 12 - May 18)</option>
+            <option value="Week 21 (May 19 - May 25)">Week 21 (May 19 - May 25)</option>
+            <option value="Week 22 (May 26 - Jun 01)">Week 22 (May 26 - Jun 01)</option>
+            <option value="Week 23 (Jun 02 - Jun 08)">Week 23 (Jun 02 - Jun 08)</option>
+            <option value="Week 24 (Jun 09 - Jun 15)">Week 24 (Jun 09 - Jun 15)</option>
+            <option value="Week 25 (Jun 16 - Jun 22)">Week 25 (Jun 16 - Jun 22)</option>
+            <option value="Week 26 (Jun 23 - Jun 29)">Week 26 (Jun 23 - Jun 29)</option>
+            <option value="Week 27 (Jun 30 - Jul 06)">Week 27 (Jun 30 - Jul 06)</option>
+            <option value="Week 28 (Jul 07 - Jul 13)">Week 28 (Jul 07 - Jul 13)</option>
+            <option value="Week 29 (Jul 14 - Jul 20)">Week 29 (Jul 14 - Jul 20)</option>
+            <option value="Week 30 (Jul 21 - Jul 27)">Week 30 (Jul 21 - Jul 27)</option>
+            <option value="Week 31 (Jul 28 - Aug 03)">Week 31 (Jul 28 - Aug 03)</option>
+            <option value="Week 32 (Aug 04 - Aug 10)">Week 32 (Aug 04 - Aug 10)</option>
+            <option value="Week 33 (Aug 11 - Aug 17)">Week 33 (Aug 11 - Aug 17)</option>
+            <option value="Week 34 (Aug 18 - Aug 24)">Week 34 (Aug 18 - Aug 24)</option>
+            <option value="Week 35 (Aug 25 - Aug 31)">Week 35 (Aug 25 - Aug 31)</option>
+            <option value="Week 36 (Sep 01 - Sep 07)">Week 36 (Sep 01 - Sep 07)</option>
+            <option value="Week 37 (Sep 08 - Sep 14)">Week 37 (Sep 08 - Sep 14)</option>
+            <option value="Week 38 (Sep 15 - Sep 21)">Week 38 (Sep 15 - Sep 21)</option>
+            <option value="Week 39 (Sep 22 - Sep 28)">Week 39 (Sep 22 - Sep 28)</option>
+            <option value="Week 40 (Sep 29 - Oct 05)">Week 40 (Sep 29 - Oct 05)</option>
+            <option value="Week 41 (Oct 06 - Oct 12)">Week 41 (Oct 06 - Oct 12)</option>
+            <option value="Week 42 (Oct 13 - Oct 19)">Week 42 (Oct 13 - Oct 19)</option>
+            <option value="Week 43 (Oct 20 - Oct 26)">Week 43 (Oct 20 - Oct 26)</option>
+            <option value="Week 44 (Oct 27 - Nov 02)">Week 44 (Oct 27 - Nov 02)</option>
+            <option value="Week 45 (Nov 03 - Nov 09)">Week 45 (Nov 03 - Nov 09)</option>
+            <option value="Week 46 (Nov 10 - Nov 16)">Week 46 (Nov 10 - Nov 16)</option>
+            <option value="Week 47 (Nov 17 - Nov 23)">Week 47 (Nov 17 - Nov 23)</option>
+            <option value="Week 48 (Nov 24 - Nov 30)">Week 48 (Nov 24 - Nov 30)</option>
+            <option value="Week 49 (Dec 01 - Dec 07)">Week 49 (Dec 01 - Dec 07)</option>
+            <option value="Week 50 (Dec 08 - Dec 14)">Week 50 (Dec 08 - Dec 14)</option>
+            <option value="Week 51 (Dec 15 - Dec 21)">Week 51 (Dec 15 - Dec 21)</option>
+            <option value="Week 52 (Dec 22 - Dec 28)">Week 52 (Dec 22 - Dec 28)</option>
+            <option value="Week 53 (Dec 29 - Dec 31)">Week 53 (Dec 29 - Dec 31)</option>
+          </select>
+        </div>
+        <div>
+          <label for="presentationTitle">Presentation Title (Optional):</label>
+          <input type="text" name="presentationTitle" id="presentationTitle">
+        </div>
+        <div>
+          <label for="presentationIframeCode">Google Slides Embed Code (iframe):</label>
+          <textarea name="iframeCode" id="presentationIframeCode" required
+            placeholder="Paste the full <iframe> code from Google Slides here..."></textarea>
+        </div>
+        <button type="submit">Save Presentation</button>
+      </form>
+    </div>
+    <div id="presentations-display-area" style="margin-top: 30px;">
+    </div>
   </div>
+
   <div id="dummy4-section" style="display:none; text-align:center;">
     <h2>Dummy Section 4 Content</h2>
   </div>
 
   <script>
-    // IMPORTANT: Ensure this URL points to your LATEST deployed Apps Script web app.
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
+    var scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
+
+    function fetchPresentations() {
+      const presentationsContainer = document.getElementById('presentations-display-area');
+      if (!presentationsContainer) {
+        console.error("Presentations display area not found!");
+        return;
+      }
+      presentationsContainer.innerHTML = '<p style="text-align:center;">Loading presentations...</p>';
+
+      fetch(scriptURL + '?action=get_presentations')
+        .then(res => {
+          if (!res.ok) {
+            return res.text().then(text => { throw new Error(`Failed to fetch presentations: ${res.status} ${text || res.statusText}`) });
+          }
+          return res.json();
+        })
+        .then(data => {
+          console.log("Fetched presentations data:", data);
+          if (data && data.error) {
+            presentationsContainer.innerHTML = `<p class="error-message">Error loading presentations: ${data.error}</p>`;
+            return;
+          }
+          if (!Array.isArray(data) || data.length === 0) {
+            presentationsContainer.innerHTML = '<p style="text-align:center; margin-top:20px;">No presentations available at the moment. (Data array empty)</p>';
+            return;
+          }
+
+          const [headers, ...rows] = data;
+          if (!Array.isArray(headers) || headers.length === 0) {
+            presentationsContainer.innerHTML = '<p style="text-align:center; margin-top:20px;">No presentation data or headers found.</p>';
+            return;
+          }
+
+          const uniqueIdIndex = headers.indexOf('UniqueID');
+          const weekIndex = headers.indexOf('Week');
+          const titleIndex = headers.indexOf('Title');
+          const iframeCodeIndex = headers.indexOf('IframeCode');
+
+          if ([uniqueIdIndex, weekIndex, titleIndex, iframeCodeIndex].some(idx => idx === -1)) {
+            console.error("Presentation data headers are missing or incorrect:", headers);
+            presentationsContainer.innerHTML = '<p class="error-message">Error: Presentation data is not in the expected format (missing headers).</p>';
+            return;
+          }
+
+          if (rows.length === 0) {
+            presentationsContainer.innerHTML = '<p style="text-align:center; margin-top:20px;">No presentations have been added yet.</p>';
+            return;
+          }
+
+          const presentations = rows.map(row => ({
+            uniqueID: row[uniqueIdIndex],
+            week: row[weekIndex],
+            title: row[titleIndex],
+            iframeCode: row[iframeCodeIndex]
+          }));
+
+          let html = '';
+          if (presentations.length > 0) {
+            const groupedByWeek = presentations.reduce((acc, pres) => {
+              if (!acc[pres.week]) {
+                acc[pres.week] = [];
+              }
+              acc[pres.week].push(pres);
+              return acc;
+            }, {});
+
+            Object.keys(groupedByWeek).sort((a, b) => {
+              const weekANumMatch = a.match(/\d+/);
+              const weekBNumMatch = b.match(/\d+/);
+              const weekANum = weekANumMatch ? parseInt(weekANumMatch[0]) : 0;
+              const weekBNum = weekBNumMatch ? parseInt(weekBNumMatch[0]) : 0;
+              return weekANum - weekBNum;
+            }).forEach(week => {
+              html += `<div class="presentation-week-group"><h3>${week}</h3>`;
+              groupedByWeek[week].forEach(presentation => {
+                const responsiveIframeCode = presentation.iframeCode
+                  .replace(/width="[^"]*"/ig, '')
+                  .replace(/height="[^"]*"/ig, '');
+                html += `
+                                <div class="presentation-item">
+                                    ${presentation.title ? `<h4>${presentation.title}</h4>` : ''}
+                                    <div class="presentation-container">
+                                        ${responsiveIframeCode}
+                                    </div>
+                                    <button class="delete-button" onclick="deletePresentation('${presentation.uniqueID}')">Delete Presentation</button>
+                                </div>
+                            `;
+              });
+              html += `</div>`;
+            });
+          } else {
+            html += '<p style="text-align:center; margin-top:20px;">No presentations available at the moment.</p>';
+          }
+          presentationsContainer.innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error fetching presentations:', error);
+          presentationsContainer.innerHTML = `<p class="error-message">Error loading presentations: ${error.message}</p>`;
+        });
+    }
+
 
     function renderTable(data, tableId, sectionType) {
       const tbody = document.querySelector(`#${tableId} tbody`);
@@ -496,7 +753,16 @@
         return;
       }
 
-      const [headers, ...dataRows] = data;
+      let [headers, ...dataRows] = data;
+      let photoUrlColIndex = -1;
+
+      if (sectionType === 'meetings') {
+        photoUrlColIndex = headers.indexOf('Photo URL');
+        if (photoUrlColIndex !== -1) {
+          headers = headers.filter((header, index) => index !== photoUrlColIndex);
+        }
+      }
+
 
       if (!headers || !Array.isArray(headers) || headers.length === 0) {
         console.warn(`No headers or invalid headers format for ${tableId}:`, headers);
@@ -518,10 +784,10 @@
       }));
 
       try {
-        if (sectionType === 'weeklyStatus' && headers.indexOf('Week') !== -1 && headers.indexOf('Zone') !== -1) {
+        if (sectionType === 'weeklyStatus' && data[0].indexOf('Week') !== -1 && data[0].indexOf('Zone') !== -1) {
           rowsWithIndex.sort((a, b) => {
-            const weekIndex = headers.indexOf('Week');
-            const zoneIndex = headers.indexOf('Zone');
+            const weekIndex = data[0].indexOf('Week');
+            const zoneIndex = data[0].indexOf('Zone');
 
             const valA = a.row && typeof a.row[weekIndex] === 'string' ? String(a.row[weekIndex]).match(/\d+/) : null;
             const weekA = valA ? parseInt(valA[0], 10) : 0;
@@ -537,8 +803,8 @@
         }
 
         if (sectionType === 'meetings') {
-          const dateColumnIndex = headers.indexOf('Meeting Date');
-          if (dateColumnIndex !== -1) {
+          const dateColumnIndexOriginal = data[0].indexOf('Meeting Date');
+          if (dateColumnIndexOriginal !== -1) {
             rowsWithIndex.sort((a, b) => {
               const parseDate = (value) => {
                 if (value === undefined || value === null || String(value).trim() === "") return new Date(NaN);
@@ -555,8 +821,8 @@
                 return new Date(value);
               };
 
-              const valA = a.row && a.row.length > dateColumnIndex ? a.row[dateColumnIndex] : undefined;
-              const valB = b.row && b.row.length > dateColumnIndex ? b.row[dateColumnIndex] : undefined;
+              const valA = a.row && a.row.length > dateColumnIndexOriginal ? a.row[dateColumnIndexOriginal] : undefined;
+              const valB = b.row && b.row.length > dateColumnIndexOriginal ? b.row[dateColumnIndexOriginal] : undefined;
 
               const dateA = parseDate(valA);
               const dateB = parseDate(valB);
@@ -584,10 +850,14 @@
         const rowData = encodeURIComponent(JSON.stringify(row));
 
         const cells = row.map((c, j) => {
-          let cellValue = (c === null || c === undefined) ? "" : String(c);
-          const headerName = headers[j];
+          if (sectionType === 'meetings' && j === photoUrlColIndex) {
+            return '';
+          }
 
-          if ((headerName === 'Meeting Date' || headerName === 'Deadline')) {
+          let cellValue = (c === null || c === undefined) ? "" : String(c);
+          const currentHeader = data[0][j];
+
+          if ((currentHeader === 'Meeting Date' || currentHeader === 'Deadline')) {
             if (c instanceof Date && !isNaN(c)) {
               const day = String(c.getDate()).padStart(2, '0');
               const month = String(c.getMonth() + 1).padStart(2, '0');
@@ -604,13 +874,6 @@
             }
           }
 
-          const photoUrlHeaderName = 'Photo URL';
-          const photoUrlHeaderIndex = headers.findIndex(h => h && h.toLowerCase() === photoUrlHeaderName.toLowerCase());
-
-          if (sectionType === 'meetings' && j === photoUrlHeaderIndex && typeof c === "string" && c.startsWith("http")) {
-            return `<td><a href="${c}" target="_blank">View Photo</a></td>`;
-          }
-
           if (typeof c === "string" && c.includes('\n')) {
             const lines = c.split(/\r?\n/).filter(line => line.trim() !== '');
             const listItems = lines.map(item => {
@@ -620,7 +883,7 @@
             return `<td><ol style="padding-left: 18px; margin: 0;">${listItems}</ol></td>`;
           }
           return `<td>${cellValue}</td>`;
-        }).join('');
+        }).filter(cellHTML => cellHTML !== '').join('');
 
         const editFunc = sectionType === 'meetings' ? 'editMeeting' :
           sectionType === 'weeklyStatus' ? 'editStatus' : 'editAction';
@@ -724,7 +987,7 @@
     }
 
     function showSection(sectionIdToShow) {
-      const allSectionDivIds = ['meetings-section', 'weeklyStatus-section', 'media-section', 'dummy3-section', 'dummy4-section'];
+      const allSectionDivIds = ['meetings-section', 'weeklyStatus-section', 'media-section', 'presentations-section', 'dummy4-section'];
       allSectionDivIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -733,6 +996,9 @@
       });
       if (sectionIdToShow === 'media-section') {
         fetchMediaGallery();
+      }
+      if (sectionIdToShow === 'presentations-section') {
+        fetchPresentations();
       }
     }
 
@@ -781,10 +1047,9 @@
       const rawDataArray = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input[type="hidden"]').value));
       const form = document.forms['meeting-form'];
       form.reset();
-      document.getElementById('photoUrlFile').value = ''; // Clear file input
       form.row.value = row;
 
-      const fieldKeys = ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'meetingAgenda', 'meetingDiscussion', 'photoUrl'];
+      const fieldKeys = ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'meetingAgenda', 'meetingDiscussion'];
       const dataToPopulate = getFormDataByIndex(fieldKeys, rawDataArray);
 
       form.meetingId.value = dataToPopulate.meetingId;
@@ -797,20 +1062,6 @@
       form.attendees.value = dataToPopulate.attendees;
       form.meetingAgenda.value = dataToPopulate.meetingAgenda;
       form.meetingDiscussion.value = dataToPopulate.meetingDiscussion;
-
-      // For photoUrl, if it's a URL, populate the text field. The file input cannot be pre-filled.
-      const photoUrlTextField = document.getElementById('photoUrlText');
-      photoUrlTextField.value = (dataToPopulate.photoUrl && String(dataToPopulate.photoUrl).startsWith('http')) ? dataToPopulate.photoUrl : "";
-
-      const photoUrlDisplay = document.getElementById('current-meeting-photo-url');
-      if (photoUrlDisplay) {
-        if (dataToPopulate.photoUrl && String(dataToPopulate.photoUrl).startsWith('http')) {
-          photoUrlDisplay.innerHTML = `Current photo: <a href="${dataToPopulate.photoUrl}" target="_blank">View</a> (To change, select new file or clear URL and select file)`;
-        } else {
-          photoUrlDisplay.innerHTML = "No current photo URL. Select file to upload.";
-        }
-      }
-
 
       document.getElementById('meeting-mode').innerText = "Mode: Editing Meeting (Row " + row + ")";
       showSection('meetings-section');
@@ -857,10 +1108,6 @@
     function postData(formDataObject, callback) {
       const formData = new FormData();
       for (const key in formDataObject) {
-        // Skip file input if it's for meeting photo and meant to be handled differently or is empty
-        if (key === 'photoUrlFile' && (!formDataObject[key] || formDataObject[key].size === 0)) {
-          continue;
-        }
         formData.append(key, formDataObject[key]);
       }
 
@@ -907,90 +1154,23 @@
       if (confirm("Delete this status entry?")) postData({ action: "delete_status", row: row }, fetchWeeklyStatus);
     }
 
-    // Helper function for meeting photo upload (if it's to be uploaded to Drive)
-    // This is currently NOT integrated with the main meeting form submission fully.
-    // It assumes 'photoUrl' in the sheet is a URL string.
-    function handleMeetingPhotoUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        // If you want to upload this file and get a URL to store:
-        // 1. Use a FileReader to get Base64 or send FormData directly.
-        // 2. Send to a specific 'action' in Apps Script (e.g., 'upload_meeting_photo_file').
-        // 3. Apps Script returns the Drive URL.
-        // 4. Populate the 'photoUrlText' input with this URL.
-        console.log("Meeting photo selected:", file.name);
-        // For now, let's just clear the text URL if a file is selected,
-        // assuming user will choose one or the other.
-        document.getElementById('photoUrlText').value = '';
-        // Or, you could immediately upload and populate photoUrlText with the Drive URL (more complex)
-      }
-    }
-
-
     document.getElementById('meeting-form').addEventListener('submit', function (e) {
       e.preventDefault();
       const form = this;
       const formData = new FormData(form);
       const isEdit = form.row.value && form.row.value.trim() !== "";
 
-      // Determine action and add row if editing
-      formData.set("action", isEdit ? "edit_meeting" : "add_meeting"); // Use .set to ensure only one action
+      formData.set("action", isEdit ? "edit_meeting" : "add_meeting");
       if (isEdit) formData.set("row", form.row.value);
 
-      // Handle photoUrl: if a file is selected in photoUrlFile, it needs to be uploaded separately
-      // or photoUrlText (URL) should be prioritized.
-      // Current backend (handleAddMeeting/handleEditMeeting) expects params.photoUrl as a string.
-      // If photoUrlFile has a file, we need a mechanism to upload it and get a URL.
-      // For simplicity, if photoUrlText is filled, use it. Otherwise, photoUrlFile would need handling.
+      formData.delete('photoUrlFile');
+      formData.delete('photoUrlText');
 
-      const photoFile = formData.get('photoUrlFile');
-      const photoUrlFromText = formData.get('photoUrlText');
-
-      if (photoFile && photoFile.size > 0) {
-        // Option 1: Upload this file (e.g., using Base64 like media gallery, get URL, then submit meeting form)
-        // This makes the submission a two-step process or requires more complex client-side orchestration.
-        // Option 2: Send the file and have Apps Script handle it, returning the URL to save in the sheet.
-        // This requires `handleAddMeeting` etc. to be ableto handle a file.
-
-        // For now, let's alert the user this part is complex or clear photoUrlText if file is chosen.
-        // The simplest for existing backend: if file chosen, it implies 'photoUrlText' should be derived from it AFTER upload.
-        // The backend is NOT set up to receive 'photoUrlFile' as a blob for meeting forms.
-        // It expects 'params.photoUrl' as a string.
-
-        alert("Photo file selected for meeting. This demo form sends the text URL. To upload the file, a separate mechanism or backend adjustment for meeting photos is needed.");
-        // If we were to proceed, we might clear formData.get('photoUrlFile') and rely on a URL.
-        // Or, if photoUrlText is empty, this implies the file upload isn't fully integrated yet
-        // with the simple string URL storage in the sheet for meetings.
-        // We'll proceed by prioritizing photoUrlText.
-        if (!photoUrlFromText) {
-          formData.set('photoUrl', ''); // No text URL, and file isn't processed by this path
-        } else {
-          formData.set('photoUrl', photoUrlFromText);
-        }
-        formData.delete('photoUrlFile'); // Don't send the file object with current postData structure
-
-      } else if (photoUrlFromText) {
-        formData.set('photoUrl', photoUrlFromText); // Use the text URL
-        formData.delete('photoUrlFile');
-        formData.delete('photoUrlText'); // Clean up, photoUrl is now the primary
-      } else {
-        formData.set('photoUrl', ''); // No photo URL provided
-        formData.delete('photoUrlFile');
-        formData.delete('photoUrlText');
-      }
-
-
-      // Convert FormData to object for the generic postData (which rebuilds FormData)
-      // This loses file objects if any were intended to be passed as files.
       const formObject = Object.fromEntries(formData.entries());
 
       postData(formObject, () => {
         fetchData();
         form.reset();
-        document.getElementById('photoUrlFile').value = ''; // Clear file input
-        document.getElementById('photoUrlText').value = '';
-        const photoUrlDisplay = document.getElementById('current-meeting-photo-url');
-        if (photoUrlDisplay) photoUrlDisplay.innerHTML = "";
         document.getElementById('meeting-mode').innerText = 'Mode: Add New Meeting';
       });
     });
@@ -1054,8 +1234,8 @@
         const base64Data = base64DataWithPrefix.substring(base64DataWithPrefix.indexOf(',') + 1);
         const fileName = file.name;
 
-        const formDataForMediaBase64 = new FormData(); // Use FormData to send base64 and other params
-        formDataForMediaBase64.append('action', 'upload_media_base64'); // Action for base64
+        const formDataForMediaBase64 = new FormData();
+        formDataForMediaBase64.append('action', 'upload_media_base64');
         formDataForMediaBase64.append('weekInfo', form.weekInfo.value);
         formDataForMediaBase64.append('zone', form.zone.value);
         formDataForMediaBase64.append('district', form.district.value);
@@ -1097,6 +1277,46 @@
       };
       reader.readAsDataURL(file);
     });
+
+    // Listener for the new presentation form
+    document.getElementById('presentation-upload-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const form = this;
+      const formData = new FormData(form);
+      const formObject = Object.fromEntries(formData.entries());
+      formObject.action = 'add_presentation';
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.textContent = 'Saving...';
+
+      postData(formObject, () => {
+        form.reset();
+        fetchPresentations(); // Refresh the list of presentations
+        submitButton.disabled = false;
+        submitButton.textContent = 'Save Presentation';
+      });
+    });
+
+    function deletePresentation(uniqueID) {
+      if (!uniqueID) {
+        alert("Error: Presentation ID is missing. Cannot delete.");
+        return;
+      }
+      if (confirm("Are you sure you want to delete this presentation?")) {
+        const deleteButtons = document.querySelectorAll('.delete-button'); // Disable all to prevent multiple clicks
+        deleteButtons.forEach(btn => btn.disabled = true);
+
+
+        postData({ action: "delete_presentation", uniqueID: uniqueID }, () => {
+          fetchPresentations();
+          // Buttons will be re-enabled when fetchPresentations re-renders the content, 
+          // or if not, they would need to be re-enabled here or in a finally block.
+          // For simplicity, fetchPresentations will re-render them without disabled attribute.
+        });
+      }
+    }
+
 
     function fetchMediaGallery() {
       fetch(scriptURL + '?sheet=Media')
@@ -1162,15 +1382,15 @@
 
           let html = "";
           Object.keys(grouped).sort().forEach(week => {
-            html += `<div class="week-group" style="margin-bottom: 30px; border: 1px solid #eee; padding:10px; border-radius:5px;">
-                   <h2 style="text-align:center; background:#0a2a5e; color:#fff; padding:8px; border-radius:5px; margin-top:0;">${week}</h2>`;
+            html += `<div class="media-week-group"> 
+                   <h3>${week}</h3>`;
             Object.keys(grouped[week]).sort().forEach(zone => {
               html += `<div style="margin: 15px 0;">
-                     <h3 style="background:#e0e0e0; padding:6px; border-radius:4px;">${zone}</h3>`;
+                     <h4>${zone}</h4>`;
               Object.keys(grouped[week][zone]).sort().forEach(district => {
                 html += `<div style="margin: 10px 0;">
-                       <h4 style="color:#333; margin-bottom:8px; border-bottom:1px solid #ddd; padding-bottom:5px;">${district}</h4>
-                       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">`;
+                       <h5>${district}</h5>`;
+                html += `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">`;
                 grouped[week][zone][district].forEach(media => {
                   const match = String(media.url).match(/\/d\/([a-zA-Z0-9_-]{25,})/);
                   const fileId = match ? match[1] : '';

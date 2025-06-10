@@ -2,20 +2,46 @@
 <html>
 
 <head>
-  <title>BCIEP Phase 1 Tracker</title>
+  <title>BCIEP Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
+    /* Base body styles for the tracker page */
+    body.tracker-active {
       font-family: 'Segoe UI', sans-serif;
       margin: 0 auto;
-      padding: 20px;
-      max-width: 1300px;
+      padding: 0; /* Padding will be on app-container or main-content-wrapper */
+      max-width: 1300px; /* Max width for tracker content */
       background: #f9f9f9;
     }
+    /* Ensure app-container also respects max-width for tracker view */
+    body.tracker-active #app-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 20px; /* Horizontal padding for tracker content */
+    }
 
-    h2 {
+
+    /* Styles for Infographic Page (applied via .infographic-active on body) */
+    body.infographic-active { 
+        font-family: 'Open Sans', sans-serif; 
+        background-color: #E8F5E9; 
+        color: #333333; 
+        margin:0; 
+        padding:0; 
+        max-width: none; /* Infographic can be full width if desired */
+    }
+    body.infographic-active #app-container {
+        max-width: none; /* Allow infographic to be wider if needed */
+        margin: 0;
+        padding: 0;
+    }
+   
+    /* General h2 for tracker sections - Themed Green */
+    h2 { 
       text-align: center;
       margin-top: 40px;
-      background-color: #003366;
+      background-color: #1B5E20; /* Dark Green Theme */
       color: #fff;
       padding: 10px;
       border-radius: 5px;
@@ -39,8 +65,14 @@
 
     .form-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr; 
       gap: 20px;
+    }
+
+    @media (min-width: 768px) { 
+      .form-grid {
+        grid-template-columns: 1fr 1fr;
+      }
     }
 
     .full-width {
@@ -70,1385 +102,512 @@
       min-height: 100px;
     }
 
-    button {
-      padding: 8px 16px;
-      font-size: 14px;
-      border: none;
-      border-radius: 4px;
-      background-color: #003366;
-      color: white;
-      cursor: pointer;
-      margin-right: 10px;
-      margin-top: 5px;
-    }
-
-    button:hover {
-      background-color: #005299;
-    }
-
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
+    /* General table styling for tracker */
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 30px;
       background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      overflow: hidden; 
     }
 
     th,
     td {
       border: 1px solid #ccc;
-      padding: 8px;
-      font-size: 13px;
+      padding: 10px; 
+      font-size: 14px; 
       text-align: left;
     }
 
     th {
-      background-color: #e0e0e0;
+      background-color: #e0e0e0; /* Light gray, can be themed if needed */
+      font-weight: bold; 
+    }
+   
+    tbody tr:nth-child(odd) {
+        background-color: #f9f9f9; /* Can be a very light green if desired */
+    }
+    tbody tr:hover {
+        background-color: #f1f1f1; /* Can be a light green hover if desired */
     }
 
-    .error-message {
-      color: red;
-      font-weight: bold;
-    }
+    .error-message { color: red; font-weight: bold; }
+    .success-message { color: green; font-weight: bold; padding: 10px; background-color: #e6ffe6; border: 1px solid #b3ffb3; border-radius: 4px; margin-bottom: 15px; text-align: center; }
 
-    .presentation-upload-form-container {
-      background: #fff;
-      padding: 20px;
-      border-radius: 6px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      margin-bottom: 30px;
-    }
+    /* Presentation specific styles (tracker view) */
+    .presentation-upload-form-container { background: #fff; padding: 20px; border-radius: 6px; box-shadow: 0 0 5px rgba(0,0,0,0.1); margin-bottom: 30px; }
+    .presentation-week-group, .media-week-group { margin-bottom: 30px; border: 1px solid #ddd; padding: 20px 0; border-radius: 8px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .presentation-week-group h3, .media-week-group h3 { text-align: left; background: #2F855A; /* Themed Green */ color: #fff; padding: 10px 15px; border-radius: 5px 5px 0 0; margin: -20px 0 20px 0; font-size: 1.3em; }
+    .presentation-week-group h4, .media-week-group h4 { margin-top: 15px; margin-bottom: 10px; color: #333; font-size: 1.1em; border-bottom: 1px solid #eee; padding-bottom: 8px; padding-left: 15px; padding-right: 15px; }
+    .presentation-item { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed #eee; padding-left: 15px; padding-right: 15px; }
+    .presentation-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .presentation-container { position: relative; width: 100%; max-width: 100%; padding-top: 56.25%; height: 0; overflow: hidden; margin: 10px 0; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .presentation-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    
+    .delete-button { background-color: #d9534f; color: white; padding: 6px 12px; font-size: 0.9em; border-radius: 4px; cursor: pointer; border: none; margin-top: 10px; display: inline-block; }
+    .delete-button:hover { background-color: #c9302c; }
 
-    .presentation-week-group,
-    .media-week-group {
-      margin-bottom: 30px;
-      border: 1px solid #ddd;
-      padding: 20px;
-      border-radius: 8px;
-      background-color: #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
+    /* Custom Message Box & Loader (Global) */
+    .custom-message-box-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+    .custom-message-box-overlay.active { opacity: 1; visibility: visible; }
+    .custom-message-box { background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 400px; text-align: center; }
+    .custom-message-box p { margin-bottom: 20px; font-size: 16px; color: #333; }
+    .custom-message-box-buttons button { padding: 10px 20px; margin: 0 10px; border-radius: 5px; cursor: pointer; font-size: 14px; min-width: 80px; }
+    .custom-message-box-buttons .confirm-button { background-color: #1B5E20; /* Themed Green */ color: white; border: none; }
+    .custom-message-box-buttons .confirm-button:hover { background-color: #14532d; /* Darker Green */ }
+    .custom-message-box-buttons .cancel-button { background-color: #f0f0f0; color: #333; border: 1px solid #ccc; }
+    .custom-message-box-buttons .cancel-button:hover { background-color: #e0e0e0; }
+    .loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(255,255,255,0.9); padding: 20px; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.2); z-index: 1001; text-align: center; }
+    .loading-indicator p { margin: 0; font-size: 16px; color: #003366; } /* Can be themed green */
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid #1B5E20; /* Themed Green */ border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    .admin-only { display: none; } /* Admin controls are hidden by default */
 
-    .presentation-week-group h3,
-    .media-week-group h3 {
-      text-align: left;
-      background: #004a99;
-      color: #fff;
-      padding: 10px 15px;
-      border-radius: 5px;
-      margin-top: 0;
-      margin-bottom: 20px;
-      font-size: 1.3em;
-    }
-
-    .presentation-week-group h4,
-    .media-week-group h4 {
-      margin-top: 15px;
-      margin-bottom: 10px;
-      color: #333;
-      font-size: 1.1em;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 8px;
-    }
-
-
-    .presentation-item {
-      margin-bottom: 20px;
-      padding-bottom: 20px;
-      border-bottom: 1px dashed #eee;
-    }
-
-    .presentation-item:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-
-    .presentation-container {
-      position: relative;
-      width: 100%;
-      max-width: 100%;
-      padding-top: 56.25%;
-      height: 0;
-      overflow: hidden;
-      margin: 10px auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .presentation-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-
-    .navigation-buttons {
-      text-align: center;
-      margin-bottom: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .delete-button {
-      background-color: #d9534f;
-      color: white;
-      padding: 6px 12px;
-      font-size: 0.9em;
-      border-radius: 4px;
-      cursor: pointer;
-      border: none;
-      margin-top: 10px;
-      display: inline-block;
-    }
-
-    .delete-button:hover {
-      background-color: #c9302c;
-    }
+    /* Infographic specific styles (prefixed with .infographic-active) */
+    body.infographic-active .chart-container { position: relative; width: 100%; max-width: 450px; margin-left: auto; margin-right: auto; height: 280px; max-height: 350px; }
+    @media (min-width: 768px) { body.infographic-active .chart-container { height: 320px; } }
+    body.infographic-active .stat-card { background-color: #FFFFFF; border-radius: 0.5rem; /* rounded-lg */ box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* shadow-md */ padding: 1.5rem; /* p-6 */ margin-bottom: 1.5rem; /* mb-6 */ transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid #D1FAE5; /* Light green border */ }
+    body.infographic-active .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); /* shadow-lg */ }
+    body.infographic-active .section-title { color: #1B5E20; font-weight: 700; margin-bottom: 1.5rem; /* Increased margin */ }
+    body.infographic-active .big-number { font-size: 3.5rem; /* Slightly larger */ font-weight: 700; color: #4CAF50; line-height: 1; }
+    body.infographic-active .icon-list-item { display: flex; align-items: center; margin-bottom: 0.75rem; background-color: #F0FDF0; padding: 1rem; /* Increased padding */ border-radius: 0.375rem; border-left: 4px solid #FFC107; }
+    body.infographic-active .icon-list-item .icon { font-size: 1.75rem; /* Increased icon size */ margin-right: 1rem; /* Increased margin */ color: #1B5E20; }
+    body.infographic-active .timeline-item { background-color: #FFFFFF; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06); padding: 1.5rem; margin-bottom: 1.5rem; border-left: 6px solid #4CAF50; }
+    body.infographic-active .timeline-item h4 { color: #1B5E20; font-weight: 700; margin-bottom: 0.75rem; }
+    body.infographic-active .timeline-item ul { list-style: none; padding-left: 0; }
+    body.infographic-active .timeline-item ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.5rem; color: #333333; line-height: 1.6; }
+    body.infographic-active .timeline-item ul li::before { content: '•'; position: absolute; left: 0; color: #FFC107; font-weight: bold; }
+    body.infographic-active .ownership-bar-container { display: flex; width: 100%; height: 40px; border-radius: 0.5rem; overflow: hidden; margin-top: 1rem; margin-bottom: 1.5rem; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+    body.infographic-active .ownership-bar-rmc { background-color: #1B5E20; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.9rem; }
+    body.infographic-active .ownership-bar-community { background-color: #4CAF50; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.9rem; }
+    body.infographic-active .org-chart-node { background-color: #F0FDF0; /* Light green background */ border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 1rem; text-align: center; margin: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #1B5E20; /* Darker green text */ border: 1px solid #4CAF50; /* Medium Green border */ }
+    body.infographic-active .org-chart-level { display: flex; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    body.infographic-active .org-chart-arrow { text-align: center; font-size: 1.5rem; color: #4CAF50; margin: 0.5rem 0; }
+    body.infographic-active .org-chart-line { height: 20px; width: 2px; background-color: #4CAF50; margin: 0 auto; }
+    body.infographic-active .org-chart-horizontal-line { height: 2px; background-color: #4CAF50; width: 100%; margin-top: 10px; margin-bottom: 10px; }
+    body.infographic-active .org-chart-connector { display: flex; justify-content: center; align-items: center; position: relative; }
+    body.infographic-active .org-chart-connector::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 10px; background-color: #4CAF50; }
+    body.infographic-active .org-chart-connector::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 10px; background-color: #4CAF50; }
+    body.infographic-active .org-chart-flex { display: flex; justify-content: center; flex-wrap: wrap; width: 100%; }
+    body.infographic-active .org-chart-flex > div { flex: 1 1 30%; max-width: 30%; box-sizing: border-box; }
+    @media (max-width: 767px) { body.infographic-active .org-chart-flex > div { flex: 1 1 100%; max-width: 100%; } }
+    body.infographic-active .stakeholder-card { background-color: #FFFFFF; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06); padding: 1.5rem; margin-bottom: 1.5rem; border-left: 6px solid #1B5E20; }
+    body.infographic-active .stakeholder-card h4 { color: #4CAF50; font-weight: 700; margin-bottom: 0.75rem; }
+    body.infographic-active .stakeholder-card ul { list-style: none; padding-left: 0; }
+    body.infographic-active .stakeholder-card ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.5rem; color: #333333; font-size: 0.95rem; }
+    body.infographic-active .stakeholder-card ul li::before { content: '✓'; position: absolute; left: 0; color: #FFC107; font-weight: bold; }
+    body.infographic-active .component-card { background-color: #FFFFFF; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06); padding: 1.5rem; margin-bottom: 1.5rem; border-left: 6px solid #FFC107; }
+    body.infographic-active .component-card h4 { color: #1B5E20; font-weight: 700; margin-bottom: 0.75rem; }
+    body.infographic-active .component-card ul { list-style: none; padding-left: 0; }
+    body.infographic-active .component-card ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.5rem; color: #333333; font-size: 0.95rem; }
+    body.infographic-active .component-card ul li::before { content: '•'; position: absolute; left: 0; color: #4CAF50; font-weight: bold; }
+    body.infographic-active .risk-card { background-color: #FFFFFF; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06); padding: 1.5rem; margin-bottom: 1.5rem; border-left: 6px solid #1B5E20; }
+    body.infographic-active .risk-card h4 { color: #4CAF50; font-weight: 700; margin-bottom: 0.75rem; }
+    body.infographic-active .risk-card h5 { color: #FFC107; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; font-size: 1.05rem; }
+    body.infographic-active .risk-card ul { list-style: none; padding-left: 0; }
+    body.infographic-active .risk-card ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.5rem; color: #333333; font-size: 0.95rem; }
+    body.infographic-active .risk-card ul li::before { content: '•'; position: absolute; left: 0; color: #81C784; font-weight: bold; }
+    body.infographic-active .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06); }
+    body.infographic-active .data-table { width: 100%; border-collapse: collapse; background-color: #FFFFFF; font-size: 0.9rem; min-width: 800px; }
+    body.infographic-active .data-table th, body.infographic-active .data-table td { padding: 0.75rem 1rem; border: 1px solid #E0E0E0; text-align: left; }
+    body.infographic-active .data-table th { background-color: #1B5E20; color: white; font-weight: 600; position: sticky; top: 0; z-index: 10; }
+    body.infographic-active .data-table tbody tr:nth-child(odd) { background-color: #F0FDF0; }
+    body.infographic-active .data-table tbody tr:hover { background-color: #DCF0DD; }
   </style>
 </head>
 
-<body>
-  <div class="navigation-buttons">
-    <button onclick="showSection('meetings-section')">Meetings</button>
-    <button onclick="showSection('weeklyStatus-section')">Weekly Status</button>
-    <button onclick="showSection('media-section')">Media</button>
-    <button onclick="showSection('presentations-section')">Presentation</button>
-    <button onclick="showSection('dummy4-section')">Dummy 4</button>
-  </div>
-
-  <div id="meetings-section" style="display: none;">
-    <h2>Bloomberg Cities Idea Exchange || India || Meeting & Action Tracker</h2>
-    <div class="form-container">
-      <form id="meeting-form" style="margin-top: 0; border: 2px solid #ccc;">
-        <h3 style="margin-top: 0px;">Meeting Agenda and Discussions</h3>
-        <div id="meeting-mode"
-          style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5; font-weight: bold; color: #d9534f;">
-          Mode: Add New Meeting</div>
-        <input type="hidden" name="row">
-        <div class="form-grid">
-          <div><label>Meeting ID:</label><input type="text" name="meetingId" id="meetingId" readonly></div>
-          <div><label>Meeting Date:</label><input type="date" name="meetingDate" required>
-          </div>
-          <div><label>Zone:</label><select name="zone" required>
-              <option value="">Select Zone</option>
-              <option>Zone 1</option>
-              <option>Zone 2</option>
-              <option>Zone 3</option>
-            </select></div>
-          <div><label>District:</label><select name="district" required>
-              <option value="">Select District</option>
-              <option>Balangir</option>
-              <option>Bargarh</option>
-              <option>Cuttack</option>
-              <option>Ganjam</option>
-              <option>Kendujhar</option>
-              <option>Koraput</option>
-              <option>Mayurbhanj</option>
-              <option>Sambalpur</option>
-              <option>Sundargarh</option>
-            </select></div>
-          <div><label>Cold Room Location (Optional):</label><select name="coldRoom">
-              <option value="">None</option>
-              <option>Besil</option>
-              <option>RMC Behera Market</option>
-              <option>RMC Sarandapali</option>
-              <option>Athagarh NAC</option>
-              <option>Nistipur</option>
-              <option>Dudhianali</option>
-              <option>RMC Kalabada Market Yard</option>
-              <option>RMC Digapahandi Market Yard</option>
-              <option>RMC Bhanjanagar Market Yard</option>
-              <option>Bahadapada</option>
-              <option>RMC Buguda Market Yard</option>
-              <option>Chatrapur Market</option>
-              <option>Kolasingi</option>
-              <option>Raisuan</option>
-              <option>Madarangajodi</option>
-              <option>Mukuna</option>
-              <option>Tikarapada</option>
-              <option>Nuagaon (Narsinghpur)</option>
-              <option>Baradapala,</option>
-              <option>Ratanpur</option>
-              <option>Tulasichaura</option>
-              <option>Kathakaranjia</option>
-              <option>Ghatabhagra</option>
-              <option>Malimarla</option>
-              <option>Baghiatangar</option>
-              <option>Chapaldihi</option>
-              <option>Akhapolan</option>
-              <option>Sandhenkia</option>
-              <option>Tikhia</option>
-              <option>Kuchinda</option>
-              <option>Bhojpur</option>
-              <option>T.Niktimal</option>
-              <option>Charmal</option>
-              <option>Khetrajpur</option>
-              <option>Kardega</option>
-              <option>Kadalidhipa</option>
-              <option>Khariapada</option>
-              <option>Bhelluadihi</option>
-              <option>Domposh</option>
-              <option>Rajpur</option>
-              <option>Kansar</option>
-            </select></div>
-          <div class="full-width"><label>Meeting Title:</label><input type="text" name="meetingTitle" required></div>
-          <div><label>Conducted By:</label><select name="conductedBy" required>
-              <option>Akshaya Kumar Pallai</option>
-              <option>Vicky Vikram Das</option>
-              <option>Krushna Chandra Parida</option>
-              <option>Mary Helena Kujur</option>
-              <option>Hemanti Sabar</option>
-              <option>Amlan Abhinav</option>
-              <option>Asutosh Nayak</option>
-              <option>Pratham Parida</option>
-              <option>Rashmi Prava Nayak</option>
-              <option>Minati Mallick</option>
-              <option>Sunita Patra</option>
-              <option>Deepak Kumar Tudu</option>
-              <option>Swati Rani Achary</option>
-            </select></div>
-          <div><label>Attendees:</label><textarea name="attendees" required></textarea></div>
-          <div class="full-width"><label>Meeting Agenda:</label><textarea name="meetingAgenda" required></textarea>
-          </div>
-          <div class="full-width"><label>What points were discussed during the meeting?</label><textarea
-              name="meetingDiscussion"></textarea></div>
-        </div>
-        <button type="submit">Save Meeting</button>
-      </form>
-
-      <form id="action-form" style="margin-top: 0; border: 2px solid #ccc;">
-        <h3 style="margin-top: 0px;">Meeting Action Items</h3>
-        <div id="action-mode"
-          style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5; font-weight: bold; color: #d9534f;">
-          Mode: Add New Action Item
-        </div>
-        <input type="hidden" name="row">
-        <div class="form-grid">
-          <div><label>Meeting ID:</label><input type="text" name="meetingId" id="action-meetingId" readonly required>
-          </div>
-          <div class="full-width"><label>Action Item:</label><input type="text" name="actionItem" required></div>
-          <div><label>Assigned To:</label><select name="assignedTo" required>
-              <option>Akshaya Kumar Pallai</option>
-              <option>Vicky Vikram Das</option>
-              <option>Krushna Chandra Parida</option>
-              <option>Mary Helena Kujur</option>
-              <option>Hemanti Sabar</option>
-              <option>Amlan Abhinav</option>
-              <option>Asutosh Nayak</option>
-              <option>Pratham Parida</option>
-              <option>Rashmi Prava Nayak</option>
-              <option>Minati Mallick</option>
-              <option>Sunita Patra</option>
-              <option>Deepak Kumar Tudu</option>
-              <option>Swati Rani Achary</option>
-            </select></div>
-          <div><label>Deadline:</label><input type="date" name="deadline" required></div>
-          <div class="full-width"><label>Status:</label><select name="status" required>
-              <option value="">Select Status</option>
-              <option>Pending</option>
-              <option>In Progress</option>
-              <option>Completed</option>
-            </select></div>
-        </div>
-        <button type="submit">Add Action Item</button>
-        <button type="reset">Clear</button>
-      </form>
+<body class="tracker-active"> 
+  <div id="app-container">
+    <div class="navigation-buttons sticky top-0 z-50 bg-green-50 shadow-md p-3 flex flex-wrap justify-center gap-2">
+      <button onclick="showHomePage()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Home</button>
+      <button onclick="showSection('meetings-section')" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Meetings</button>
+      <button onclick="showSection('media-section')" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Media</button>
+      <button onclick="showSection('presentations-section')" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Presentation</button>
+      <button id="admin-nav-button" onclick="handleAdminNavClick()" class="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors">Admin</button>
     </div>
-    <h2 style="text-align: center; margin-top: 20px">All Meetings</h2>
-    <table id="meeting-table">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
 
-    <h2 style="text-align: center;">All Action Items</h2>
-    <table id="action-table">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <div id="weeklyStatus-section" style="display:none;">
-    <h2 style="text-align:center; background:#0b2d64; color:white; padding:10px; border-radius:5px;">
-      Bloomberg Cities Idea Exchange || India || Weekly Status
-    </h2>
-
-    <form id="weekly-status-form"
-      style="margin:0 auto; background:white; padding:20px; border-radius:6px; border:2px solid #ccc;">
-      <input type="hidden" name="row">
-      <h3>Enter Weekly Status</h3>
-      <div id="status-mode"
-        style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5; font-weight: bold; color: #d9534f;">
-        Mode: Add New Status</div>
-      <label>Week Number:</label>
-      <select name="weekInfo" required>
-        <option value="">Select Week</option>
-        <option value="Week 19 (May 05 - May 11)">Week 19 (May 05 - May 11)</option>
-        <option value="Week 20 (May 12 - May 18)">Week 20 (May 12 - May 18)</option>
-        <option value="Week 21 (May 19 - May 25)">Week 21 (May 19 - May 25)</option>
-        <option value="Week 22 (May 26 - Jun 01)">Week 22 (May 26 - Jun 01)</option>
-        <option value="Week 23 (Jun 02 - Jun 08)">Week 23 (Jun 02 - Jun 08)</option>
-        <option value="Week 24 (Jun 09 - Jun 15)">Week 24 (Jun 09 - Jun 15)</option>
-        <option value="Week 25 (Jun 16 - Jun 22)">Week 25 (Jun 16 - Jun 22)</option>
-        <option value="Week 26 (Jun 23 - Jun 29)">Week 26 (Jun 23 - Jun 29)</option>
-        <option value="Week 27 (Jun 30 - Jul 06)">Week 27 (Jun 30 - Jul 06)</option>
-        <option value="Week 28 (Jul 07 - Jul 13)">Week 28 (Jul 07 - Jul 13)</option>
-        <option value="Week 29 (Jul 14 - Jul 20)">Week 29 (Jul 14 - Jul 20)</option>
-        <option value="Week 30 (Jul 21 - Jul 27)">Week 30 (Jul 21 - Jul 27)</option>
-        <option value="Week 31 (Jul 28 - Aug 03)">Week 31 (Jul 28 - Aug 03)</option>
-        <option value="Week 32 (Aug 04 - Aug 10)">Week 32 (Aug 04 - Aug 10)</option>
-        <option value="Week 33 (Aug 11 - Aug 17)">Week 33 (Aug 11 - Aug 17)</option>
-        <option value="Week 34 (Aug 18 - Aug 24)">Week 34 (Aug 18 - Aug 24)</option>
-        <option value="Week 35 (Aug 25 - Aug 31)">Week 35 (Aug 25 - Aug 31)</option>
-        <option value="Week 36 (Sep 01 - Sep 07)">Week 36 (Sep 01 - Sep 07)</option>
-        <option value="Week 37 (Sep 08 - Sep 14)">Week 37 (Sep 08 - Sep 14)</option>
-        <option value="Week 38 (Sep 15 - Sep 21)">Week 38 (Sep 15 - Sep 21)</option>
-        <option value="Week 39 (Sep 22 - Sep 28)">Week 39 (Sep 22 - Sep 28)</option>
-        <option value="Week 40 (Sep 29 - Oct 05)">Week 40 (Sep 29 - Oct 05)</option>
-        <option value="Week 41 (Oct 06 - Oct 12)">Week 41 (Oct 06 - Oct 12)</option>
-        <option value="Week 42 (Oct 13 - Oct 19)">Week 42 (Oct 13 - Oct 19)</option>
-        <option value="Week 43 (Oct 20 - Oct 26)">Week 43 (Oct 20 - Oct 26)</option>
-        <option value="Week 44 (Oct 27 - Nov 02)">Week 44 (Oct 27 - Nov 02)</option>
-        <option value="Week 45 (Nov 03 - Nov 09)">Week 45 (Nov 03 - Nov 09)</option>
-        <option value="Week 46 (Nov 10 - Nov 16)">Week 46 (Nov 10 - Nov 16)</option>
-        <option value="Week 47 (Nov 17 - Nov 23)">Week 47 (Nov 17 - Nov 23)</option>
-        <option value="Week 48 (Nov 24 - Nov 30)">Week 48 (Nov 24 - Nov 30)</option>
-        <option value="Week 49 (Dec 01 - Dec 07)">Week 49 (Dec 01 - Dec 07)</option>
-        <option value="Week 50 (Dec 08 - Dec 14)">Week 50 (Dec 08 - Dec 14)</option>
-        <option value="Week 51 (Dec 15 - Dec 21)">Week 51 (Dec 15 - Dec 21)</option>
-        <option value="Week 52 (Dec 22 - Dec 28)">Week 52 (Dec 22 - Dec 28)</option>
-        <option value="Week 53 (Dec 29 - Dec 31)">Week 53 (Dec 29 - Dec 31)</option>
-      </select>
-
-      <label>Zone:</label>
-      <select name="zone" required>
-        <option value="">Select Zone</option>
-        <option>Zone 1</option>
-        <option>Zone 2</option>
-        <option>Zone 3</option>
-      </select>
-
-      <label>District:</label>
-      <select name="district" required>
-        <option value="">Select District</option>
-        <option>Balangir</option>
-        <option>Bargarh</option>
-        <option>Cuttack</option>
-        <option>Ganjam</option>
-        <option>Kendujhar</option>
-        <option>Koraput</option>
-        <option>Mayurbhanj</option>
-        <option>Sambalpur</option>
-        <option>Sundargarh</option>
-      </select>
-
-      <label>Summary of This Week Activities:</label>
-      <textarea name="currentWeekUpdate" rows="3" required></textarea>
-
-      <label>Activities Planned for Next Week:</label>
-      <textarea name="nextWeekUpdate" rows="4" required></textarea>
-
-      <button type="submit">Save Status</button>
-    </form>
-    <h2 style="text-align: center; margin-top: 20px">All Weekly Status</h2>
-    <table id="weekly-status-table" style="margin:0 auto;">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <div id="media-section" style="display:none; text-align:center;">
-    <h2>Upload Weekly Media Files</h2>
-    <form id="media-upload-form" method="post" enctype="multipart/form-data"
-      style="max-width: 800px; margin:0 auto; border:2px solid #ccc; padding:20px; border-radius:8px;">
-      <div class="form-grid">
-        <div>
-          <label>Week:</label>
-          <select name="weekInfo" required>
-            <option value="">Select Week</option>
-            <option value="Week 19 (May 05 - May 11)">Week 19 (May 05 - May 11)</option>
-            <option value="Week 20 (May 12 - May 18)">Week 20 (May 12 - May 18)</option>
-            <option value="Week 21 (May 19 - May 25)">Week 21 (May 19 - May 25)</option>
-            <option value="Week 22 (May 26 - Jun 01)">Week 22 (May 26 - Jun 01)</option>
-            <option value="Week 23 (Jun 02 - Jun 08)">Week 23 (Jun 02 - Jun 08)</option>
-            <option value="Week 24 (Jun 09 - Jun 15)">Week 24 (Jun 09 - Jun 15)</option>
-            <option value="Week 25 (Jun 16 - Jun 22)">Week 25 (Jun 16 - Jun 22)</option>
-            <option value="Week 26 (Jun 23 - Jun 29)">Week 26 (Jun 23 - Jun 29)</option>
-            <option value="Week 27 (Jun 30 - Jul 06)">Week 27 (Jun 30 - Jul 06)</option>
-            <option value="Week 28 (Jul 07 - Jul 13)">Week 28 (Jul 07 - Jul 13)</option>
-            <option value="Week 29 (Jul 14 - Jul 20)">Week 29 (Jul 14 - Jul 20)</option>
-            <option value="Week 30 (Jul 21 - Jul 27)">Week 30 (Jul 21 - Jul 27)</option>
-            <option value="Week 31 (Jul 28 - Aug 03)">Week 31 (Jul 28 - Aug 03)</option>
-            <option value="Week 32 (Aug 04 - Aug 10)">Week 32 (Aug 04 - Aug 10)</option>
-            <option value="Week 33 (Aug 11 - Aug 17)">Week 33 (Aug 11 - Aug 17)</option>
-            <option value="Week 34 (Aug 18 - Aug 24)">Week 34 (Aug 18 - Aug 24)</option>
-            <option value="Week 35 (Aug 25 - Aug 31)">Week 35 (Aug 25 - Aug 31)</option>
-            <option value="Week 36 (Sep 01 - Sep 07)">Week 36 (Sep 01 - Sep 07)</option>
-            <option value="Week 37 (Sep 08 - Sep 14)">Week 37 (Sep 08 - Sep 14)</option>
-            <option value="Week 38 (Sep 15 - Sep 21)">Week 38 (Sep 15 - Sep 21)</option>
-            <option value="Week 39 (Sep 22 - Sep 28)">Week 39 (Sep 22 - Sep 28)</option>
-            <option value="Week 40 (Sep 29 - Oct 05)">Week 40 (Sep 29 - Oct 05)</option>
-            <option value="Week 41 (Oct 06 - Oct 12)">Week 41 (Oct 06 - Oct 12)</option>
-            <option value="Week 42 (Oct 13 - Oct 19)">Week 42 (Oct 13 - Oct 19)</option>
-            <option value="Week 43 (Oct 20 - Oct 26)">Week 43 (Oct 20 - Oct 26)</option>
-            <option value="Week 44 (Oct 27 - Nov 02)">Week 44 (Oct 27 - Nov 02)</option>
-            <option value="Week 45 (Nov 03 - Nov 09)">Week 45 (Nov 03 - Nov 09)</option>
-            <option value="Week 46 (Nov 10 - Nov 16)">Week 46 (Nov 10 - Nov 16)</option>
-            <option value="Week 47 (Nov 17 - Nov 23)">Week 47 (Nov 17 - Nov 23)</option>
-            <option value="Week 48 (Nov 24 - Nov 30)">Week 48 (Nov 24 - Nov 30)</option>
-            <option value="Week 49 (Dec 01 - Dec 07)">Week 49 (Dec 01 - Dec 07)</option>
-            <option value="Week 50 (Dec 08 - Dec 14)">Week 50 (Dec 08 - Dec 14)</option>
-            <option value="Week 51 (Dec 15 - Dec 21)">Week 51 (Dec 15 - Dec 21)</option>
-            <option value="Week 52 (Dec 22 - Dec 28)">Week 52 (Dec 22 - Dec 28)</option>
-            <option value="Week 53 (Dec 29 - Dec 31)">Week 53 (Dec 29 - Dec 31)</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Zone:</label>
-          <select name="zone" required>
-            <option value="">Select Zone</option>
-            <option>Zone 1</option>
-            <option>Zone 2</option>
-            <option>Zone 3</option>
-          </select>
-        </div>
-
-        <div>
-          <label>District:</label>
-          <select name="district" required>
-            <option value="">Select District</option>
-            <option>Balangir</option>
-            <option>Bargarh</option>
-            <option>Cuttack</option>
-            <option>Ganjam</option>
-            <option>Kendujhar</option>
-            <option>Koraput</option>
-            <option>Mayurbhanj</option>
-            <option>Sambalpur</option>
-            <option>Sundargarh</option>
-          </select>
-        </div>
-
-        <div class="full-width">
-          <label>Upload Media (Photos/Videos):</label>
-          <input type="file" name="mediaFile" accept="image/*,video/*" required>
-        </div>
-      </div>
-      <button type="submit">Upload Media</button>
-    </form>
-    <h3>Uploaded Media Gallery</h3>
-    <div id="media-gallery" style="margin-top: 40px;">
+    <div id="main-content-wrapper" class="pt-20"> 
+        <div id="tracker-content-area">
+            <div id="meetings-section" style="display: none;">
+                <h2>Bloomberg Cities Idea Exchange || India || Meeting & Action Tracker</h2>
+                <div class="form-container">
+                <form id="meeting-form" style="margin-top: 0; border: 2px solid #ccc;">
+                    <h3 style="margin-top: 0px;">Meeting Agenda and Discussions</h3>
+                    <div id="meeting-mode" style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5; font-weight: bold; color: #d9534f;">Mode: Add New Meeting</div>
+                    <input type="hidden" name="row">
+                    <div class="form-grid">
+                    <div><label for="meetingId">Meeting ID:</label><input type="text" name="meetingId" id="meetingId" readonly></div>
+                    <div><label for="meetingDate">Meeting Date:</label><input type="date" name="meetingDate" id="meetingDate" required></div>
+                    <div><label for="zoneM">Zone:</label><select name="zone" id="zoneM" required><option value="">Select Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select></div>
+                    <div><label for="districtM">District:</label><select name="district" id="districtM" required><option value="">Select District</option><option>Balangir</option> <option>Bargarh</option> <option>Cuttack</option> <option>Ganjam</option> <option>Kendujhar</option> <option>Koraput</option> <option>Mayurbhanj</option> <option>Sambalpur</option> <option>Sundargarh</option></select></div>
+                    <div><label for="coldRoomM">Cold Room Location (Optional):</label><select id="coldRoomM" name="coldRoom"><option value="">None</option><option>Besil</option><option>RMC Behera Market</option><option>RMC Sarandapali</option><option>Athagarh NAC</option><option>Nistipur</option><option>Dudhianali</option><option>RMC Kalabada Market Yard</option><option>RMC Digapahandi Market Yard</option><option>RMC Bhanjanagar Market Yard</option><option>Bahadapada</option><option>RMC Buguda Market Yard</option><option>Chatrapur Market</option><option>Kolasingi</option><option>Raisuan</option><option>Madarangajodi</option><option>Mukuna</option><option>Tikarapada</option><option>Nuagaon (Narsinghpur)</option><option>Baradapala</option><option>Ratanpur</option><option>Tulasichaura</option><option>Kathakaranjia</option><option>Ghatabhagra</option><option>Malimarla</option><option>Baghiatangar</option><option>Chapaldihi</option><option>Akhapolan</option><option>Sandhenkia</option><option>Tikhia</option><option>Kuchinda</option><option>Bhojpur</option><option>T.Niktimal</option><option>Charmal</option><option>Khetrajpur</option><option>Kardega</option><option>Kadalidhipa</option><option>Khariapada</option><option>Bhelluadihi</option><option>Domposh</option><option>Rajpur</option><option>Kansar</option></select></div>
+                    <div class="full-width"><label for="meetingTitle">Meeting Title:</label><input type="text" id="meetingTitle" name="meetingTitle" required></div>
+                    <div><label for="conductedByM">Conducted By:</label><select name="conductedBy" id="conductedByM" required><option>Akshaya Kumar Pallai</option><option>Vicky Vikram Das</option><option>Krushna Chandra Parida</option><option>Mary Helena Kujur</option><option>Hemanti Sabar</option><option>Amlan Abhinav</option><option>Asutosh Nayak</option><option>Pratham Parida</option><option>Rashmi Prava Nayak</option><option>Minati Mallick</option><option>Sunita Patra</option><option>Deepak Kumar Tudu</option><option>Swati Rani Achary</option></select></div>
+                    <div><label for="attendeesM">Attendees:</label><textarea name="attendees" id="attendeesM" required></textarea></div>
+                    <div class="full-width"><label for="meetingAgendaM">Meeting Agenda:</label><textarea name="meetingAgenda" id="meetingAgendaM" required></textarea></div>
+                    <div class="full-width"><label for="meetingDiscussionM">What points were discussed during the meeting?</label><textarea name="meetingDiscussion" id="meetingDiscussionM"></textarea></div>
+                    </div>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700">Save Meeting</button>
+                </form>
+                <form id="action-form" style="margin-top: 0; border: 2px solid #ccc;">
+                    <h3 style="margin-top: 0px;">Meeting Action Items</h3>
+                    <div id="action-mode" style="margin: 10px 0; margin-bottom: 15px; padding: 5px; border: 2px solid #aaa; border-radius: 4px; background-color: #f5f5f5; font-weight: bold; color: #d9534f;">Mode: Add New Action Item</div>
+                    <input type="hidden" name="row">
+                    <div class="form-grid">
+                    <div><label for="action-meetingId">Meeting ID:</label><input type="text" name="meetingId" id="action-meetingId" readonly required></div>
+                    <div class="full-width"><label for="actionItemA">Action Item:</label><input type="text" name="actionItem" id="actionItemA" required></div>
+                    <div><label for="assignedToA">Assigned To:</label><select name="assignedTo" id="assignedToA" required><option>Akshaya Kumar Pallai</option><option>Vicky Vikram Das</option><option>Krushna Chandra Parida</option><option>Mary Helena Kujur</option><option>Hemanti Sabar</option><option>Amlan Abhinav</option><option>Asutosh Nayak</option><option>Pratham Parida</option><option>Rashmi Prava Nayak</option><option>Minati Mallick</option><option>Sunita Patra</option><option>Deepak Kumar Tudu</option><option>Swati Rani Achary</option></select></div>
+                    <div><label for="deadlineA">Deadline:</label><input type="date" name="deadline" id="deadlineA" required></div>
+                    <div class="full-width"><label for="statusA">Status:</label><select name="status" id="statusA" required><option value="">Select Status</option> <option>Pending</option> <option>In Progress</option> <option>Completed</option></select></div>
+                    </div>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700">Add Action Item</button>
+                    <button type="reset" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Clear</button>
+                </form>
+                </div>
+                <h2 style="text-align: center; margin-top: 20px">All Meetings</h2>
+                <table id="meeting-table"><thead></thead><tbody></tbody></table>
+                <h2 style="text-align: center;">All Action Items</h2>
+                <table id="action-table"><thead></thead><tbody></tbody></table>
+            </div>
+            <div id="media-section" style="display:none; text-align:center;">
+                <h2>Upload Weekly Media Files</h2>
+                <form id="media-upload-form" method="post" enctype="multipart/form-data" style="max-width: 800px; margin:0 auto; border:2px solid #ccc; padding:20px; border-radius:8px;"><div class="form-grid"><div> <label for="weekInfoMedia">Week:</label> <select name="weekInfo" id="weekInfoMedia" required> <option value="">Select Week</option> <option value="Week 19 (May 05 - May 11)">Week 19 (May 05 - May 11)</option> <option value="Week 53 (Dec 29 - Dec 31)">Week 53 (Dec 29 - Dec 31)</option> </select> </div><div> <label for="zoneMedia">Zone:</label> <select name="zone" id="zoneMedia" required> <option value="">Select Zone</option> <option>Zone 1</option> <option>Zone 2</option> <option>Zone 3</option> </select> </div><div> <label for="districtMedia">District:</label> <select name="district" id="districtMedia" required> <option value="">Select District</option> <option>Balangir</option> <option>Sundargarh</option> </select> </div><div class="full-width"> <label for="mediaFileMedia">Upload Media (Photos/Videos):</label> <input type="file" name="mediaFile" id="mediaFileMedia" accept="image/*,video/*" required> </div></div><button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700">Upload Media</button></form>
+                <h3>Uploaded Media Gallery</h3>
+                <div id="media-gallery" style="margin-top: 40px;"><p>Loading media gallery...</p></div>
+            </div>
+            <div id="presentations-section" style="display:none;">
+                <h2>Project Presentations</h2>
+                <div class="presentation-upload-form-container"><h3>Add New Presentation</h3><form id="presentation-upload-form"><div> <label for="presentationWeekInfo">Week Number:</label> <select name="weekInfo" id="presentationWeekInfo" required> <option value="">Select Week</option> </select> </div><div> <label for="presentationTitleInput">Presentation Title (Optional):</label> <input type="text" name="presentationTitle" id="presentationTitleInput"> </div><div> <label for="presentationIframeCode">Google Slides Embed Code (iframe):</label> <textarea name="iframeCode" id="presentationIframeCode" required placeholder="Paste the full <iframe> code from Google Slides here..."></textarea> </div><button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700">Save Presentation</button></form></div>
+                <div id="presentations-display-area" style="margin-top: 30px;"><p>Loading presentations...</p></div>
+            </div>
+            <div id="admin-section" style="display: none;" class="max-w-md mx-auto mt-10">
+                <form id="admin-login-form" class="bg-white p-8 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">Admin Login</h2>
+                    <div class="mb-4">
+                        <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
+                        <input type="text" id="username" name="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-6">
+                        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                        <input type="password" id="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Sign In
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div> 
+        <div id="infographic-content-area" style="display:none;"></div>
+    </div> 
+    <div id="loadingIndicator" class="loading-indicator">
+        <div class="loader"></div>
+        <p>Processing...</p>
     </div>
-  </div>
-
-  <div id="presentations-section" style="display:none;">
-    <h2>Project Presentations</h2>
-    <div class="presentation-upload-form-container">
-      <h3>Add New Presentation</h3>
-      <form id="presentation-upload-form">
-        <div>
-          <label for="presentationWeekInfo">Week Number:</label>
-          <select name="weekInfo" id="presentationWeekInfo" required>
-            <option value="">Select Week</option>
-            <option value="Week 19 (May 05 - May 11)">Week 19 (May 05 - May 11)</option>
-            <option value="Week 20 (May 12 - May 18)">Week 20 (May 12 - May 18)</option>
-            <option value="Week 21 (May 19 - May 25)">Week 21 (May 19 - May 25)</option>
-            <option value="Week 22 (May 26 - Jun 01)">Week 22 (May 26 - Jun 01)</option>
-            <option value="Week 23 (Jun 02 - Jun 08)">Week 23 (Jun 02 - Jun 08)</option>
-            <option value="Week 24 (Jun 09 - Jun 15)">Week 24 (Jun 09 - Jun 15)</option>
-            <option value="Week 25 (Jun 16 - Jun 22)">Week 25 (Jun 16 - Jun 22)</option>
-            <option value="Week 26 (Jun 23 - Jun 29)">Week 26 (Jun 23 - Jun 29)</option>
-            <option value="Week 27 (Jun 30 - Jul 06)">Week 27 (Jun 30 - Jul 06)</option>
-            <option value="Week 28 (Jul 07 - Jul 13)">Week 28 (Jul 07 - Jul 13)</option>
-            <option value="Week 29 (Jul 14 - Jul 20)">Week 29 (Jul 14 - Jul 20)</option>
-            <option value="Week 30 (Jul 21 - Jul 27)">Week 30 (Jul 21 - Jul 27)</option>
-            <option value="Week 31 (Jul 28 - Aug 03)">Week 31 (Jul 28 - Aug 03)</option>
-            <option value="Week 32 (Aug 04 - Aug 10)">Week 32 (Aug 04 - Aug 10)</option>
-            <option value="Week 33 (Aug 11 - Aug 17)">Week 33 (Aug 11 - Aug 17)</option>
-            <option value="Week 34 (Aug 18 - Aug 24)">Week 34 (Aug 18 - Aug 24)</option>
-            <option value="Week 35 (Aug 25 - Aug 31)">Week 35 (Aug 25 - Aug 31)</option>
-            <option value="Week 36 (Sep 01 - Sep 07)">Week 36 (Sep 01 - Sep 07)</option>
-            <option value="Week 37 (Sep 08 - Sep 14)">Week 37 (Sep 08 - Sep 14)</option>
-            <option value="Week 38 (Sep 15 - Sep 21)">Week 38 (Sep 15 - Sep 21)</option>
-            <option value="Week 39 (Sep 22 - Sep 28)">Week 39 (Sep 22 - Sep 28)</option>
-            <option value="Week 40 (Sep 29 - Oct 05)">Week 40 (Sep 29 - Oct 05)</option>
-            <option value="Week 41 (Oct 06 - Oct 12)">Week 41 (Oct 06 - Oct 12)</option>
-            <option value="Week 42 (Oct 13 - Oct 19)">Week 42 (Oct 13 - Oct 19)</option>
-            <option value="Week 43 (Oct 20 - Oct 26)">Week 43 (Oct 20 - Oct 26)</option>
-            <option value="Week 44 (Oct 27 - Nov 02)">Week 44 (Oct 27 - Nov 02)</option>
-            <option value="Week 45 (Nov 03 - Nov 09)">Week 45 (Nov 03 - Nov 09)</option>
-            <option value="Week 46 (Nov 10 - Nov 16)">Week 46 (Nov 10 - Nov 16)</option>
-            <option value="Week 47 (Nov 17 - Nov 23)">Week 47 (Nov 17 - Nov 23)</option>
-            <option value="Week 48 (Nov 24 - Nov 30)">Week 48 (Nov 24 - Nov 30)</option>
-            <option value="Week 49 (Dec 01 - Dec 07)">Week 49 (Dec 01 - Dec 07)</option>
-            <option value="Week 50 (Dec 08 - Dec 14)">Week 50 (Dec 08 - Dec 14)</option>
-            <option value="Week 51 (Dec 15 - Dec 21)">Week 51 (Dec 15 - Dec 21)</option>
-            <option value="Week 52 (Dec 22 - Dec 28)">Week 52 (Dec 22 - Dec 28)</option>
-            <option value="Week 53 (Dec 29 - Dec 31)">Week 53 (Dec 29 - Dec 31)</option>
-          </select>
+    <div id="customMessageBoxOverlay" class="custom-message-box-overlay">
+        <div class="custom-message-box">
+            <p id="customMessageText"></p>
+            <div class="custom-message-box-buttons">
+                <button id="customMessageConfirm" class="confirm-button">OK</button>
+                <button id="customMessageCancel" class="cancel-button">Cancel</button>
+            </div>
         </div>
-        <div>
-          <label for="presentationTitle">Presentation Title (Optional):</label>
-          <input type="text" name="presentationTitle" id="presentationTitle">
-        </div>
-        <div>
-          <label for="presentationIframeCode">Google Slides Embed Code (iframe):</label>
-          <textarea name="iframeCode" id="presentationIframeCode" required
-            placeholder="Paste the full <iframe> code from Google Slides here..."></textarea>
-        </div>
-        <button type="submit">Save Presentation</button>
-      </form>
     </div>
-    <div id="presentations-display-area" style="margin-top: 30px;">
-    </div>
-  </div>
-
-  <div id="dummy4-section" style="display:none; text-align:center;">
-    <h2>Dummy Section 4 Content</h2>
-  </div>
 
   <script>
     var scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
+    
+    let isAdminLoggedIn = false;
 
-    function fetchPresentations() {
-      const presentationsContainer = document.getElementById('presentations-display-area');
-      if (!presentationsContainer) {
-        console.error("Presentations display area not found!");
-        return;
-      }
-      presentationsContainer.innerHTML = '<p style="text-align:center;">Loading presentations...</p>';
+    const originalTrackerHeadContent = document.head.innerHTML;
+    const originalTrackerBodyClasses = document.body.className;
+    const originalTrackerBodyStyles = {
+        fontFamily: document.body.style.fontFamily,
+        margin: document.body.style.margin,
+        padding: document.body.style.padding,
+        maxWidth: document.body.style.maxWidth,
+        backgroundColor: document.body.style.backgroundColor
+    };
 
-      fetch(scriptURL + '?action=get_presentations')
-        .then(res => {
-          if (!res.ok) {
-            return res.text().then(text => { throw new Error(`Failed to fetch presentations: ${res.status} ${text || res.statusText}`) });
-          }
-          return res.json();
-        })
-        .then(data => {
-          console.log("Fetched presentations data:", data);
-          if (data && data.error) {
-            presentationsContainer.innerHTML = `<p class="error-message">Error loading presentations: ${data.error}</p>`;
+    const infographicPageHeadHTML_Base = `
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bloomberg Cities Idea Exchange - Project Infographic</title>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+        <style>
+            /* Styles for Infographic Page are now primarily handled by Tailwind via .infographic-active on body */
+        </style>
+    `;
+    const infographicPageBodyHTML = `
+        <div class="p-4 md:p-8"> 
+            <header class="text-center mb-16"> <h1 class="text-4xl md:text-5xl font-bold" style="color: #1B5E20;">Bloomberg Cities Idea Exchange</h1> <h2 class="text-2xl md:text-3xl mt-3" style="color: #4CAF50;">Economic Vulnerability Project: Powering Cold Storage with Solar Energy & Community Cooperatives</h2> </header> 
+            <main class="space-y-16"> 
+                <section class="stat-card text-center border border-gray-200 hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"> <h3 class="section-title text-3xl mb-6">🎯 Project Objective Overview</h3> <p class="text-2xl font-semibold" style="color: #1B5E20;">Our Core Mission: Scaling the highly successful Rourkela Cold Room Project model statewide across Odisha, transforming local economies and empowering communities! <span class="text-3xl inline-block ml-2">🚀</span></p> </section> 
+                <section> <h3 class="section-title text-3xl text-center mb-8">📍 Geographic Impact - Phase 1 Expansion</h3> <p class="text-center text-lg mb-8">We're expanding our reach across Odisha to bring sustainable cold storage solutions to more communities, fostering growth and reducing food loss.</p> <div class="stat-card text-center p-6 mb-8 border border-gray-200 hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"> <h4 class="font-semibold text-xl mb-3" style="color: #4CAF50;">Cold Room Locations Across Odisha</h4> <p class="text-sm text-gray-600 mb-4">Visual representation of cold room distribution across the 9 target districts, highlighting the project's widespread impact.</p> <div align="center"><img src="https://1drv.ms/i/c/FCC27489BB0A4269/IQSvnAtoFx5ISp0qSdwMlPLUAendayx2MQsXZOFgVqua3D0?width=660" align="center" "width="660" height="auto" /></div> <div class="stat-card p-6 mb-8 border border-gray-200 hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"> <h4 class="font-semibold text-xl mb-3 text-center" style="color: #4CAF50;">Phase 1 Cold Room Site Details</h4> <p class="text-sm text-gray-600 mb-4 text-center">A comprehensive list of all 41 cold room sites, detailing their location, type, capacity, operators, and supervision.</p> <div class="table-container"> <table class="data-table"> <thead><tr><th class="py-3 px-4">#</th><th class="py-3 px-4">District</th><th class="py-3 px-4">Sub-Division</th><th class="py-3 px-4">Block</th><th class="py-3 px-4">Nearby Urban Local Body</th><th class="py-3 px-4">Cold Room Type</th><th class="py-3 px-4">Locations</th><th class="py-3 px-4">Size (in MT)</th><th class="py-3 px-4">Operators</th><th class="py-3 px-4">Supervision By</th></tr></thead> <tbody> <tr><td>01</td><td>Balangir</td><td>Titila garh</td><td>Titila garh</td><td>Titilagarh Muni .</td><td>OREDA</td><td>Besil</td><td>10</td><td>Jaden FPC</td><td>DDH Balangir</td></tr> <tr><td>02</td><td>Bargarh</td><td>Bargarh</td><td>Bargarh</td><td>Bargarh Muni .</td><td>Pre-Existing</td><td>RMC Behera Market</td><td>10</td><td>Premsai SHG</td><td>RMC Bargarh</td></tr> <tr><td>03</td><td>Bargarh</td><td>Bargarh</td><td>Bargarh</td><td>Bargarh Muni .</td><td>Pre-Existing</td><td>RMC Sarandapali</td><td>10</td><td>Jawala SHG</td><td>RMC Bargarh</td></tr> <tr><td>04</td><td>Cuttack</td><td>Athagarh</td><td>Athagarh</td><td>Athagarh NAC</td><td>OREDA</td><td>Athagarh NAC</td><td>10</td><td>Sasmita Rout & Coop .</td><td>DDH Cuttack</td></tr> <tr><td>05</td><td>Cuttack</td><td>Banki</td><td>Banki</td><td>Banki NAC</td><td>OREDA</td><td>Nistipur</td><td>10</td><td>Jaydev Jena & Coop .</td><td>DDH Cuttack</td></tr> <tr><td>06</td><td>Cuttack</td><td>Cuttack</td><td>Tangi-Choudwar</td><td>Choudwar Muni .</td><td>OREDA</td><td>Dudhianali</td><td>10</td><td>Puspita Sahoo & Coop .</td><td>DDH Cuttack</td></tr> <tr><td>07</td><td>Ganjam</td><td>Berhampur</td><td>Chikiti</td><td>Chikiti NAC</td><td>Pre-Existing</td><td>RMC Kalabada Market Yard</td><td>10</td><td>RMC Digapahandi</td><td>RMC Digapahandi</td></tr> <tr><td>08</td><td>Ganjam</td><td>Berhampur</td><td>Digapahandi</td><td>Digapahandi NAC</td><td>Pre-Existing</td><td>RMC Digapahandi Market Yard</td><td>30</td><td>FPO</td><td>RMC Digapahandi</td></tr> <tr><td>09</td><td>Ganjam</td><td>Bhanjanagar</td><td>Bhanjanagar</td><td>Bhanjanagar NAC</td><td>Pre-Existing</td><td>RMC Bhanjanagar Market Yard</td><td>10</td><td>Maa Byaghradevi FPC</td><td>RMC Bhanjanagar</td></tr> <tr><td>10</td><td>Ganjam</td><td>Bhanjanagar</td><td>Bhanjanagar .</td><td>Bhanjanagar NAC</td><td>OREDA</td><td>Bahadapada</td><td>10</td><td>Khali Bishoyi & Coop .</td><td>DDH Ganjam</td></tr> <tr><td>11</td><td>Ganjam</td><td>Bhanjanagar</td><td>Buguda</td><td>Buguda NAC</td><td>Pre-Existing</td><td>RMC Buguda Market Yard</td><td>10</td><td>Gajalaxmi PG</td><td>RMC Bhanjanagar</td></tr> <tr><td>12</td><td>Ganjam</td><td>Chatrapur</td><td>Chatrapur</td><td>Chatrapur NAC</td><td>Pre-Existing</td><td>Chatrapur Market</td><td>30</td><td>Sampoorna Sukanya PC</td><td>RMC Hinjilicut</td></tr> <tr><td>13</td><td>Ganjam</td><td>Chatrapur</td><td>Purushottampur</td><td>Purushottampur NAC</td><td>OREDA</td><td>Kolasingi</td><td>10</td><td>Baba Biswanath FPO</td><td>DDH Ganjam</td></tr> <tr><td>14</td><td>Kendujhar</td><td>Keonjhar sadar</td><td>Keonjhar</td><td>Keonjhar Muni .</td><td>Pre-Existing</td><td>Raisuan</td><td>10</td><td>Maa Tarini Vegetable PG</td><td>DDH Keonjhar</td></tr> <tr><td>15</td><td>Kendujhar</td><td>Keonjhar sadar</td><td>Keonjhar</td><td>Keonjhar Muni .</td><td>Pre-Existing</td><td>Madarangajodi</td><td>05</td><td>Maa Mangala PG</td><td>DDH Keonjhar</td></tr> <tr><td>16</td><td>Kendujhar</td><td>Keonjhar sadar</td><td>Keonjhar</td><td>Keonjhar Muni .</td><td>Pre-Existing</td><td>Mukuna</td><td>05</td><td>Satya Narayana PG</td><td>DDH Keonjhar</td></tr> <tr><td>17</td><td>Kendujhar</td><td>Keonjhar sadar</td><td>Keonjhar</td><td>Keonjhar Muni .</td><td>Pre-Existing</td><td>Tikarapada</td><td>05</td><td>Maa Taratarini PG</td><td>DDH Keonjhar</td></tr> <tr><td>18</td><td>Kendujhar</td><td>Keonjhar sadar</td><td>Keonjhar</td><td>Keonjhar Muni .</td><td>Pre-Existing</td><td>Nuagaon ( Narsinghpur )</td><td>10</td><td>Radhakrishna PG</td><td>DDH Keonjhar</td></tr> <tr><td>19</td><td>Kendujhar</td><td>Keonjhar sadar</td><td>Keonjhar</td><td>Keonjhar Muni .</td><td>Pre-Existing</td><td>Baradapala ,</td><td>05</td><td>Maa Tarini vegetable PG</td><td>DDH Keonjhar</td></tr> <tr><td>20</td><td>Kendujhar</td><td>Keonjhar sadar</td><td>Keonjhar</td><td>Keonjhar Muni .</td><td>Pre-Existing</td><td>Ratanpur</td><td>05</td><td>Jay Hanuman PG</td><td>DDH Keonjhar</td></tr> <tr><td>21</td><td>Kendujhar</td><td>Keonjhar sadar</td><td>Keonjhar</td><td>Keonjhar Muni .</td><td>Pre-Existing</td><td>Tulasichaura</td><td>10</td><td>Meghmala Parida and FPO</td><td>DDH Keonjhar</td></tr> <tr><td>22</td><td>Kendujhar</td><td>Keonjhar sadar</td><td>Keonjhar</td><td>Keonjhar Muni .</td><td>Pre-Existing</td><td>Kathakaranjia</td><td>05</td><td>Mandaramalini PG</td><td>DDH Keonjhar</td></tr> <tr><td>23</td><td>Koraput</td><td>Jeypore</td><td>Jeypore</td><td>Jeypore Muni .</td><td>Pre-Existing</td><td>Ghatabhagra</td><td>10</td><td>Bajrangbali SHG</td><td>DDH Koraput</td></tr> <tr><td>24</td><td>Koraput</td><td>Koraput</td><td>Semliguda</td><td>Sunabeda Muni .</td><td>Pre-Existing</td><td>Malimarla</td><td>10</td><td>Kailashgiri SHG</td><td>DDH Koraput</td></tr> <tr><td>25</td><td>Mayurbhanj</td><td>Bamanaghati</td><td>Rairangpur</td><td>Rairangpur Muni .</td><td>Pre-Existing</td><td>Baghiatangar</td><td>05</td><td>Padmabati SHG</td><td>DDH Mayurbhanj</td></tr> <tr><td>26</td><td>Mayurbhanj</td><td>Kaptipada</td><td>Udala</td><td>Udala NAC</td><td>Pre-Existing</td><td>Chapaldihi</td><td>05</td><td>Jai Maa Tarini SHG</td><td>DDH Mayurbharj</td></tr> <tr><td>27</td><td>Mayurbhanj</td><td>Panchapid</td><td>Karanjia</td><td>Karanja Muni .</td><td>Pre-Existing</td><td>Akhapolan</td><td>10</td><td>Maa Mangala SHG</td><td>DDH Mayurbhanj</td></tr> <tr><td>28</td><td>Mayurbhanj</td><td>Baripada</td><td>Baripada</td><td>Baripada Muni .</td><td>OREDA</td><td>Sandhenkia</td><td>10</td><td>Sandhenkia SHG</td><td>DDH Mayurbhanj</td></tr> <tr><td>29</td><td>Mayurbhanj</td><td>Rairangpur</td><td>Rairangpur</td><td>Rairangpur Muni .</td><td>OREDA</td><td>Tikhia</td><td>10</td><td>Bahalda FPC</td><td>DDH Mayurbhanj</td></tr> <tr><td>30</td><td>Sambalpur</td><td>Kuchinda</td><td>Kuchinda</td><td>Kuchinda NAC</td><td>Pre-Existing</td><td>Kuchinda</td><td>05</td><td>RMC Kuchinda</td><td>RMC Kuchinda</td></tr> <tr><td>31</td><td>Sambalpur</td><td>Kuchinda</td><td>Kuchinda</td><td>Kuchinda NAC</td><td>Pre-Existing</td><td>Bhojpur</td><td>30</td><td>RMC Kuchinda</td><td>RMC Kuchinda</td></tr> <tr><td>32</td><td>Sambalpur</td><td>Kuchinda</td><td>Kuchinda</td><td>Kuchinda NAC</td><td>OREDA</td><td>T.Niktimal</td><td>10</td><td>RMC Kuchinda</td><td>RMC Kuchinda</td></tr> <tr><td>33</td><td>Sambalpur</td><td>Rairakhol</td><td>Redhakhol</td><td>Redhakhol NAC</td><td>Pre-Existing</td><td>Charmal</td><td>05</td><td>RMC Redhakhol</td><td>RMC Redhakhol</td></tr> <tr><td>34</td><td>Sambalpur</td><td>Sambalpur</td><td>Dhankauda</td><td>Sambalpur MC</td><td>Pre-Existing</td><td>Khetrajpur</td><td>05</td><td>RMC Sambalpur</td><td>RMC Sambalpur</td></tr> <tr><td>35</td><td>Sundargarh</td><td>Panposh</td><td>Bisra</td><td>Biramitrapur Muni .</td><td>Pre-Existing</td><td>Kardega .</td><td>05</td><td>Samleswari SHG</td><td>DDH Sundargarh</td></tr> <tr><td>36</td><td>Sundargarh</td><td>Panposh</td><td>Lathikata</td><td>Rourkela MC</td><td>Pre-Existing</td><td>Kadalidhipa</td><td>05</td><td>Muskan SHG</td><td>DDH Sundargarh</td></tr> <tr><td>37</td><td>Sundargarh</td><td>Panposh</td><td>Rajgangpur</td><td>Rajgangpur Muni .</td><td>Pre-Existing</td><td>Khariapada</td><td>05</td><td>Priya SHG</td><td>DDH Sundargarh</td></tr> <tr><td>38</td><td>Sundargarh</td><td>Panposh</td><td>Rajgangpur</td><td>Rajgangpur Muni .</td><td>Pre-Existing</td><td>Bhelluadihi</td><td>05</td><td>Shaktirupa SHG</td><td>DDH Sundargarh</td></tr> <tr><td>39</td><td>Sundargarh</td><td>Panposh</td><td>Rajgangpur</td><td>Rajgangpur Muni .</td><td>Pre-Existing</td><td>Domposh</td><td>05</td><td>Ritika SHG</td><td>DDH Sundargarh</td></tr> <tr><td>40</td><td>Sundargarh</td><td>Sundargarh</td><td>Sundargarh</td><td>Sundargarh Muni .</td><td>Pre-Existing</td><td>Rajpur</td><td>05</td><td>Bulbul SHG</td><td>DDH Sundargarh</td></tr> <tr><td>41</td><td>Sundargarh</td><td>Rourkela</td><td>Lathikata</td><td>Rourkela MC</td><td>OREDA</td><td>Kansar</td><td>10</td><td>Subhashree Mohanty & Coop .</td><td>DDH Sundargarh</td></tr> </tbody> </table> </div> </div> <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"> <div class="stat-card text-center p-6 border border-gray-200 hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"><div class="big-number">41</div><p class="text-xl mt-2">Total Sites <span class="text-3xl inline-block ml-1">🏗️</span></p><p class="text-sm text-gray-600">(Existing & Upcoming)</p></div> <div class="stat-card text-center p-6 border border-gray-200 hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"><div class="big-number">25</div><p class="text-xl mt-2">Cities Covered <span class="text-3xl inline-block ml-1">🏙️</span></p></div> <div class="stat-card text-center p-6 border border-gray-200 hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"><div class="big-number">9</div><p class="text-xl mt-2">Key Districts <span class="text-3xl inline-block ml-1">🗺️</span></p></div> </div> <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start"> <div class="stat-card border border-gray-200 hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"> <h4 class="font-semibold text-xl mb-3 text-center" style="color: #4CAF50;">Site Distribution</h4> <p class="text-sm text-center mb-4">The 41 sites comprise both existing facilities and new installations, ensuring a broad and effective rollout.</p> <div class="chart-container"><canvas id="sitesChart"></canvas></div> </div> <div class="stat-card border border-gray-200 hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"> <h4 class="font-semibold text-xl mb-3" style="color: #4CAF50;">Districts Served in Odisha:</h4> <p class="text-sm mb-4">Our project aims to make a significant impact across these key agricultural regions within Odisha.</p> <ul class="space-y-2"> <li class="icon-list-item"><span class="icon text-2xl mr-3">🗺️</span> Balangir</li><li class="icon-list-item"><span class="icon text-2xl mr-3">🗺️</span> Bargarh</li><li class="icon-list-item"><span class="icon text-2xl mr-3">🗺️</span> Sambalpur</li> <li class="icon-list-item"><span class="icon text-2xl mr-3">🗺️</span> Sundargarh</li><li class="icon-list-item"><span class="icon text-2xl mr-3">🗺️</span> Keonjhar</li><li class="icon-list-item"><span class="icon text-2xl mr-3">🗺️</span> Mayurbhanj</li> <li class="icon-list-item"><span class="icon text-2xl mr-3">🗺️</span> Cuttack</li><li class="icon-list-item"><span class="icon text-2xl mr-3">🗺️</span> Ganjam</li><li class="icon-list-item"><span class="icon text-2xl mr-3">🗺️</span> Koraput</li> </ul> </div> </div> </section>
+                <section class="stat-card"> <h3 class="section-title text-3xl text-center mb-6">🤝 Key Partners & Execution Strategy</h3> <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"><div> <h4 class="font-semibold text-2xl mb-3" style="color: #4CAF50;">Dedicated Implementing Agency</h4> <p class="text-lg mb-2">Proudly implemented by:</p> <p class="text-2xl font-bold" style="color: #1B5E20;">Koel Fresh Private Limited</p> <p class="text-sm mt-1 text-gray-600">(As per the significant MoU between Directorate of Horticulture (Odisha) and Delivery Associates (UK))</p></div><div class="text-center"> <h4 class="font-semibold text-2xl mb-3" style="color: #4CAF50;">Phase 1 Timeline</h4> <p class="text-lg mb-2">This phase is designed for rapid, impactful deployment:</p> <div class="big-number" style="font-size: 4rem; color: #1B5E20;">2 <span class="text-3xl align-baseline">Years</span></div> <p class="text-xl mt-2">Focused Simultaneous Execution ⏳</p> <p class="text-sm text-gray-600">(Across all 41 sites)</p></div></div> </section>
+                <section> <h3 class="section-title text-3xl text-center mb-8">🛠️ Strategic Pillars - Phase 1 Focus</h3> <p class="text-center text-lg mb-8">Our success in Phase 1 is built on three core strategic pillars, ensuring comprehensive development and sustainable impact.</p> <div class="grid grid-cols-1 md:grid-cols-3 gap-6"> <div class="stat-card text-center p-6"> <div class="text-5xl mb-4">🧊</div> <h4 class="font-semibold text-xl mb-2" style="color: #1B5E20;">Optimal Cold Room Utilization</h4> <p class="text-gray-600">Maximizing the efficiency and usage of cold storage facilities to preserve produce quality and extend shelf life.</p> </div> <div class="stat-card text-center p-6"> <div class="text-5xl mb-4">👩‍🏫</div> <h4 class="font-semibold text-xl mb-2" style="color: #4CAF50;">Robust SHG/FPO Capacity Building</h4> <p class="text-gray-600">Empowering Self-Help Groups and Farmer Producer Organizations with skills and knowledge for effective management.</p> </div> <div class="stat-card text-center p-6"> <div class="text-5xl mb-4">🔗</div> <h4 class="font-semibold text-xl mb-2" style="color: #FFC107;">Strong Market Linkage Establishment</h4> <p class="text-gray-600">Connecting farmers and cooperatives to viable markets, ensuring better prices and consistent demand for their produce.</p> </div> </div> </section>
+                <section class="stat-card"> <h3 class="section-title text-3xl text-center mb-6">🌟 The Rourkela Cold Room Project: A Model of Success! 🏆</h3> <p class="text-center text-lg mb-6">(A proud Winner of the Bloomberg Philanthropies Global Mayors Challenge 2021!)</p> <p class="text-center text-lg mb-8">The expansion builds upon the proven, impactful results of the Rourkela pilot project, which demonstrated significant benefits for farmers and the community.</p> <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center"> <div class="p-6 bg-white rounded-lg shadow-inner border border-gray-200"> <div class="big-number" style="color: #1B5E20;">75%</div> <p class="text-xl mt-2 font-semibold">Food Waste Reduction 🗑️➡️✅</p> <p class="text-sm text-gray-600 mt-1">Dramatically reduced post-harvest losses.</p> </div> <div class="p-6 bg-white rounded-lg shadow-inner border border-gray-200"> <div class="text-5xl mb-3" style="color: #4CAF50;">💰</div> <p class="text-xl mt-2 font-semibold">Higher Farmer Earnings</p> <p class="text-sm text-gray-600 mt-1">Enabled farmers to achieve significantly better prices for their valuable produce.</p> </div> <div class="p-6 bg-white rounded-lg shadow-inner border border-gray-200"> <div class="text-5xl mb-3" style="color: #FFC107;">💪</div> <p class="text-xl mt-2 font-semibold">Women-Led Cooperative Empowerment</p> <p class="text-sm text-gray-600 mt-1">Fostered and strengthened women-led cooperatives, driving local economic growth.</p> </div> </div> </section>
+                <section> <h3 class="section-title text-3xl text-center mb-8">🚀 Our Ambitious Project Goals</h3> <p class="text-center text-lg mb-8">We are committed to driving positive and lasting change across Odisha through these key objectives.</p> <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> <div class="stat-card icon-list-item"> <span class="icon">🍎</span> <div> <h4 class="font-semibold text-lg">Combat Food Waste</h4> <p class="text-sm text-gray-600">Minimize food waste and eliminate distress selling among our valued small farmers and vendors.</p> </div> </div> <div class="stat-card icon-list-item"> <span class="icon">👩‍🌾</span> <div> <h4 class="font-semibold text-lg">Empower Local Communities</h4> <p class="text-sm text-gray-600">Uplift and empower women (SHGs/PGs) and farmer cooperatives (FPOs/FPCs) through sustainable practices.</p> </div> </div> <div class="stat-card icon-list-item"> <span class="icon">🔒</span> <div> <h4 class="font-semibold text-lg">Enhance Food Security</h4> <p class="text-sm text-gray-600">Strengthen regional food security and build resilient market linkages for a better future.</p> </div> </div> <div class="stat-card icon-list-item"> <span class="icon">🌱</span> <div> <h4 class="font-semibold text-lg">Foster Sustainable Enterprises</h4> <p class="text-sm text-gray-600">Cultivate and establish thriving, community-led cold room enterprises that last.</p> </div> </div> </div> </section>
+                <section class="stat-card"> <h3 class="section-title text-3xl text-center mb-6">🗺️ The Roadmap: Key Components of the Full Master Plan</h3> <p class="text-center text-lg mb-8">The comprehensive master plan provides a clear and detailed pathway for successful project implementation, covering all critical aspects.</p> <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"> <li class="icon-list-item"><span class="icon">⏱️</span> A Detailed Comprehensive Timeline</li> <li class="icon-list-item"><span class="icon">👥</span> A Clear Stakeholder Framework</li> <li class="icon-list-item"><span class="icon">🛠️</span> An Actionable Implementation Strategy</li> <li class="icon-list-item"><span class="icon">📢</span> A Proactive Communication Approach</li> <li class="icon-list-item"><span class="icon">✅</span> A Robust Monitoring System</li> </ul> </section>
+                <section> <h3 class="section-title text-3xl text-center mb-8">🗓️ Implementation Timeline: 12 Months, Concurrent Rollout</h3> <p class="text-center text-lg mb-8">All 41 cold room sites will be activated in parallel, with key phases overlapping across districts to ensure efficient and widespread impact.</p> <div class="space-y-6"> <div class="timeline-item"> <h4>Months 1-2: Kick-off, PMU Setup & Infrastructure Readiness 🚀</h4> <ul> <li><span class="font-semibold">Kick-off Meetings:</span> Launch project simultaneously across all selected districts with formal meetings by Koel Fresh, District Horticulture Offices, and District Administrations. Communicate objectives, timelines, roles, and outcomes.</li> <li><span class="font-semibold">Central Project Management Unit (PMU) Setup (State Level):</span> Establish within Koel Fresh's head office (Rourkela or Bhubaneswar). Appoint dedicated Project Director, Project Manager, M&E Specialist, Market Linkage Specialist, Digital Tools Expert, and Communications Officer. Centralize coordination with Delivery Associates, Directorate of Horticulture, OREDA, ORMAS, OLM, NGOs, and state-level stakeholders. Develop guidelines, SOPs, reporting formats, and deploy digital dashboards for oversight.</li> <li><span class="font-semibold">District-Level PMUs Setup:</span> Establish dedicated PMUs in each of the 9 districts, preferably at District Horticulture Offices. Appoint District Project Coordinators, Field Executives, Capacity Building Trainers, and Community Mobilizers. Ensure representation from district horticulture officials, collectors/CDOs, ORMAS, OLM, RMC officials, and local NGO representatives. Coordinate daily activities, site readiness, local capacity building, farmer outreach, operational support, and troubleshooting. Organize monthly district-level coordination meetings and provide weekly performance data to Central PMU.</li> <li><span class="font-semibold">Infrastructure Readiness & Equipment Setup:</span><ul><li><span class="font-semibold">New Cold Rooms (10 units):</span> Coordinate timely installation, commissioning, and final readiness checks with OREDA. Ensure technical readiness and operational handover by Month 2.</li><li><span class="font-semibold">Existing Cold Rooms (31 units):</span> Verify operational functionality, minor maintenance, and accessory installations (storage crates, digital scales, tablets). Ensure any minor repairs, cleaning, or equipment setup completed for full operational readiness by Month 2.</li></ul></li> </ul> </div> <div class="timeline-item"> <h4>Months 2-3: Training & Capacity Building 👩‍🏫</h4> <ul> <li><span class="font-semibold">Simultaneous Training Sessions:</span> Conduct training for all cold room operating groups: Women Self-Help Groups (SHGs), Producer Groups (PGs), Farmer Producer Organizations (FPOs), and Regulated Market Committee (RMC) staff.</li> <li><span class="font-semibold">Capacity Building Workshops:</span> Covering cold room operations and routine maintenance, digital inventory management using the Coldtivate app, basic financial bookkeeping and business management skills, and customer interaction and community engagement best practices.</li> <li><span class="font-semibold">Practical Trial Runs:</span> Initiate small-scale pilot storage operations at each site, allowing farmers/vendors to store produce and experience operational procedures firsthand. Provide continuous on-site guidance and support by Koel Fresh staff.</li> <li><span class="font-semibold">Monitoring and Feedback:</span> Regularly assess training effectiveness and operator readiness. Identify operational challenges early and refine training accordingly.</li> </ul> </div> <div class="timeline-item"> <h4>Months 3-8: Operational Launch, Awareness, Market Linkage Development 📈</h4> <ul> <li><span class="font-semibold">Cold Room Operations Begin:</span> Launch full-scale operations at all 41 sites by Month 4. Ensure daily availability of storage services for farmers and vendors.</li> <li><span class="font-semibold">Farmer & Vendor Onboarding:</span> Conduct targeted awareness drives in villages and markets. Promote cold room benefits through flyers, posters, loudspeaker announcements, and community meetings. Enroll farmers and vendors as regular users through SHG/FPO outreach.</li> <li><span class="font-semibold">Market Linkage Facilitation:</span> Koel Fresh teams connect SHGs/FPOs with bulk buyers such as wholesalers, retail chains, hotels, hospitals, hostels, food processors, and institutions. Schedule regular procurement pickups and aggregation planning.</li> <li><span class="font-semibold">Community Engagement:</span> Use existing platforms (weekly haats, panchayat meetings) to demonstrate use cases. Coordinate with NGOs and OLM to sustain participation and farmer confidence.</li> <li><span class="font-semibold">Mid-Project Review (Around Month 8):</span> Organize joint review meetings with district-level stakeholders. Evaluate utilization rates, SHG/FPO performance, and cold room impact. Identify and resolve any adoption, logistics, or maintenance challenges.</li> </ul> </div> <div class="timeline-item"> <h4>Months 9-12: Optimization, Evaluation & Sustainability Planning ✅</h4> <ul> <li><span class="font-semibold">Optimize Utilization & Financial Viability:</span> Focus on maximizing cold room usage across all sites. Analyze patterns of underutilization and implement corrective actions. Introduce or adjust incentive programs to encourage greater usage (if required).</li> <li><span class="font-semibold">Strengthen Market Linkages:</span> Refine existing procurement schedules with bulk buyers. Expand partnerships for consistent off-take of produce. Support operators in diversifying customer base (e.g., events, hostels, processors).</li> <li><span class="font-semibold">Build Long-Term Sustainability:</span> Assist SHGs/FPOs in developing Standard Operating Procedures (SOPs). Support preparation of basic business and operational plans for self-reliance. Guide cooperatives on setting service charges, reinvestment, and maintenance models.</li> <li><span class="font-semibold">Performance Evaluation:</span> Conduct site-wise assessment against Key Performance Indicators (KPIs) including utilization rates, farmer and SHG income improvements, market linkage volumes, and reduction in spoilage/waste. Capture field data, testimonials, and success stories.</li> <li><span class="font-semibold">Project Closure & Knowledge Sharing:</span> Organize district-level closure workshops to present results and highlight best practices. Host a state-level closure and learning event with all stakeholders. Document lessons learned and outline the roadmap for replication and long-term integration.</li> </ul> </div> </div> </section>
+                <section class="stat-card"> <h3 class="section-title text-3xl text-center mb-6">❄️ Cold Room Site Details: A Deeper Look ❄️</h3> <p class="text-center text-lg mb-8">The project strategically utilizes 41 cold storage rooms, integrating both existing infrastructure and new solar-powered units, tailored to local needs and community empowerment.</p> <div class="mb-8"> <h4 class="font-semibold text-2xl mb-3" style="color: #4CAF50;">Location & Ownership Model:</h4> <p class="text-md mb-4">Cold rooms are strategically located to maximize accessibility and impact, reflecting a dual ownership model to best serve local communities.</p> <div class="ownership-bar-container"> <div class="ownership-bar-rmc" style="width: calc(11 / 41 * 100%);">11 RMC Premises</div> <div class="ownership-bar-community" style="width: calc(30 / 41 * 100%);">30 Community-Managed</div> </div> <p class="text-sm text-gray-600 mt-2">11 sites are on Regulated Market Committee (RMC) yards, facilitating direct access for market vendors. The remaining 30 are at farm-gate or village cluster locations, operated by women’s Self-Help Groups (SHGs), Producer Groups (PGs), or Farmer Producer Organizations/Companies (FPOs/FPCs).</p> </div> <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8"> <div> <h4 class="font-semibold text-2xl mb-3" style="color: #4CAF50;">Existing vs. New Facilities:</h4> <ul class="space-y-3"> <li class="icon-list-item"><span class="icon">🔄</span><div><h5 class="font-semibold text-lg">31 Existing Cold Rooms:</h5><p class="text-sm text-gray-600">Leveraged immediately, these units will be activated by training current operators or bringing in SHG/FPO management to address low utilization.</p></div></li> <li class="icon-list-item"><span class="icon">☀️</span><div><h5 class="font-semibold text-lg">10 New Solar-Powered Units (by OREDA):</h5><p class="text-sm text-gray-600">These 10MT units expand capacity in identified gaps, ensuring uninterrupted cooling with 5-year maintenance support, aligning with sustainable energy goals.</p></div></li> </ul> </div> <div> <h4 class="font-semibold text-2xl mb-3" style="color: #4CAF50;">Capacity and Technology:</h4> <ul class="space-y-3"> <li class="icon-list-item"><span class="icon">📦</span><div><h5 class="font-semibold text-lg">Storage Capacity:</h5><p class="text-sm text-gray-600">Each cold room typically ranges from 5 to 30 metric tons of perishable produce storage, adaptable to local needs.</p></div></li> <li class="icon-list-item"><span class="icon">⚙️</span><div><h5 class="font-semibold text-lg">Advanced Technology:</h5><p class="text-sm text-gray-600">All units, new and existing, are equipped with precise temperature control systems and IoT sensors for optimal monitoring and management.</p></div></li> </ul> </div> </div> <div> <h4 class="font-semibold text-2xl mb-3" style="color: #4CAF50;">Community-Centric Operations Model:</h4> <p class="text-md mb-4">Each site adopts a community-centric model, empowering local groups and fostering ownership, a key to the project's success.</p> <ul class="space-y-3"> <li class="icon-list-item"><span class="icon">👩‍👩‍👧‍👦</span><div><h5 class="font-semibold text-lg">Managed by Local Cooperatives:</h5><p class="text-sm text-gray-600">Wherever possible, cold rooms are managed by local women’s cooperatives (SHGs/FPOs), providing livelihood opportunities and encouraging local trust.</p></div></li> <li class="icon-list-item"><span class="icon">🌟</span><div><h5 class="font-semibold text-lg">Rourkela Pilot Success:</h5><p class="text-sm text-gray-600">The Rourkela pilot demonstrated that women-run cold rooms significantly increase farmers’ incomes and create new economic opportunities for women entrepreneurs.</p></div></li> <li class="icon-list-item"><span class="icon">🤝</span><div><h5 class="font-semibold text-lg">Integrated Operations:</h5><p class="text-sm text-gray-600">At some sites, existing FPOs or cooperative marketing societies lead operations, integrating their members into project activities for seamless functionality.</p></div></li> </ul> </div> </section>
+                <section class="stat-card"> <h3 class="section-title text-3xl text-center mb-8">🏛️ Institutional Framework & Project Structure 🏛️</h3> <p class="text-center text-lg mb-8">A robust institutional framework, anchored by the MoU between the Directorate of Horticulture, Odisha and Delivery Associates UK, guides the project's implementation, establishing clear roles and collaboration mechanisms.</p> <div class="mb-10"> <h4 class="font-semibold text-2xl mb-4 text-center" style="color: #4CAF50;">Governing Bodies: State Level Oversight</h4> <p class="text-md text-center mb-6">Overall policy guidance and strategic direction are provided at the state level, ensuring alignment with government objectives and swift issue resolution.</p> <div class="flex flex-col items-center"> <div class="org-chart-node ...">Directorate of Horticulture (DoH)<br><span class="text-sm font-normal text-gray-600">Overall Policy Guidance & Integration</span></div><div class="org-chart-arrow">⬇️</div> <div class="org-chart-node ...">State-Level Steering Committee<br><span class="text-sm font-normal text-gray-600">Chaired by Director of Horticulture (Monthly Meetings)</span></div><div class="org-chart-line"></div> <div class="org-chart-flex"> <div class="org-chart-node"><span class="font-semibold"...>DoH Representatives</span><br><span class="text-sm font-normal text-gray-600">Ensures alignment with government objectives</span></div> <div class="org-chart-node"><span class="font-semibold"...>Delivery Associates</span><br><span class="text-sm font-normal text-gray-600">Strategic Advice, Best Practices, Monitoring Delivery</span></div> <div class="org-chart-node"><span class="font-semibold"...>Koel Fresh</span><br><span class="text-sm font-normal text-gray-600">Project Management Unit & Field Implementation</span></div> </div> </div> </div> <div class="mb-10"> <h4 class="font-semibold text-2xl mb-4 text-center" style="color: #4CAF50;">Koel Fresh’s Central Role: Project Management & Field Execution</h4> <p class="text-md text-center mb-6">Koel Fresh serves as the primary implementing agency, coordinating all activities across the 41 sites and driving the project's core focus areas.</p> <ul class="space-y-3"> <li class="icon-list-item"><span class="icon">📍</span><div><h5 class="font-semibold text-lg">Project Management Unit (PMU) & Field Arm</h5><p class="text-sm text-gray-600">Coordinates all activities from technical support and training to market linkage facilitation across all 41 sites.</p></div></li> <li class="icon-list-item"><span class="icon">🎯</span><div><h5 class="font-semibold text-lg">Executing Three Core Focus Areas</h5><ul class="list-disc list-inside text-sm text-gray-600 ml-4"><li>Maximizing cold room utilization</li><li>Building capacity of SHGs/FPOs to manage units</li><li>Linking farmers to markets for better incomes</li></ul><p class="text-sm text-gray-600 mt-1">These mirror the Rourkela model's success in providing infrastructure, connecting farmers to buyers, and empowering women's groups.</p></div></li> <li class="icon-list-item"><span class="icon">🗺️</span><div><h5 class="font-semibold text-lg">District Coordinators</h5><p class="text-sm text-gray-600">Dedicated coordinators deployed in each of the 9 districts to liaise with local officials and oversee site-level execution.</p></div></li> </ul> </div> <div class="mb-10"> <h4 class="font-semibold text-2xl mb-4 text-center" style="color: #4CAF50;">Delivery Associates’ Role: Performance & Replication</h4> <p class="text-md text-center mb-6">Delivery Associates (UK) brings expertise in performance management, ensuring outcome-oriented implementation and facilitating knowledge sharing.</p> <ul class="space-y-3"> <li class="icon-list-item"><span class="icon">📊</span><div><h5 class="font-semibold text-lg">Performance Management & KPI Dashboards</h5><p class="text-sm text-gray-600">Helps design KPI dashboards and facilitates problem-solving sessions to ensure project stays outcome-oriented.</p></div></li> <li class="icon-list-item"><span class="icon">📝</span><div><h5 class="font-semibold text-lg">Documentation & Replication</h5><p class="text-sm text-gray-600">Documents the process for future replication and scaling of the successful model.</p></div></li> <li class="icon-list-item"><span class="icon">🤝</span><div><h5 class="font-semibold text-lg">Donor Reporting & Capacity Building</h5><p class="text-sm text-gray-600">Monitors and reports to donors (like Bloomberg Philanthropies) and may embed advisors to build capacity in data-driven delivery.</p></div></li> </ul> </div> <div class="mb-10"> <h4 class="font-semibold text-2xl mb-4 text-center" style="color: #4CAF50;">Local Governance & Ownership: District Level Coordination</h4> <p class="text-md text-center mb-6">Institutional anchoring at the district level secures buy-in from all relevant authorities and keeps the project high on the agenda, ensuring local relevance and support.</p> <div class="flex flex-col items-center"> <div class="org-chart-node ...">District Collector / Addl. Collector<br><span class="text-sm font-normal text-gray-600">Chair of District Working Group (Bi-monthly Meetings)</span></div><div class="org-chart-arrow">⬇️</div> <div class="org-chart-node ...">District Working Group<br><span class="text-sm font-normal text-gray-600">Tracks progress, mobilizes resources, resolves issues</span></div><div class="org-chart-line"></div> <div class="org-chart-flex"> <div class="org-chart-node"><span class="font-semibold"...>DDH (Nodal Officer)</span><br><span class="text-sm font-normal text-gray-600">Ensures district administration support</span></div> <div class="org-chart-node"><span class="font-semibold"...>OLM & ORMAS Officials</span><br><span class="text-sm font-normal text-gray-600">Livelihoods Mission & Rural Marketing Society</span></div> <div class="org-chart-node"><span class="font-semibold"...>RMC Leadership</span><br><span class="text-sm font-normal text-gray-600">Regulated Market Committee</span></div> <div class="org-chart-node"><span class="font-semibold"...>Koel Fresh District Coordinator</span><br><span class="text-sm font-normal text-gray-600">Liaison & Site-level Execution Oversight</span></div> </div> </div> </div> <p class="text-center text-lg mt-10 font-semibold" style="color: #1B5E20;">This institutional setup effectively balances government oversight, professional project management, and crucial community ownership, ensuring all stakeholders work towards shared outcomes.</p> </section>
+                <section> <h3 class="section-title text-3xl text-center mb-8">👥 Stakeholder Engagement & Roles: A Collaborative Ecosystem 👥</h3> <p class="text-center text-lg mb-8">Successful execution hinges on coordinated efforts among a diverse set of stakeholders, each playing a specific and crucial role in the project's success.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"> <div class="stakeholder-card"><h4><span class="icon">🌿</span> Directorate of Horticulture (State Level)</h4> <p class="text-sm text-gray-600 mb-3">Provides overall leadership, policy guidance, and integration with state horticulture schemes.</p><ul><li>Issues necessary government orders for facility use and SHG/FPO management.</li><li>Monitors project progress against horticultural development goals.</li><li>Facilitates funds disbursement and champions the initiative to district officials.</li></ul></div> <div class="stakeholder-card"><h4><span class="icon">🏡</span> District Horticulture Offices (DDH/ADH/AHO)</h4> <p class="text-sm text-gray-600 mb-3">Act as nodal points in each district, ensuring local integration and farmer mobilization.</p><ul><li>Convenes district working groups and mobilizes farmers through block-level officers.</li><li>Assists in new site selection, verifies cold room readiness, and supports training.</li><li>Validates data on utilization and farmer outreach for reporting.</li></ul></div> <div class="stakeholder-card"><h4><span class="icon">🛒</span> Regulated Market Committee (RMC) Officials</h4> <p class="text-sm text-gray-600 mb-3">Crucial for cold rooms on market yards, facilitating access and market integration.</p><ul><li>Facilitates space allocation, infrastructure support, and utility access.</li><li>Helps advertise cold storage services to traders and farmers.</li><li>Assists in price discovery and may coordinate user fees and power collection.</li></ul></div> <div class="stakeholder-card"><h4><span class="icon">👩‍👧‍👦</span> Odisha Livelihoods Mission (OLM)</h4> <p class="text-sm text-gray-600 mb-3">Empowers SHGs by mobilizing, recommending, and providing capacity building support.</p><ul><li>Mobilizes and recommends suitable Women’s Self-Help Groups (SHGs) to operate cold rooms.</li><li>Provides capacity building in group management and financial literacy.</li><li>May extend bank linkage programs or revolving funds for working capital.</li></ul></div> <div class="stakeholder-card"><h4><span class="icon">📈</span> Odisha Rural Development and Marketing Society (ORMAS)</h4> <p class="text-sm text-gray-600 mb-3">Specializes in market linkage for rural products, ensuring profitable outlets for produce.</p><ul><li>Connects cold room user groups with higher-order markets and bulk buyers.</li><li>Facilitates tie-ups with large buyers and includes produce in trade fairs.</li><li>Assists in developing branding/packaging and amplifies success stories.</li></ul></div> <div class="stakeholder-card"><h4><span class="icon">👑</span> District Collectors and Administration</h4> <p class="text-sm text-gray-600 mb-3">Highest authority at the district level, providing oversight and administrative support.</p><ul><li>Convenes coordination meetings and expedites necessary permissions.</li><li>Can utilize district funds to plug resource gaps (e.g., transport vehicles).</li><li>Lends administrative backing, signaling project importance to line departments.</li></ul></div> <div class="stakeholder-card"><h4><span class="icon">🤝</span> Community Development/NGO Partners</h4> <p class="text-sm text-gray-600 mb-3">Ensures community buy-in, extends project reach, and provides local expertise.</p><ul><li><span class="font-semibold">SEWA:</span> Mobilizes women vendors, trains in business practices, provides mentorship.</li><li><span class="font-semibold">SEWAK:</span> Facilitates community meetings, resolves local issues, promotes horticulture.</li><li><span class="font-semibold">PRADAN/APC Agencies:</span> Mobilizes farmers in Producer Groups, provides technical knowledge on value chain development.</li></ul></div> <div class="stakeholder-card"><h4><span class="icon">⚡</span> OREDA (Odisha Renewable Energy Development Agency)</h4> <p class="text-sm text-gray-600 mb-3">Responsible for the technical aspects of new solar cold storage units.</p><ul><li>Ensures timely installation and technical commissioning of 10 new units.</li><li>Provides demos on basic maintenance and handles major technical servicing.</li><li>May integrate solar systems with data loggers for energy tracking.</li></ul></div> <div class="stakeholder-card"><h4><span class="icon">👨‍💻</span> Koel Fresh Team</h4> <p class="text-sm text-gray-600 mb-3">Manages the project and engages daily with all stakeholders, ensuring smooth communication and coordination.</p><ul><li>Ensures smooth communication and updates with horticulture officers.</li><li>Collaborates with OLM/NGOs to avoid duplication in training efforts.</li><li>Orchestrates joint visits with key stakeholders to showcase progress and maintain transparency.</li></ul></div> </div> <p class="text-center text-lg mt-10 font-semibold" style="color: #1B5E20;">This integrated approach, with clearly defined roles and robust communication channels, ensures a holistic support system around each cold room site, mitigating risks and driving collective success.</p> </section>
+                <section> <h3 class="section-title text-3xl text-center mb-8">⚙️ Implementation Components & Strategy: Actionable Steps ⚙️</h3> <p class="text-center text-lg mb-8">Koel Fresh implements the project through several interlinked components, each addressing a critical success factor for the cold room ecosystem, ensuring a comprehensive and effective rollout.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"> <div class="component-card"><h4><span class="icon">🔍</span> Feasibility Studies and Site Readiness</h4><p class="text-sm text-gray-600 mb-3">Thorough assessments ensure each cold room site is technically, economically, socially, and institutionally prepared for successful operations.</p><ul class="space-y-2"><li><span class="font-semibold">Technical Feasibility:</span> Verify cold room functionality, inspect equipment, assess location specifics (access, water, security). Minor civil/electrical works in first 2 months.</li><li><span class="font-semibold">Economic Feasibility:</span> Analyze catchment area produce volume, peak harvest times, potential utilization, and revenue. Strategies for low-usage sites.</li><li><span class="font-semibold">Social Readiness:</span> Engage community early through meetings to gauge interest, address concerns, and integrate existing user groups.</li><li><span class="font-semibold">Institutional Readiness:</span> Ensure RMC resolutions/letters, formal SHG bank accounts, and facilitate any local licensing/paperwork.</li><li><span class="font-semibold">"Green Signal" Checklist:</span> District coordinator and central team verification before moving to next phase.</li></ul></div> <div class="component-card"><h4><span class="icon">🎓</span> Capacity Building of SHGs/FPOs to Operate Cold Rooms</h4><p class="text-sm text-gray-600 mb-3">A structured training and handholding program empowers local women’s groups and cooperatives to manage cold rooms as sustainable enterprises.</p><ul class="space-y-2"><li><span class="font-semibold">Cold Storage Operations:</span> Training on cold room mechanics, optimal temperatures, loading, stacking, and routine maintenance.</li><li><span class="font-semibold">Inventory Management & Mobile App:</span> Hands-on training on Coldtivate app (local language, visual cues, shelf-life prediction, SMS alerts).</li><li><span class="font-semibold">Customer Service & Community Engagement:</span> Soft skills, role-play, and conducting awareness sessions to become "cold chain entrepreneurs."</li><li><span class="font-semibold">Business & Financial Management:</span> Ledger maintenance, cost calculation, profit management, and understanding Cooling-as-a-Service (CaaS) model.</li><li><span class="font-semibold">Market Linkage & Quality Control:</span> Sorting, grading, packaging, negotiation, and exposure visits to markets/packhouses.</li><li><span class="font-semibold">Training Delivery:</span> 3-5 day intensive training (classroom & practical), visuals, peer learning, "train-the-trainer" approach, ongoing handholding.</li><li><span class="font-semibold">Outcomes:</span> Independent cold room management, accurate record-keeping, financial reporting, new member training, basic problem-solving.</li></ul></div> <div class="component-card"><h4><span class="icon">💰</span> Operational Support (Incentives, Working Capital, Onboarding)</h4><p class="text-sm text-gray-600 mb-3">Targeted support ensures quick operationalization and smooth running of cold rooms, especially in early stages.</p><ul class="space-y-2"><li><span class="font-semibold">Onboarding Support:</span> Guiding groups through operations plan, SOP handbook, and facilitating local kickoff events for legitimacy.</li><li><span class="font-semibold">Working Capital & Equipment Grants:</span> Working capital to be explored through OLM, ORMAS and other government programs.</li><li><span class="font-semibold">Incentive Facilitation:</span> Subsidized storage fees for farmers (e.g., free first days, promotions) and recognition for top-performing operators (acknowledgements, awards).</li><li><span class="font-semibold">Troubleshooting & Maintenance:</span> Rapid response mechanism, 48-hour issue resolution, regional technical assistants, 24x7 helpline.</li><li><span class="font-semibold">Standardizing Operating Procedures:</span> Uniform ticketing, daily sanitation routines, random checks for consistency and mentorship.</li></ul></div> <div class="component-card"><h4><span class="icon">📢</span> Awareness and Outreach Campaigns</h4><p class="text-sm text-gray-600 mb-3">Vigorous campaigns ensure farmers and market actors are informed and motivated to utilize the cold room facilities.</p><ul class="space-y-2"><li><span class="font-semibold">Local Launch Events:</span> Inaugurations with farmers, traders, demonstrations, and testimonials.</li><li><span class="font-semibold">Print Materials:</span> Simple, pictorial flyers/posters in local languages distributed widely.</li><li><span class="font-semibold">Village & Market Outreach:</span> Mobile announcements, info desks at weekly haats, collaboration with agri-input dealers.</li><li><span class="font-semibold">Mass Media & Digital:</span> Community radio, low-cost WhatsApp campaigns (explainer videos, infographics), engaging local influencers.</li><li><span class="font-semibold">School & Community Integration:</span> Competitions on food waste, SHG operators as community leaders.</li><li><span class="font-semibold">Continuous Promotion:</span> Sustained outreach, intensification before harvests, sharing success stories.</li></ul></div> <div class="component-card"><h4><span class="icon">🔗</span> Market Linkage Facilitation with Bulk Buyers</h4><p class="text-sm text-gray-600 mb-3">A core objective is to help farmers realize better prices and assured sales by facilitating connections with bulk buyers.</p><ul class="space-y-2"><li><span class="font-semibold">Identifying Bulk Buyers:</span> Mapping potential purchasers (retail chains, institutions, processors, city wholesale markets).</li><li><span class="font-semibold">Buyer MoUs & Aggregation:</span> Facilitating agreements, scheduling pickups, cold room as collection point, exploring transport solutions (e.rickshaw).</li><li><span class="font-semibold">Market Price Info & Decision Making:</span> Coldtivate app for market intelligence (prices, trends), tailored advice to operators/farmers.</li><li><span class="font-semibold">Facilitating Transactions:</span> Overseeing initial sales, quality checks, payment flow (direct to SHG/FPO), dispute resolution.</li><li><span class="font-semibold">Building Sustainable Supply Chains:</span> Institutionalizing linkages, meeting buyer preferences, basic value addition, targeting 2-3 regular buyers per site.</li><li><span class="font-semibold">Volume Targets:</span> Setting and tracking targets for produce sold via bulk linkages, troubleshooting lagging sites.</li></ul></div> <div class="component-card"><h4><span class="icon">📱</span> Digital Integration: Data Tracking, App, & Dashboards</h4><p class="text-sm text-gray-600 mb-3">Digital tools enhance efficiency, transparency, and decision-making, transforming cold rooms into data-driven hubs.</p><ul class="space-y-2"><li><span class="font-semibold">Coldtivate App Deployment:</span> Primary tool for inventory/operations, linked to IoT sensors, real-time logging, shelf-life prediction, SMS notifications.</li><li><span class="font-semibold">Data Dashboards:</span> Cloud-based system aggregating key metrics (utilization, farmers served, volume, turnover, issues) for managers and stakeholders.</li><li><span class="font-semibold">Decision Support & Alerts:</span> Automated alerts for temperature deviations, low utilization, or full capacity to trigger interventions.</li><li><span class="font-semibold">Integration with Government Systems:</span> Coordinating with Horticulture MIS for continuity and impact evaluation.</li><li><span class="font-semibold">Farmer Interface:</span> Basic phone list, web links/SMS query system for tech-savvy farmers, SHG/NGO as info conduits for others.</li><li><span class="font-semibold">Data Privacy & Ownership:</span> Secure storage, project partner ownership, consent for farmer data, anonymized donor reports.</li></ul><p class="text-md text-center mt-6 font-semibold" style="color: #4CAF50;">Digital integration is a game-changer, streamlining operations, providing sophisticated analytics, and building transparency and accountability across the project.</p></div> </div> </section>
+                <section> <h3 class="section-title text-3xl text-center mb-8">📚 Communication Materials & Documentation: Sharing Knowledge & Impact 📚</h3> <p class="text-center text-lg mb-8">Koel Fresh will lead the creation of a comprehensive suite of communication materials to educate, motivate, and share learnings, serving both operational and stakeholder engagement needs.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"> <div class="component-card"><h4><span class="icon">📖</span> Training Manuals and SOP Guides</h4><p class="text-sm text-gray-600 mb-3">User-friendly manuals and quick reference guides ensure operators have essential information for daily cold room management.</p><ul class="space-y-2"><li><span class="font-semibold">Operator’s Handbook:</span> In Odia and English, with step-by-step procedures, troubleshooting, safety, and support contacts. Heavily illustrated for semi-literate users.</li><li><span class="font-semibold">Quick Reference Posters:</span> For cold room/office walls, listing daily checklists, produce-specific storage tips, and operational flowcharts.</li><li><span class="font-semibold">Coldtivate App How-To Guide:</span> Laminated sheet/booklet with screenshots and local language captions for app navigation.</li></ul></div> <div class="component-card"><h4><span class="icon">📣</span> Awareness and Promotional Materials</h4><p class="text-sm text-gray-600 mb-3">Attractive and targeted materials to inform farmers and market actors about the cold room facilities and their benefits.</p><ul class="space-y-2"><li><span class="font-semibold">Flyers and Brochures:</span> Pictorial, in local languages, with project branding, fees, and contact details. Tri-fold brochures for formal settings.</li><li><span class="font-semibold">Posters and Banners:</span> Large format, consistent visual identity (e.g., mascot), used at events and as site signage.</li><li><span class="font-semibold">Video Content:</span> Short explainer videos for farmers, testimonials from women operators, and training videos demonstrating operational steps.</li></ul></div> <div class="component-card"><h4><span class="icon">📝</span> Case Studies and Documentation</h4><p class="text-sm text-gray-600 mb-3">Compiling notable successes and challenges into narrative case studies to share learnings and demonstrate impact.</p><ul class="space-y-2"><li><span class="font-semibold">Farmer Success Story:</span> Highlighting income increase due to cold storage, with before/after data and quotes.</li><li><span class="font-semibold">Women SHG Empowerment Story:</span> Detailing capacity building, improved livelihoods, and gender impact.</li><li><span class="font-semibold">Technical Innovation Story:</span> Explaining digital integration (Coldtivate) and data-driven decision-making.</li></ul></div> <div class="component-card"><h4><span class="icon">📊</span> Progress Reports and Slide Decks</h4><p class="text-sm text-gray-600 mb-3">Concise and polished reports and presentations to keep government officials and donors engaged and informed of progress.</p><ul class="space-y-2"><li><span class="font-semibold">Weekly/Quarterly Decks:</span> Highlighting progress in numbers, field stories, and qualitative updates.</li><li><span class="font-semibold">Data Visualization:</span> Visualizing dashboard data, utilization trends, and overall project narrative.</li><li><span class="font-semibold">Consistent Format:</span> Ensuring easy trend spotting and alignment with global reporting best practices.</li></ul></div> <div class="component-card"><h4><span class="icon">🗣️</span> Multilingual and Culturally Adapted Materials</h4><p class="text-sm text-gray-600 mb-3">Ensuring materials are translated and culturally adapted to resonate with diverse local communities, including tribal regions.</p><ul class="space-y-2"><li><span class="font-semibold">Translation:</span> Materials in Odia and local tribal languages where applicable.</li><li><span class="font-semibold">Cultural Adaptation:</span> Incorporating local symbols or references to ensure messaging is respectful and relatable.</li><li><span class="font-semibold">Local Collaboration:</span> Working with NGO partners to ensure effective communication and community resonance.</li></ul></div> </div> <p class="text-center text-lg mt-10 font-semibold" style="color: #1B5E20;">By developing high-quality, consistent, and culturally relevant communication materials, the project builds credibility, fosters trust, and ensures widespread understanding and sustained engagement among all stakeholders.</p> </section>
+                <section> <h3 class="section-title text-3xl text-center mb-8">📈 Monitoring, Evaluation & Reporting: Tracking Impact & Progress 📈</h3> <p class="text-center text-lg mb-8">Robust monitoring and reporting mechanisms are in place to track implementation, measure outcomes, and inform decision-making, ensuring accountability and real-time course correction.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"> <div class="component-card"><h4><span class="icon">📊</span> Weekly Dashboard Reporting</h4><p class="text-sm text-gray-600 mb-3">Weekly updated dashboards summarize key performance indicators for each site and district, keeping the project team and government informed and maintaining momentum.</p><ul class="space-y-2"><li><span class="font-semibold">Key Indicators:</span> Cold room utilization rate, number of farmers/vendors (gender disaggregated), volume stored/sold, spoilage instances, income earned (SHG/FPO & farmers), downtime/technical issues.</li><li><span class="font-semibold">Routine Review Calls:</span> Brief virtual meetings to discuss dashboard, flag red flags, and share quick wins.</li></ul></div> <div class="component-card"><h4><span class="icon">🗓️</span> Monthly Review Meetings and Slide Decks</h4><p class="text-sm text-gray-600 mb-3">Comprehensive monthly reviews at state and district levels, using slide decks to highlight cumulative progress, targets, and qualitative insights.</p><ul class="space-y-2"><li><span class="font-semibold">Slide Deck Content:</span> Cumulative progress, comparison against targets, qualitative insights, charts (utilization trends, income increase), field photos, component updates.</li><li><span class="font-semibold">Review Forums:</span> State Steering Committee (with DoH & Delivery Associates) and District Working Group (chaired by Collector).</li></ul></div> <div class="component-card md:col-span-2"><h4><span class="icon">🎯</span> Key Performance Indicators (KPIs)</h4><p class="text-sm text-gray-600 mb-3">Specific KPIs are tracked to measure project success against its core objectives.</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><ul class="space-y-2"><li><span class="icon">📊</span> <span class="font-semibold">Cold Room Utilization:</span> Target $\ge$ 70% average by year-end (higher during peak seasons).</li><li><span class="icon">💰</span> <span class="font-semibold">Farmer Income Increase:</span> Aim for 20-30% increase in average selling price for participating farmers (via surveys).</li><li><span class="icon">👩‍👧‍👦</span> <span class="font-semibold">SHG/Operator Income:</span> Target $\ge$ INR 5,000 net income per month per group by Month 12 for sustainable profit.</li></ul><ul class="space-y-2"><li><span class="icon">🗑️</span> <span class="font-semibold">Post-Harvest Loss Reduction:</span> Estimate reduction in waste/spoilage (aim for 75% reduction, similar to Rourkela pilot).</li><li><span class="icon">🔗</span> <span class="font-semibold">Market Linkage Volume and Value:</span> Total quantity/revenue from produce sold to bulk/institutional buyers (indicating market access improvement).</li><li><span class="icon">✅</span> <span class="font-semibold">Operational Sustainability:</span> Percentage of operating costs covered by revenues at each site by year-end (aim for basic expenses covered).</li><li><span class="icon">👥</span> <span class="font-semibold">Participation Metrics:</span> Number of women SHG members actively involved/trained, youth employed (additional social indicators).</li></ul></div></div> <div class="component-card"><h4><span class="icon">🚶‍♀️</span> Monitoring Visits</h4><p class="text-sm text-gray-600 mb-3">Regular field monitoring visits by Koel Fresh and government officials ensure oversight, data verification, and direct interaction with beneficiaries.</p><ul class="space-y-2"><li><span class="font-semibold">Frequency:</span> At least once a quarter for each district (joint site visits).</li><li><span class="font-semibold">Activities:</span> Observe operations, interact with farmers/SHG members, verify data (e.g., cross-check digital records with physical stock).</li><li><span class="font-semibold">Donor Involvement:</span> Anticipate and prepare for visits from donor representatives to showcase progress.</li></ul></div> <div class="component-card"><h4><span class="icon">🔄</span> Mid-Term Evaluation</h4><p class="text-sm text-gray-600 mb-3">An internal evaluation around the 6-month mark assesses progress against midline targets and informs mid-course corrections.</p><ul class="space-y-2"><li><span class="font-semibold">Process:</span> Survey sample of farmers and all SHG operators to gauge satisfaction, difficulties, and suggestions.</li><li><span class="font-semibold">Evaluation:</span> Against midline targets (e.g., ~50% of end target for KPIs).</li><li><span class="font-semibold">Outcome:</span> Mid-course correction plan if components are lagging (e.g., market linkage weakness).</li></ul></div> <div class="component-card md:col-span-2"><h4><span class="icon">📝</span> Final Evaluation and Reporting</h4><p class="text-sm text-gray-600 mb-3">A comprehensive year-end evaluation measures overall impact, compiles a master report, and informs future scale-up and funding.</p><ul class="space-y-2"><li><span class="font-semibold">Process:</span> Comprehensive evaluation, potentially with external agency or Delivery Associates experts for objectivity.</li><li><span class="font-semibold">Master Report:</span> Details activities, KPI data, impact case studies, lessons learned.</li><li><span class="font-semibold">Purpose:</span> Informs Odisha government for scale-up and Bloomberg/donors for future funding.</li><li><span class="font-semibold">Visuals:</span> Uses dashboard visuals and field stories (e.g., X tons stored, Y farmers served, Z income increase, P tons saved).</li></ul></div> </div> <p class="text-center text-lg mt-10 font-semibold" style="color: #1B5E20;">The M&E system serves as both an accountability exercise and a management tool, rigorously tracking performance to demonstrate success (improved farmer income, women's empowerment) with evidence, and ensuring prompt problem-solving.</p> </section>
+                <section> <h3 class="section-title text-3xl text-center mb-8">⚠️ Risk Management: Proactive Mitigation for Success ⚠️</h3> <p class="text-center text-lg mb-8">A proactive risk management strategy is central to ensuring smooth implementation, sustainability, and long-term success of the cold room ecosystem, anticipating and addressing potential challenges.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"> <div class="risk-card"><h4><span class="icon">⚙️</span> Operational Risks</h4><p class="text-sm text-gray-600 mb-3">Risks related to the day-to-day running of cold rooms and adherence to operational standards.</p><h5>Potential Issues:</h5><ul><li>Inconsistent cold room operation (limited local capacity, process lapses).</li><li>Improper produce handling (damage, spoilage, customer dissatisfaction).</li><li>Lack of adherence to SOPs or poor record-keeping by operators.</li></ul><h5>Mitigation Strategies:</h5><ul><li>Regular site visits by Koel Fresh field coordinators for assessment and issue resolution.</li><li>Weekly checklists for cleanliness, power, equipment, and user records.</li><li>Implement local language SOPs, accessible at each site.</li><li>Continuous mentoring and handholding for SHG/FPO operators (initial 6-8 months).</li><li>Utilize Coldtivate app for real-time inventory, operational alerts, and user tracking.</li></ul></div> <div class="risk-card"><h4><span class="icon">📉</span> Market Risks</h4><p class="text-sm text-gray-600 mb-3">Challenges related to connecting stored produce with profitable markets and managing price volatility.</p><h5>Potential Issues:</h5><ul><li>Inability to connect stored produce with reliable markets in time.</li><li>Price fluctuations or oversupply affecting farmer revenue.</li><li>Over-dependence on a single buyer or market channel.</li></ul><h5>Mitigation Strategies:</h5><ul><li>Establish multiple market linkages per site (local traders, institutions, government, retail, processors).</li><li>Provide price intelligence and market demand info via Coldtivate app and field updates.</li><li>Facilitate forward purchase agreements or informal buy-back commitments.</li><li>Develop value-addition/aggregation models (packaging, branding, cold room-based vending) for income diversification.</li></ul></div> <div class="risk-card"><h4><span class="icon">🔌</span> Technical Risks</h4><p class="text-sm text-gray-600 mb-3">Threats related to equipment malfunction and the technical capacity to address them.</p><h5>Potential Issues:</h5><ul><li>Breakdowns in refrigeration, IoT, or solar equipment leading to storage failures.</li><li>Lack of technical knowledge among operators to identify or report issues.</li><li>Delays in repairs due to absence of maintenance contracts or spare parts.</li></ul><h5>Mitigation Strategies:</h5><ul><li>New solar cold rooms (10 units) come with 5-year maintenance contract by OREDA/vendors.</li><li>Map and onboard local refrigeration technicians in each district for rapid response.</li><li>Maintain a preventive maintenance calendar and checklist for operators.</li><li>Provide basic troubleshooting training to SHG/FPO members for early issue escalation.</li><li>Integrate IoT and temperature monitoring tools to flag anomalies and ensure data visibility.</li></ul></div> <div class="risk-card"><h4><span class="icon">💸</span> Financial Risks</h4><p class="text-sm text-gray-600 mb-3">Concerns regarding the financial viability and management of cold room operations by local groups.</p><h5>Potential Issues:</h5><ul><li>Low utilization in early months may not cover basic operating costs.</li><li>SHGs/FPOs may lack liquidity for operations (transport, packaging).</li><li>Poor financial management or record-keeping (misuse/underreporting of funds).</li></ul><h5>Mitigation Strategies:</h5><ul><li>Provide interest-free working capital grants at the beginning for startup costs.</li><li>Introduce performance-based incentives (rewards for high utilization, timely reporting).</li><li>Link SHGs/FPOs with banking partners via OLM/ORMAS for revolving funds/loans.</li><li>Train operators in basic bookkeeping/financial literacy; regular audits/record checks by Koel Fresh.</li><li>Enable digital receipts and payment records via Coldtivate/mobile apps for transparency.</li></ul></div> </div> <p class="text-center text-lg mt-10 font-semibold" style="color: #1B5E20;">These comprehensive measures ensure that common risks across operations, markets, technology, and finance are anticipated early, with mitigation plans embedded into the project design, supported by risk dashboards and escalation protocols.</p> </section>
+                <section> <h3 class="section-title text-3xl text-center mb-8">🏁 Conclusion & Sustainability Roadmap: Long-Term Impact 🏁</h3> <p class="text-center text-lg mb-8">The cold room ecosystem initiative, led by Koel Fresh and anchored within the Bloomberg Cities Idea Exchange, is designed not only to address immediate post-harvest challenges but also to lay the foundation for long-term, community-driven agricultural resilience in Odisha.</p> <div class="mb-10"> <h4 class="font-semibold text-2xl mb-4 text-center" style="color: #4CAF50;">Expected Outcomes: One-Year Impact</h4> <p class="text-md text-center mb-6">By the end of the one-year implementation cycle, the project aims to deliver significant, measurable improvements across key areas.</p> <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> <div class="component-card"><h4><span class="icon">📈</span> Increased Farmer Income</h4><p>Farmers gain the ability to store produce and delay sales until market prices are favorable, enhancing their bargaining power through aggregation and direct market linkages.</p></div> <div class="component-card"><h4><span class="icon">📉</span> Reduction in Post-Harvest Losses (Target ~75%)</h4><p>Temperature-controlled preservation for perishables like tomatoes, chilis, bananas, and leafy vegetables ensures more produce reaches the market in sellable condition, drastically reducing economic loss.</p></div> <div class="component-card"><h4><span class="icon">👩‍👧‍👦</span> Empowerment & Financial Sustainability for SHGs/FPOs</h4><p>Women’s SHGs and FPOs are trained as business entities, gaining confidence and income. Operational profits and institutional support build their entrepreneurial capacity for long-term success.</p></div> <div class="component-card"><h4><span class="icon">🤝</span> Robust Market Linkages</h4><p>Structured relationships with institutional buyers ensure predictable sales channels. Cold rooms serve as vital aggregation hubs, reducing the role of intermediaries and increasing direct market access for farmers.</p></div> </div> </div> <div class="mb-10"> <h4 class="font-semibold text-2xl mb-4 text-center" style="color: #4CAF50;">Sustainability Beyond Project Timeline: Long-Term Vision</h4> <p class="text-md text-center mb-6">A key goal is for the ecosystem to continue functioning independently after the initial year, supported by local ownership, robust systems, and sustainable revenue streams.</p> <div class="grid grid-cols-1 md:grid-cols-3 gap-6"> <div class="component-card"><h4><span class="icon">自主</span> SHGs/FPOs Managing Cold Rooms Independently</h4><p>Community groups will be capable of handling all day-to-day operations, routine maintenance, user coordination, and customer service autonomously.</p></div> <div class="component-card"><h4><span class="icon">🔗</span> Institutionalized Market Relationships</h4><p>Ongoing tie-ups with buyers, fostered during the project, will ensure long-term demand assurance for cold room users, creating a steady income flow and keeping the infrastructure in use.</p></div> <div class="component-card"><h4><span class="icon">📱</span> Digital Tools Enabling Operational Efficiency</h4><p>The Coldtivate app will provide real-time data on inventory, temperature, utilization, and financials, ensuring data-driven decision making, performance monitoring, and transparent reporting long after project completion.</p></div> </div> </div> <div class="mb-10"> <h4 class="font-semibold text-2xl mb-4 text-center" style="color: #4CAF50;">Future Recommendations: Scaling & Integration</h4> <p class="text-md text-center mb-6">To build on the success of the pilot phase, the following actions are recommended for broader impact and long-term viability.</p> <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> <div class="component-card"><h4><span class="icon"> expand_content </span> Geographic Expansion into Additional Districts</h4><p>Replicate the successful model in other horticulture-intensive districts of Odisha, prioritizing areas with high distress selling, no current cold storage, or a strong existing presence of SHGs/FPOs.</p></div> <div class="component-card"><h4><span class="icon">🌍</span> National and Global Replication</h4><p>Showcase best practices and impact data to inspire adoption by other cities and states. Present the model on global platforms (e.g., COP, C40 Cities, GCF, SEforALL) to attract further investment and collaboration.</p></div> <div class="component-card"><h4><span class="icon"> integrar </span> Integration with Government Programs</h4><p>Align with national schemes such as PMFME and MIDH, as well as state-level Agriculture Promotion and Investment Corporation (APICOL) programs, to achieve convergence and unlock co-funding opportunities.</p></div> <div class="component-card"><h4><span class="icon">💡</span> Knowledge Dissemination</h4><p>Develop and distribute comprehensive toolkits, Standard Operating Procedures (SOPs), and training modules for other implementing partners. Document institutional structures, pricing models, and digital tools to ease future scale-up efforts.</p></div> </div> </div> <p class="text-center text-lg mt-10 font-semibold" style="color: #1B5E20;">This roadmap ensures the project evolves beyond a standalone pilot, becoming a replicable, community-owned model for sustainable agriculture and women-led enterprise, rooted in decentralized governance and digital transparency.</p> </section>
+            </main>
+            <footer class="text-center mt-12 py-8 border-t-2 border-gray-200">
+                <p style="color: #333333;">Driving sustainable agricultural practices and economic empowerment in Odisha.</p>
+                <p class="text-sm mt-2" style="color: #1B5E20;">Bloomberg Cities Idea Exchange - Economic Vulnerability Project</p>
+            </footer>
+        </div> 
+    `;
+
+    const infographicPageChartScript = `
+        function wrapLabels(label, maxLength = 16) { if (typeof label !== 'string') return label; if (label.length <= maxLength) return label; const words = label.split(' '); const lines = []; let currentLine = ''; for (const word of words) { if ((currentLine + word).length > maxLength && currentLine.length > 0) { lines.push(currentLine.trim()); currentLine = word + ' '; } else { currentLine += word + ' '; } } if (currentLine.trim().length > 0) lines.push(currentLine.trim()); return lines.length > 0 ? lines : [label]; }
+        if (typeof Chart !== 'undefined' && document.getElementById('sitesChart')) { const sitesChartCtx = document.getElementById('sitesChart').getContext('2d'); new Chart(sitesChartCtx, { type: 'doughnut', data: { labels: [wrapLabels('Existing Cold Storage Installations'), wrapLabels('Brand New Upcoming Installations')], datasets: [{ label: 'Site Distribution', data: [31, 10], backgroundColor: ['#4CAF50', '#FFC107'], borderColor: ['#FFFFFF', '#FFFFFF'], borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 12, family: 'Open Sans' }, color: '#333333', padding: 15, boxWidth: 15 } }, tooltip: { backgroundColor: '#333333', titleFont: { size: 14, family: 'Montserrat', weight: 'bold' }, bodyFont: { size: 12, family: 'Open Sans' }, padding: 10, callbacks: { title: function(tooltipItems) { const item = tooltipItems[0]; let label = item.chart.data.labels[item.dataIndex]; return Array.isArray(label) ? label.join(' ') : label; } } } } } }); } else { console.error("Chart.js is not defined or canvas not found."); }
+    `;
+
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    function showLoading() { if(loadingIndicator) loadingIndicator.style.display = 'block'; }
+    function hideLoading() { if(loadingIndicator) loadingIndicator.style.display = 'none'; }
+    function showMessage(message, isConfirm = false, onConfirm = null) {
+        const overlay = document.getElementById('customMessageBoxOverlay');
+        const textEl = document.getElementById('customMessageText');
+        const confirmBtn = document.getElementById('customMessageConfirm');
+        const cancelBtn = document.getElementById('customMessageCancel');
+        if (!overlay || !textEl || !confirmBtn || !cancelBtn) {
+            alert(message); 
+            if (isConfirm && onConfirm) onConfirm();
             return;
-          }
-          if (!Array.isArray(data) || data.length === 0) {
-            presentationsContainer.innerHTML = '<p style="text-align:center; margin-top:20px;">No presentations available at the moment. (Data array empty)</p>';
-            return;
-          }
+        }
+        textEl.textContent = message;
+        window.confirmCallback = onConfirm; 
+        if (isConfirm) { confirmBtn.textContent = 'Confirm'; cancelBtn.style.display = 'inline-block'; } 
+        else { confirmBtn.textContent = 'OK'; cancelBtn.style.display = 'none'; }
+        overlay.classList.add('active');
+    }
+    document.getElementById('customMessageConfirm')?.addEventListener('click', () => {
+        document.getElementById('customMessageBoxOverlay').classList.remove('active');
+        if (window.confirmCallback) window.confirmCallback();
+    });
+    document.getElementById('customMessageCancel')?.addEventListener('click', () => {
+        document.getElementById('customMessageBoxOverlay').classList.remove('active');
+    });
 
-          const [headers, ...rows] = data;
-          if (!Array.isArray(headers) || headers.length === 0) {
-            presentationsContainer.innerHTML = '<p style="text-align:center; margin-top:20px;">No presentation data or headers found.</p>';
-            return;
-          }
-
-          const uniqueIdIndex = headers.indexOf('UniqueID');
-          const weekIndex = headers.indexOf('Week');
-          const titleIndex = headers.indexOf('Title');
-          const iframeCodeIndex = headers.indexOf('IframeCode');
-
-          if ([uniqueIdIndex, weekIndex, titleIndex, iframeCodeIndex].some(idx => idx === -1)) {
-            console.error("Presentation data headers are missing or incorrect:", headers);
-            presentationsContainer.innerHTML = '<p class="error-message">Error: Presentation data is not in the expected format (missing headers).</p>';
-            return;
-          }
-
-          if (rows.length === 0) {
-            presentationsContainer.innerHTML = '<p style="text-align:center; margin-top:20px;">No presentations have been added yet.</p>';
-            return;
-          }
-
-          const presentations = rows.map(row => ({
-            uniqueID: row[uniqueIdIndex],
-            week: row[weekIndex],
-            title: row[titleIndex],
-            iframeCode: row[iframeCodeIndex]
-          }));
-
-          let html = '';
-          if (presentations.length > 0) {
-            const groupedByWeek = presentations.reduce((acc, pres) => {
-              if (!acc[pres.week]) {
-                acc[pres.week] = [];
-              }
-              acc[pres.week].push(pres);
-              return acc;
-            }, {});
-
-            Object.keys(groupedByWeek).sort((a, b) => {
-              const weekANumMatch = a.match(/\d+/);
-              const weekBNumMatch = b.match(/\d+/);
-              const weekANum = weekANumMatch ? parseInt(weekANumMatch[0]) : 0;
-              const weekBNum = weekBNumMatch ? parseInt(weekBNumMatch[0]) : 0;
-              return weekANum - weekBNum;
-            }).forEach(week => {
-              html += `<div class="presentation-week-group"><h3>${week}</h3>`;
-              groupedByWeek[week].forEach(presentation => {
-                const responsiveIframeCode = presentation.iframeCode
-                  .replace(/width="[^"]*"/ig, '')
-                  .replace(/height="[^"]*"/ig, '');
-                html += `
-                                <div class="presentation-item">
-                                    ${presentation.title ? `<h4>${presentation.title}</h4>` : ''}
-                                    <div class="presentation-container">
-                                        ${responsiveIframeCode}
-                                    </div>
-                                    <button class="delete-button" onclick="deletePresentation('${presentation.uniqueID}')">Delete Presentation</button>
-                                </div>
-                            `;
-              });
-              html += `</div>`;
-            });
-          } else {
-            html += '<p style="text-align:center; margin-top:20px;">No presentations available at the moment.</p>';
-          }
-          presentationsContainer.innerHTML = html;
-        })
-        .catch(error => {
-          console.error('Error fetching presentations:', error);
-          presentationsContainer.innerHTML = `<p class="error-message">Error loading presentations: ${error.message}</p>`;
+    function updateAdminUI(isLoggedIn) {
+        const adminElements = document.querySelectorAll('.admin-only');
+        adminElements.forEach(el => {
+            el.style.display = isLoggedIn ? 'inline-block' : 'none';
         });
     }
 
-
-    function renderTable(data, tableId, sectionType) {
-      const tbody = document.querySelector(`#${tableId} tbody`);
-      const thead = document.querySelector(`#${tableId} thead`);
-
-      if (thead) thead.innerHTML = ""; else console.error(`Thead not found for ${tableId}`);
-      if (tbody) tbody.innerHTML = ""; else console.error(`Tbody not found for ${tableId}`);
-
-      if (!thead || !tbody) {
-        alert(`Table structure incomplete for ${sectionType}. Cannot render.`);
-        return;
-      }
-
-      if (!data || !Array.isArray(data) || (Array.isArray(data) && data.length > 0 && data[0] && data[0].error)) {
-        let errorMessage = `No data or invalid data format received for ${sectionType}.`;
-        if (Array.isArray(data) && data.length > 0 && data[0] && data[0].error) {
-          errorMessage = `Error from server for ${sectionType}: ${data[0].error}`;
-          if (data[0].sheet) errorMessage += ` (Sheet: ${data[0].sheet})`;
-        } else if (data && data.error) {
-          errorMessage = `Error from server for ${sectionType}: ${data.error}`;
+    function handleAdminNavClick() {
+        if (isAdminLoggedIn) {
+            isAdminLoggedIn = false;
+            document.getElementById('admin-nav-button').textContent = 'Admin';
+            updateAdminUI(false);
+            showMessage('You have been logged out.', false);
+        } else {
+            showSection('admin-section');
         }
-        console.warn(`Problematic data for ${tableId}:`, data);
-        thead.innerHTML = `<tr><th>Notice</th></tr>`;
-        tbody.innerHTML = `<tr><td class="error-message">${errorMessage}</td></tr>`;
-        return;
-      }
-
-      if (data.length === 0) {
-        console.warn(`Empty data array received for ${tableId}`);
-        thead.innerHTML = `<tr><th>Notice</th></tr>`;
-        tbody.innerHTML = `<tr><td class="error-message">No data available for ${sectionType}. The sheet might be empty or headers are missing.</td></tr>`;
-        return;
-      }
-
-      let [headers, ...dataRows] = data;
-      let photoUrlColIndex = -1;
-
-      if (sectionType === 'meetings') {
-        photoUrlColIndex = headers.indexOf('Photo URL');
-        if (photoUrlColIndex !== -1) {
-          headers = headers.filter((header, index) => index !== photoUrlColIndex);
+    }
+    
+    document.getElementById('admin-login-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = this.username.value;
+        const password = this.password.value;
+        if (username === 'admin' && password === 'admin') {
+            isAdminLoggedIn = true;
+            document.getElementById('admin-nav-button').textContent = 'Logout';
+            updateAdminUI(true);
+            showHomePage(); 
+            showMessage('Admin login successful.', false);
+        } else {
+            showMessage('Invalid username or password.', false);
+            this.password.value = '';
         }
-      }
+    });
 
-
-      if (!headers || !Array.isArray(headers) || headers.length === 0) {
-        console.warn(`No headers or invalid headers format for ${tableId}:`, headers);
-        thead.innerHTML = `<tr><th>Error</th></tr>`;
-        tbody.innerHTML = `<tr><td class="error-message">No headers or invalid header format received for ${sectionType}. Cannot display table.</td></tr>`;
-        return;
-      }
-
-      thead.innerHTML = "<tr>" + headers.map(h => `<th>${h === undefined || h === null ? "" : h}</th>`).join('') + "<th>Actions</th></tr>";
-
-      if (dataRows.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='" + (headers.length + 1) + "'>No entries found.</td></tr>";
-        return;
-      }
-
-      let rowsWithIndex = dataRows.map((row, idx) => ({
-        row,
-        sheetRow: idx + 2
-      }));
-
-      try {
-        if (sectionType === 'weeklyStatus' && data[0].indexOf('Week') !== -1 && data[0].indexOf('Zone') !== -1) {
-          rowsWithIndex.sort((a, b) => {
-            const weekIndex = data[0].indexOf('Week');
-            const zoneIndex = data[0].indexOf('Zone');
-
-            const valA = a.row && typeof a.row[weekIndex] === 'string' ? String(a.row[weekIndex]).match(/\d+/) : null;
-            const weekA = valA ? parseInt(valA[0], 10) : 0;
-            const valB = b.row && typeof b.row[weekIndex] === 'string' ? String(b.row[weekIndex]).match(/\d+/) : null;
-            const weekB = valB ? parseInt(valB[0], 10) : 0;
-
-            if (weekA !== weekB) return weekA - weekB;
-
-            const zoneA = a.row && typeof a.row[zoneIndex] === 'string' ? a.row[zoneIndex] : "";
-            const zoneB = b.row && typeof b.row[zoneIndex] === 'string' ? b.row[zoneIndex] : "";
-            return zoneA.localeCompare(zoneB);
-          });
+    function showHomePage() {
+        showLoading();
+        const trackerContentArea = document.getElementById('tracker-content-area');
+        const infographicContentArea = document.getElementById('infographic-content-area');
+        
+        document.body.className = 'infographic-active'; 
+        if (trackerContentArea) trackerContentArea.style.display = 'none';
+        if (infographicContentArea) {
+            infographicContentArea.innerHTML = infographicPageBodyHTML; 
+            infographicContentArea.style.display = 'block';
         }
-
-        if (sectionType === 'meetings') {
-          const dateColumnIndexOriginal = data[0].indexOf('Meeting Date');
-          if (dateColumnIndexOriginal !== -1) {
-            rowsWithIndex.sort((a, b) => {
-              const parseDate = (value) => {
-                if (value === undefined || value === null || String(value).trim() === "") return new Date(NaN);
-                if (value instanceof Date && !isNaN(value)) return value;
-                if (typeof value === 'number') return new Date(Math.round((value - 25569) * 86400 * 1000));
-                if (typeof value === 'string') {
-                  if (/^\d{4}-\d{2}-\d{2}T/.test(value)) return new Date(value);
-                  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(value + "T00:00:00");
-                  if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
-                    const [day, month, year] = value.split("-");
-                    return new Date(`${year}-${month}-${day}T00:00:00`);
-                  }
-                }
-                return new Date(value);
-              };
-
-              const valA = a.row && a.row.length > dateColumnIndexOriginal ? a.row[dateColumnIndexOriginal] : undefined;
-              const valB = b.row && b.row.length > dateColumnIndexOriginal ? b.row[dateColumnIndexOriginal] : undefined;
-
-              const dateA = parseDate(valA);
-              const dateB = parseDate(valB);
-
-              if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
-              if (isNaN(dateA.getTime())) return 1;
-              if (isNaN(dateB.getTime())) return -1;
-              return dateA - dateB;
-            });
-          } else {
-            console.warn(`'Meeting Date' column not found for sorting in ${tableId}. Table will not be sorted by date.`);
-          }
-        }
-      } catch (e) {
-        console.error(`Error during sorting for ${tableId}:`, e);
-        tbody.innerHTML = `<tr><td colspan="${headers.length + 1}" class="error-message">Error during data sorting. Entries may not be displayed correctly.</td></tr>`;
-      }
-
-      tbody.innerHTML = rowsWithIndex.map(({ row, sheetRow }) => {
-        const rowIndex = sheetRow;
-        if (!Array.isArray(row)) {
-          console.error("Encountered a non-array row object:", row, "at original sheet row (approx):", sheetRow);
-          return `<tr><td colspan="${headers.length + 1}" class="error-message">Error: Corrupted row data.</td></tr>`;
-        }
-        const rowData = encodeURIComponent(JSON.stringify(row));
-
-        const cells = row.map((c, j) => {
-          if (sectionType === 'meetings' && j === photoUrlColIndex) {
-            return '';
-          }
-
-          let cellValue = (c === null || c === undefined) ? "" : String(c);
-          const currentHeader = data[0][j];
-
-          if ((currentHeader === 'Meeting Date' || currentHeader === 'Deadline')) {
-            if (c instanceof Date && !isNaN(c)) {
-              const day = String(c.getDate()).padStart(2, '0');
-              const month = String(c.getMonth() + 1).padStart(2, '0');
-              const year = c.getFullYear();
-              cellValue = `${day}-${month}-${year}`;
-            } else if (typeof c === "string" && /^\d{4}-\d{2}-\d{2}T/.test(c)) {
-              const dateObj = new Date(c);
-              if (!isNaN(dateObj.getTime())) {
-                const day = String(dateObj.getDate()).padStart(2, '0');
-                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-                const year = dateObj.getFullYear();
-                cellValue = `${day}-${month}-${year}`;
-              }
-            }
-          }
-
-          if (typeof c === "string" && c.includes('\n')) {
-            const lines = c.split(/\r?\n/).filter(line => line.trim() !== '');
-            const listItems = lines.map(item => {
-              const cleanItem = item.trim().replace(/^\d+\.\s*/, '');
-              return `<li>${cleanItem}</li>`;
-            }).join('');
-            return `<td><ol style="padding-left: 18px; margin: 0;">${listItems}</ol></td>`;
-          }
-          return `<td>${cellValue}</td>`;
-        }).filter(cellHTML => cellHTML !== '').join('');
-
-        const editFunc = sectionType === 'meetings' ? 'editMeeting' :
-          sectionType === 'weeklyStatus' ? 'editStatus' : 'editAction';
-        const deleteFunc = sectionType === 'meetings' ? 'deleteMeeting' :
-          sectionType === 'weeklyStatus' ? 'deleteStatus' : 'deleteAction';
-
-        return `<tr>${cells}<td>
-            <button onclick="${editFunc}(${rowIndex}, this)">Edit</button>
-            <button onclick="${deleteFunc}(${rowIndex})">Delete</button>
-            <input type="hidden" value="${rowData}">
-            </td></tr>`;
-      }).join('');
+        
+        const existingChartScript = document.head.querySelector('script[src="https://cdn.jsdelivr.net/npm/chart.js"]');
+        if (existingChartScript) existingChartScript.remove();
+        
+        const chartJsScript = document.createElement('script');
+        chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
+        chartJsScript.onload = () => {
+            const chartInitScriptElement = document.createElement('script');
+            chartInitScriptElement.textContent = infographicPageChartScript;
+            document.body.appendChild(chartInitScriptElement); 
+            hideLoading();
+        };
+        chartJsScript.onerror = () => { console.error("Failed to load Chart.js."); hideLoading(); showMessage("Error loading chart library.", false); };
+        document.head.appendChild(chartJsScript);
     }
 
-    function fetchData() {
-      const commonCatchHandler = (error, tableId, sectionName) => {
-        console.error(`Error fetching or processing ${sectionName} data:`, error);
-        const tableBody = document.querySelector(`#${tableId} tbody`);
-        const tableHead = document.querySelector(`#${tableId} thead`);
-        let colspan = 5;
-        if (tableHead) {
-          if (tableHead.rows.length > 0 && tableHead.rows[0].cells.length > 0) {
-            colspan = tableHead.rows[0].cells.length;
-          } else {
-            tableHead.innerHTML = `<tr><th>Error</th></tr>`;
-            colspan = 1;
-          }
-        }
-        if (tableBody) {
-          tableBody.innerHTML = `<tr><td colspan="${colspan}" class="error-message">Failed to load ${sectionName} entries. ${error.message}. See console for more details.</td></tr>`;
-        }
-      };
-
-      fetch(scriptURL + '?sheet=Meetings')
-        .then(res => {
-          if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! Status: ${res.status} for Meetings. Server says: ${text || res.statusText}`) });
-          return res.json();
-        })
-        .then(data => {
-          console.log('Meetings data received:', data);
-          if (data && data.error) {
-            commonCatchHandler(new Error(data.error + (data.sheet ? ` (Sheet: ${data.sheet})` : "")), 'meeting-table', 'Meetings');
-          } else {
-            renderTable(data, 'meeting-table', 'meetings');
-          }
-        })
-        .catch(error => commonCatchHandler(error, 'meeting-table', 'Meetings'));
-
-      fetch(scriptURL + '?sheet=Action Items')
-        .then(res => {
-          if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! Status: ${res.status} for Action Items. Server says: ${text || res.statusText}`) });
-          return res.json();
-        })
-        .then(data => {
-          console.log('Action Items data received:', data);
-          if (data && data.error) {
-            commonCatchHandler(new Error(data.error + (data.sheet ? ` (Sheet: ${data.sheet})` : "")), 'action-table', 'Action Items');
-          } else {
-            renderTable(data, 'action-table', 'actions');
-          }
-        })
-        .catch(error => commonCatchHandler(error, 'action-table', 'Action Items'));
-
-      fetch(scriptURL + '?sheet=Weekly Status')
-        .then(res => {
-          if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! Status: ${res.status} for Weekly Status. Server says: ${text || res.statusText}`) });
-          return res.json();
-        })
-        .then(data => {
-          console.log('Weekly Status data received:', data);
-          if (data && data.error) {
-            commonCatchHandler(new Error(data.error + (data.sheet ? ` (Sheet: ${data.sheet})` : "")), 'weekly-status-table', 'Weekly Status');
-          } else {
-            renderTable(data, 'weekly-status-table', 'weeklyStatus');
-          }
-        })
-        .catch(error => commonCatchHandler(error, 'weekly-status-table', 'Weekly Status'));
-    }
-
-    function fetchWeeklyStatus() {
-      fetch(scriptURL + "?sheet=Weekly Status")
-        .then(res => {
-          if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! Status: ${res.status} for Weekly Status (refresh). Server says: ${text || res.statusText}`) });
-          return res.json();
-        })
-        .then(data => {
-          console.log('Weekly Status data (re-fetched):', data);
-          if (data && data.error) {
-            console.error('Error refreshing Weekly Status:', data.error);
-            const tbody = document.querySelector('#weekly-status-table tbody');
-            if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="error-message">Failed to refresh. ${data.error}</td></tr>`;
-          } else {
-            renderTable(data, 'weekly-status-table', 'weeklyStatus');
-          }
-        })
-        .catch(error => {
-          console.error('Error in fetchWeeklyStatus function:', error);
-          const tbody = document.querySelector('#weekly-status-table tbody');
-          if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="error-message">Failed to refresh. ${error.message}</td></tr>`;
-        });
-    }
 
     function showSection(sectionIdToShow) {
-      const allSectionDivIds = ['meetings-section', 'weeklyStatus-section', 'media-section', 'presentations-section', 'dummy4-section'];
-      allSectionDivIds.forEach(id => {
+      const trackerContentArea = document.getElementById('tracker-content-area');
+      const infographicContentArea = document.getElementById('infographic-content-area');
+      
+      document.body.className = 'tracker-active'; 
+      document.head.innerHTML = originalTrackerHeadContent; 
+
+      if (infographicContentArea) infographicContentArea.style.display = 'none';
+      if (trackerContentArea) trackerContentArea.style.display = 'block';
+
+      const allTrackerSectionDivIds = ['meetings-section', 'media-section', 'presentations-section', 'admin-section'];
+      allTrackerSectionDivIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
           el.style.display = (id === sectionIdToShow) ? 'block' : 'none';
         }
       });
-      if (sectionIdToShow === 'media-section') {
-        fetchMediaGallery();
-      }
-      if (sectionIdToShow === 'presentations-section') {
-        fetchPresentations();
-      }
-    }
 
-    function getFormDataByIndex(keys, dataArray) {
-      const formData = {};
-      if (!Array.isArray(dataArray)) {
-        console.warn("getFormDataByIndex received non-array data:", dataArray);
-        keys.forEach(key => formData[key] = "");
-        return formData;
-      }
-      keys.forEach((key, index) => {
-        formData[key] = dataArray[index] !== undefined ? dataArray[index] : "";
-      });
-      return formData;
-    }
-
-    function formatDateForInput(dateStringOrObject) {
-      if (!dateStringOrObject) return "";
-      let dateObj;
-      if (dateStringOrObject instanceof Date && !isNaN(dateStringOrObject)) {
-        dateObj = dateStringOrObject;
-      } else if (typeof dateStringOrObject === 'string') {
-        if (dateStringOrObject.includes('T')) {
-          dateObj = new Date(dateStringOrObject.split('T')[0]);
-        } else if (dateStringOrObject.match(/^\d{2}-\d{2}-\d{4}$/)) {
-          const parts = dateStringOrObject.split('-');
-          dateObj = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-        } else if (dateStringOrObject.match(/^\d{4}-\d{2}-\d{2}$/)) {
-          dateObj = new Date(dateStringOrObject);
-        } else {
-          dateObj = new Date(dateStringOrObject);
-        }
-      } else if (typeof dateStringOrObject === 'number') {
-        dateObj = new Date(Math.round((dateStringOrObject - 25569) * 86400 * 1000));
-      } else {
-        return "";
-      }
-
-      if (isNaN(dateObj.getTime())) return "";
-
-      const tempDate = new Date(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate());
-      return tempDate.toISOString().split('T')[0];
-    }
-
-    function editMeeting(row, btn) {
-      const rawDataArray = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input[type="hidden"]').value));
-      const form = document.forms['meeting-form'];
-      form.reset();
-      form.row.value = row;
-
-      const fieldKeys = ['meetingId', 'meetingDate', 'zone', 'district', 'coldRoom', 'meetingTitle', 'conductedBy', 'attendees', 'meetingAgenda', 'meetingDiscussion'];
-      const dataToPopulate = getFormDataByIndex(fieldKeys, rawDataArray);
-
-      form.meetingId.value = dataToPopulate.meetingId;
-      form.meetingDate.value = formatDateForInput(dataToPopulate.meetingDate);
-      form.zone.value = dataToPopulate.zone;
-      form.district.value = dataToPopulate.district;
-      form.coldRoom.value = dataToPopulate.coldRoom;
-      form.meetingTitle.value = dataToPopulate.meetingTitle;
-      form.conductedBy.value = dataToPopulate.conductedBy;
-      form.attendees.value = dataToPopulate.attendees;
-      form.meetingAgenda.value = dataToPopulate.meetingAgenda;
-      form.meetingDiscussion.value = dataToPopulate.meetingDiscussion;
-
-      document.getElementById('meeting-mode').innerText = "Mode: Editing Meeting (Row " + row + ")";
-      showSection('meetings-section');
-    }
-
-    function editStatus(row, btn) {
-      const rawDataArray = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input[type="hidden"]').value));
-      const form = document.forms['weekly-status-form'];
-      form.reset();
-      form.row.value = row;
-
-      const fieldKeys = ['weekInfo', 'zone', 'district', 'currentWeekUpdate', 'nextWeekUpdate'];
-      const dataToPopulate = getFormDataByIndex(fieldKeys, rawDataArray);
-
-      form.weekInfo.value = dataToPopulate.weekInfo;
-      form.zone.value = dataToPopulate.zone;
-      form.district.value = dataToPopulate.district;
-      form.currentWeekUpdate.value = dataToPopulate.currentWeekUpdate;
-      form.nextWeekUpdate.value = dataToPopulate.nextWeekUpdate;
-
-      document.getElementById('status-mode').innerText = "Mode: Editing Status (Row " + row + ")";
-      showSection('weeklyStatus-section');
-    }
-
-    function editAction(row, btn) {
-      const rawDataArray = JSON.parse(decodeURIComponent(btn.parentElement.querySelector('input[type="hidden"]').value));
-      const form = document.forms['action-form'];
-      form.reset();
-      form.row.value = row;
-
-      const fieldKeys = ['meetingId', 'actionItem', 'assignedTo', 'deadline', 'status'];
-      const dataToPopulate = getFormDataByIndex(fieldKeys, rawDataArray);
-
-      form.meetingId.value = dataToPopulate.meetingId;
-      form.actionItem.value = dataToPopulate.actionItem;
-      form.assignedTo.value = dataToPopulate.assignedTo;
-      form.deadline.value = formatDateForInput(dataToPopulate.deadline);
-      form.status.value = dataToPopulate.status;
-
-      document.getElementById('action-mode').innerText = "Mode: Editing Action Item (Row " + row + ")";
-      showSection('meetings-section');
-    }
-
-    function postData(formDataObject, callback) {
-      const formData = new FormData();
-      for (const key in formDataObject) {
-        formData.append(key, formDataObject[key]);
-      }
-
-      fetch(scriptURL, { method: 'POST', body: formData })
-        .then(res => {
-          if (!res.ok) {
-            return res.text().then(text => {
-              let errorMsg = `Server error: ${res.status} - ${res.statusText || 'Unknown error'}`;
-              try {
-                const errObj = JSON.parse(text);
-                errorMsg = errObj.error || errObj.message || errorMsg;
-              } catch (e) { /* Ignore if text is not JSON, use default */ }
-              throw new Error(errorMsg);
-            });
-          }
-          return res.json();
-        })
-        .then(response => {
-          if (response.error) {
-            throw new Error(response.error);
-          }
-          let successMessage = response.message || 'Operation successful.';
-          if (response.meetingId) {
-            successMessage += ' Meeting ID: ' + response.meetingId;
-            if (document.getElementById('meetingId')) document.getElementById('meetingId').value = response.meetingId;
-            if (document.getElementById('action-meetingId')) document.getElementById('action-meetingId').value = response.meetingId;
-          }
-          alert(successMessage);
-          if (callback) callback();
-        })
-        .catch(err => {
-          console.error('Error posting data:', err);
-          alert('Error: ' + err.message);
-        });
-    }
-
-    function deleteMeeting(row) {
-      if (confirm("Delete this meeting?")) postData({ action: "delete_meeting", row: row }, fetchData);
-    }
-    function deleteAction(row) {
-      if (confirm("Delete this action item?")) postData({ action: "delete_action", row: row }, fetchData);
-    }
-    function deleteStatus(row) {
-      if (confirm("Delete this status entry?")) postData({ action: "delete_status", row: row }, fetchWeeklyStatus);
-    }
-
-    document.getElementById('meeting-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const form = this;
-      const formData = new FormData(form);
-      const isEdit = form.row.value && form.row.value.trim() !== "";
-
-      formData.set("action", isEdit ? "edit_meeting" : "add_meeting");
-      if (isEdit) formData.set("row", form.row.value);
-
-      formData.delete('photoUrlFile');
-      formData.delete('photoUrlText');
-
-      const formObject = Object.fromEntries(formData.entries());
-
-      postData(formObject, () => {
-        fetchData();
-        form.reset();
-        document.getElementById('meeting-mode').innerText = 'Mode: Add New Meeting';
-      });
-    });
-
-    document.getElementById('action-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const form = this;
-      const formData = new FormData(form);
-      const formObject = Object.fromEntries(formData.entries());
-      const isEdit = form.row.value && form.row.value.trim() !== '';
-      formObject.action = isEdit ? 'edit_action' : 'add_action';
-      if (isEdit) formObject.row = form.row.value;
-      postData(formObject, () => {
-        fetchData();
-        form.reset();
-        document.getElementById('action-mode').innerText = 'Mode: Add New Action Item';
-      });
-    });
-
-    document.getElementById('weekly-status-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const form = this;
-      const formData = new FormData(form);
-      const formObject = Object.fromEntries(formData.entries());
-      const isEdit = form.row.value && form.row.value.trim() !== "";
-      formObject.action = isEdit ? "edit_status" : "add_status";
-      if (isEdit) formObject.row = form.row.value;
-      postData(formObject, () => {
-        fetchWeeklyStatus();
-        form.reset();
-        document.getElementById('status-mode').innerText = 'Mode: Add New Status';
-      });
-    });
-
-    document.getElementById('media-upload-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const form = e.target;
-      const fileInput = form.querySelector('input[name="mediaFile"]');
-      const file = fileInput.files[0];
-      const submitButton = form.querySelector('button[type="submit"]');
-
-      if (!file) {
-        alert("Please select a file.");
-        return;
-      }
-
-      submitButton.disabled = true;
-      submitButton.textContent = 'Uploading...';
-
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const base64DataWithPrefix = event.target.result;
-        const MimeTypeMatch = base64DataWithPrefix.match(/^data:(.+);base64,/);
-        if (!MimeTypeMatch || MimeTypeMatch.length < 2) {
-          alert("Could not determine file type for Base64 upload.");
-          submitButton.disabled = false;
-          submitButton.textContent = 'Upload Media';
-          return;
-        }
-        const mimeType = MimeTypeMatch[1];
-        const base64Data = base64DataWithPrefix.substring(base64DataWithPrefix.indexOf(',') + 1);
-        const fileName = file.name;
-
-        const formDataForMediaBase64 = new FormData();
-        formDataForMediaBase64.append('action', 'upload_media_base64');
-        formDataForMediaBase64.append('weekInfo', form.weekInfo.value);
-        formDataForMediaBase64.append('zone', form.zone.value);
-        formDataForMediaBase64.append('district', form.district.value);
-        formDataForMediaBase64.append('dataBase64', base64Data);
-        formDataForMediaBase64.append('fileName', fileName);
-        formDataForMediaBase64.append('mimeType', mimeType);
-
-        fetch(scriptURL, { method: 'POST', body: formDataForMediaBase64 })
-          .then(res => {
-            if (!res.ok) {
-              return res.json().then(err => {
-                throw new Error(err.error || err.message || `Media Upload HTTP error! Status: ${res.status}`);
-              }).catch(() => {
-                throw new Error(`Media Upload HTTP error! Status: ${res.status}. Check server logs for details.`);
-              });
-            }
-            return res.json();
-          })
-          .then(response => {
-            if (response.error) throw new Error(response.error);
-            alert(response.message || 'Upload successful!');
-            form.reset();
-            fetchMediaGallery();
-          })
-          .catch(err => {
-            console.error('Upload failed:', err);
-            alert('Upload failed: ' + err.message);
-          })
-          .finally(() => {
-            submitButton.disabled = false;
-            submitButton.textContent = 'Upload Media';
-          });
-      };
-      reader.onerror = function (error) {
-        console.error("File reading error for Base64:", error);
-        alert("Error reading file for upload.");
-        submitButton.disabled = false;
-        submitButton.textContent = 'Upload Media';
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Listener for the new presentation form
-    document.getElementById('presentation-upload-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const form = this;
-      const formData = new FormData(form);
-      const formObject = Object.fromEntries(formData.entries());
-      formObject.action = 'add_presentation';
-
-      const submitButton = form.querySelector('button[type="submit"]');
-      submitButton.disabled = true;
-      submitButton.textContent = 'Saving...';
-
-      postData(formObject, () => {
-        form.reset();
-        fetchPresentations(); // Refresh the list of presentations
-        submitButton.disabled = false;
-        submitButton.textContent = 'Save Presentation';
-      });
-    });
-
-    function deletePresentation(uniqueID) {
-      if (!uniqueID) {
-        alert("Error: Presentation ID is missing. Cannot delete.");
-        return;
-      }
-      if (confirm("Are you sure you want to delete this presentation?")) {
-        const deleteButtons = document.querySelectorAll('.delete-button'); // Disable all to prevent multiple clicks
-        deleteButtons.forEach(btn => btn.disabled = true);
-
-
-        postData({ action: "delete_presentation", uniqueID: uniqueID }, () => {
-          fetchPresentations();
-          // Buttons will be re-enabled when fetchPresentations re-renders the content, 
-          // or if not, they would need to be re-enabled here or in a finally block.
-          // For simplicity, fetchPresentations will re-render them without disabled attribute.
-        });
+      if (sectionIdToShow === 'media-section') fetchMediaGallery();
+      if (sectionIdToShow === 'presentations-section') fetchPresentations();
+      
+      if (!document.querySelector('script[src="https://cdn.tailwindcss.com"]')) {
+          const tailwindScript = document.createElement('script');
+          tailwindScript.src = "https://cdn.tailwindcss.com";
+          document.head.appendChild(tailwindScript);
       }
     }
 
-
-    function fetchMediaGallery() {
-      fetch(scriptURL + '?sheet=Media')
-        .then(res => {
-          if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! status: ${res.status} for Media Gallery. Server says: ${text || res.statusText}`) });
-          return res.json();
-        })
+    function fetchPresentations() {
+      const presentationsContainer = document.getElementById('presentations-display-area');
+      if (!presentationsContainer) { console.error("Presentations display area not found!"); return; }
+      presentationsContainer.innerHTML = '<p style="text-align:center;">Loading presentations...</p>'; showLoading();
+      fetch(scriptURL + '?action=get_presentations')
+        .then(res => res.json())
         .then(data => {
-          const gallery = document.getElementById("media-gallery");
-          if (!gallery) return;
-
-          if (data && data.error) {
-            gallery.innerHTML = `<p class="error-message">Error loading media: ${data.error}</p>`;
-            return;
-          }
-          if (!Array.isArray(data) || data.length < 1) {
-            gallery.innerHTML = "<p>No media data found or data in unexpected format.</p>";
-            return;
-          }
-
+          if (data && data.error) throw new Error(data.error);
           const [headers, ...rows] = data;
-          if (!Array.isArray(headers) || headers.length === 0) {
-            gallery.innerHTML = "<p>Media headers missing.</p>";
-            return;
-          }
-
-          if (rows.length === 0) {
-            gallery.innerHTML = "<p>No media found in the gallery.</p>";
-            return;
-          }
-
+          if (!Array.isArray(headers)) throw new Error("Invalid data format");
+          const uniqueIdIndex = headers.indexOf('UniqueID');
           const weekIndex = headers.indexOf('Week');
-          const zoneIndex = headers.indexOf('Zone');
-          const districtIndex = headers.indexOf('District');
-          const fileNameIndex = headers.indexOf('File Name');
-          const urlIndex = headers.indexOf('File URL');
-          const typeIndex = headers.indexOf('File Type');
+          const titleIndex = headers.indexOf('Title');
+          const iframeCodeIndex = headers.indexOf('IframeCode');
 
-          if ([weekIndex, zoneIndex, districtIndex, fileNameIndex, urlIndex, typeIndex].some(idx => idx === -1)) {
-            console.error("One or more required headers missing in Media sheet data:", headers);
-            gallery.innerHTML = "<p class='error-message'>Error: Media data is not in the expected column format.</p>";
-            return;
-          }
+          let html = '';
+          if (rows.length > 0) {
+            const groupedByWeek = rows.reduce((acc, row) => {
+              const week = row[weekIndex] || 'Uncategorized';
+              if (!acc[week]) acc[week] = [];
+              acc[week].push({
+                uniqueID: row[uniqueIdIndex],
+                title: row[titleIndex],
+                iframeCode: row[iframeCodeIndex]
+              });
+              return acc;
+            }, {});
 
-          const grouped = {};
-          rows.forEach(row => {
-            if (!Array.isArray(row)) return;
-            const week = row[weekIndex];
-            const zone = row[zoneIndex];
-            const district = row[districtIndex];
-            const fileName = row[fileNameIndex];
-            const url = row[urlIndex];
-            const typeFromServer = row[typeIndex];
-            const type = typeFromServer || (String(url).match(/\.(jpe?g|png|gif|webp)$/i) ? 'image' : String(url).match(/\.(mp4|mov|avi|webm)$/i) ? 'video' : 'file');
-
-            if (!week || !zone || !district) return;
-
-            if (!grouped[week]) grouped[week] = {};
-            if (!grouped[week][zone]) grouped[week][zone] = {};
-            if (!grouped[week][zone][district]) grouped[week][zone][district] = [];
-            grouped[week][zone][district].push({ url, type, fileName: fileName || "Untitled" });
-          });
-
-          let html = "";
-          Object.keys(grouped).sort().forEach(week => {
-            html += `<div class="media-week-group"> 
-                   <h3>${week}</h3>`;
-            Object.keys(grouped[week]).sort().forEach(zone => {
-              html += `<div style="margin: 15px 0;">
-                     <h4>${zone}</h4>`;
-              Object.keys(grouped[week][zone]).sort().forEach(district => {
-                html += `<div style="margin: 10px 0;">
-                       <h5>${district}</h5>`;
-                html += `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">`;
-                grouped[week][zone][district].forEach(media => {
-                  const match = String(media.url).match(/\/d\/([a-zA-Z0-9_-]{25,})/);
-                  const fileId = match ? match[1] : '';
-                  const directLink = fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : media.url;
-                  const thumbnailLink = fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w200-h200` : directLink;
-
-                  if (String(media.type).startsWith('image')) {
-                    html += `
-                  <div style="position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <a href="${directLink}" target="_blank" title="${media.fileName || 'View image'}" style="display: block;">
-                      <img src="${thumbnailLink}" 
-                           style="width: 100%; height: 150px; object-fit: cover; transition: transform 0.2s; background-color: #f0f0f0;"
-                           onmouseover="this.style.transform='scale(1.05)'" 
-                           onmouseout="this.style.transform='scale(1)'"
-                           onerror="this.onerror=null; this.src='https://via.placeholder.com/150?text=No+Preview';" 
-                           alt="${media.fileName || 'Uploaded image'}">
-                    </a>
-                    <div style="font-size: 0.8em; text-align: center; padding: 5px; background: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${media.fileName}">${media.fileName}</div>
-                  </div>`;
-                  } else if (String(media.type).startsWith('video')) {
-                    html += `
-                  <div style="position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <video controls preload="metadata" style="width: 100%; height: 150px; object-fit: cover; background:#000;">
-                      <source src="${directLink}" type="${media.type || 'video/mp4'}">
-                      Your browser does not support the video tag. <a href="${directLink}" target="_blank">Download video</a>
-                    </video>
-                    <div style="font-size: 0.8em; text-align: center; padding: 5px; background: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${media.fileName}">${media.fileName}</div>
-                  </div>`;
-                  } else {
-                    html += `
-                  <div style="position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding:10px; background:#f0f0f0; height:150px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                    <a href="${directLink}" target="_blank" title="Download ${media.fileName}" style="word-break:break-all; text-decoration:none; color:#333; text-align:center;">
-                      <span style="font-size:2.5em; margin-bottom:10px; display:block;">📄</span>
-                      <div style="font-size: 0.8em;">${media.fileName}</div>
-                    </a>
-                  </div>`;
-                  }
-                });
-                html += `</div></div>`;
+            Object.keys(groupedByWeek).sort((a,b) => (a.match(/\d+/) || [0])[0] - (b.match(/\d+/) || [0])[0]).forEach(week => {
+              html += `<div class="presentation-week-group"><h3>${week}</h3>`;
+              groupedByWeek[week].forEach(p => {
+                const responsiveIframeCode = p.iframeCode.replace(/width="[^"]*"/ig, '').replace(/height="[^"]*"/ig, '');
+                html += `<div class="presentation-item">${p.title ? `<h4>${p.title}</h4>` : ''}<div class="presentation-container">${responsiveIframeCode}</div><span class="admin-only"><button class="delete-button" onclick="deletePresentation('${p.uniqueID}')">Delete</button></span></div>`;
               });
               html += `</div>`;
             });
-            html += `</div>`;
-          });
-          gallery.innerHTML = html || "<p>No media to display after grouping.</p>";
+          } else {
+            html = '<p style="text-align:center; margin-top:20px;">No presentations have been added yet.</p>';
+          }
+          presentationsContainer.innerHTML = html;
+          updateAdminUI(isAdminLoggedIn); // Ensure admin controls visibility is correct
         })
-        .catch(error => {
-          console.error('Error fetching media gallery:', error);
-          const gallery = document.getElementById("media-gallery");
-          if (gallery) gallery.innerHTML = `<p class="error-message">Error loading media gallery: ${error.message}. Please try again later.</p>`;
+        .catch(error => { console.error('Error fetching presentations:', error); presentationsContainer.innerHTML = `<p class="error-message">Error: ${error.message}</p>`; })
+        .finally(() => hideLoading());
+    }
+    
+    function renderTable(data, tableId, sectionType) {
+        const tbody = document.querySelector(`#${tableId} tbody`);
+        const thead = document.querySelector(`#${tableId} thead`);
+        if (!thead || !tbody) { console.error(`Table elements not found for ${tableId}`); return; }
+        thead.innerHTML = ""; tbody.innerHTML = "";
+        
+        if (!Array.isArray(data) || data.length < 2) { // Need at least headers and one row of data
+             thead.innerHTML = `<tr><th>Notice</th></tr>`;
+             tbody.innerHTML = `<tr><td>No entries found for ${sectionType}.</td></tr>`;
+             return;
+        }
+
+        let [headers, ...rows] = data;
+        thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th class='admin-only'>Actions</th></tr>";
+        
+        rows.forEach((row, i) => {
+            const tr = tbody.insertRow();
+            row.forEach(cell => {
+                const td = tr.insertCell();
+                td.innerHTML = cell; // Using innerHTML to render line breaks if any
+            });
+            const actionCell = tr.insertCell();
+            actionCell.className = 'admin-only';
+            actionCell.innerHTML = `<button class="px-3 py-1 text-xs font-medium text-white bg-yellow-500 rounded hover:bg-yellow-600" onclick="edit${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}(${i + 2}, this.closest('tr'))">Edit</button>
+                                  <button class="ml-1 px-3 py-1 text-xs font-medium text-white bg-red-600 rounded hover:bg-red-700" onclick="delete${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}(${i + 2})">Delete</button>`;
         });
+        updateAdminUI(isAdminLoggedIn);
+    }
+    
+    function fetchData() {
+      showLoading();
+      const commonCatchHandler = (error, tableId, sectionName) => { console.error(`Error fetching ${sectionName}:`, error); const tableBody = document.querySelector(`#${tableId} tbody`); const tableHead = document.querySelector(`#${tableId} thead`); let colspan = 5; if (tableHead) { if(tableHead.rows.length > 0 && tableHead.rows[0].cells.length > 0) colspan = tableHead.rows[0].cells.length; else { tableHead.innerHTML = `<tr><th>Error</th></tr>`; colspan = 1;}} if (tableBody) tableBody.innerHTML = `<tr><td colspan="${colspan}" class="error-message">Failed to load ${sectionName}. ${error.message}.</td></tr>`;};
+      
+      const meetingsPromise = fetch(scriptURL + '?sheet=Meetings')
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.error) commonCatchHandler(new Error(data.error), 'meeting-table', 'Meetings');
+            else renderTable(data, 'meeting-table', 'meeting');
+        }).catch(error => commonCatchHandler(error, 'meeting-table', 'Meetings'));
+
+      const actionsPromise = fetch(scriptURL + '?sheet=Action Items')
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.error) commonCatchHandler(new Error(data.error), 'action-table', 'action');
+            else renderTable(data, 'action-table', 'action');
+        }).catch(error => commonCatchHandler(error, 'action-table', 'Action Items'));
+
+        Promise.all([meetingsPromise, actionsPromise]).finally(() => hideLoading());
     }
 
+    function fetchMediaGallery() { showLoading(); fetch(scriptURL + '?sheet=Media').then(res => { if (!res.ok) return res.text().then(text => { throw new Error(`HTTP error! status: ${res.status}. Server: ${text || res.statusText}`) }); return res.json(); }).then(data => { const gallery = document.getElementById("media-gallery"); if (!gallery) return; if (data && data.error) { gallery.innerHTML = `<p class="error-message">Error loading media: ${data.error}</p>`; return; } if (!Array.isArray(data) || data.length < 1) { gallery.innerHTML = "<p>No media data found.</p>"; return; } const [headers, ...rows] = data; if (!Array.isArray(headers) || headers.length === 0) { gallery.innerHTML = "<p>Media headers missing.</p>"; return; } if (rows.length === 0) { gallery.innerHTML = "<p>No media in gallery.</p>"; return; } const weekIndex = headers.indexOf('Week'); const zoneIndex = headers.indexOf('Zone'); const districtIndex = headers.indexOf('District'); const fileNameIndex = headers.indexOf('File Name'); const urlIndex = headers.indexOf('File URL'); const typeIndex = headers.indexOf('File Type'); if ([weekIndex, zoneIndex, districtIndex, fileNameIndex, urlIndex, typeIndex].some(idx => idx === -1)) { console.error("Required headers missing in Media sheet:", headers); gallery.innerHTML = "<p class='error-message'>Error: Media data format incorrect.</p>"; return; } const grouped = {}; rows.forEach(rowDataItem => { if (!Array.isArray(rowDataItem)) return; const week = rowDataItem[weekIndex]; const zone = rowDataItem[zoneIndex]; const district = rowDataItem[districtIndex]; const fileName = rowDataItem[fileNameIndex]; const url = rowDataItem[urlIndex]; const typeFromServer = rowDataItem[typeIndex]; let displayType = 'file'; if (typeFromServer) { if (typeFromServer.startsWith('image/')) displayType = 'image'; else if (typeFromServer.startsWith('video/')) displayType = 'video'; } else { if (String(url).match(/\.(jpe?g|png|gif|webp)$/i)) displayType = 'image'; else if (String(url).match(/\.(mp4|mov|avi|webm)$/i)) displayType = 'video'; } if (!week || !zone || !district) return; if (!grouped[week]) grouped[week] = {}; if (!grouped[week][zone]) grouped[week][zone] = {}; if (!grouped[week][zone][district]) grouped[week][zone][district] = []; grouped[week][zone][district].push({ url, displayType, originalMimeType: typeFromServer, fileName: fileName || "Untitled" }); }); let html = ""; Object.keys(grouped).sort().forEach(week => { html += `<div class="media-week-group"><h3>${week}</h3>`; Object.keys(grouped[week]).sort().forEach(zone => { html += `<div style="margin: 15px 0;"><h4>${zone}</h4>`; Object.keys(grouped[week][zone]).sort().forEach(district => { html += `<div style="margin: 10px 0;"><h5>${district}</h5>`; html += `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">`; grouped[week][zone][district].forEach(media => { const match = String(media.url).match(/\/d\/([a-zA-Z0-9_-]{25,})/); const fileId = match ? match[1] : ''; const directLink = fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : media.url; const thumbnailLink = fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w200-h200` : directLink; if (media.displayType === 'image') { html += `<div style="position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"><a href="${directLink}" target="_blank" title="${media.fileName || 'View image'}" style="display: block;"><img src="${thumbnailLink}" style="width: 100%; height: 150px; object-fit: cover; transition: transform 0.2s; background-color: #f0f0f0;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" onerror="this.onerror=null; this.src='https://placehold.co/150x150/cccccc/000000?text=No+Preview';" alt="${media.fileName || 'Uploaded image'}"></a><div style="font-size: 0.8em; text-align: center; padding: 5px; background: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${media.fileName}">${media.fileName}</div></div>`; } else if (media.displayType === 'video') { html += `<div style="position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"><video controls preload="metadata" style="width: 100%; height: 150px; object-fit: cover; background:#000;"><source src="${directLink}" type="${media.originalMimeType || 'video/mp4'}">Your browser does not support video. <a href="${directLink}" target="_blank">Download</a></video><div style="font-size: 0.8em; text-align: center; padding: 5px; background: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${media.fileName}">${media.fileName}</div></div>`; } else { html += `<div style="position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding:10px; background:#f0f0f0; height:150px; display:flex; flex-direction:column; justify-content:center; align-items:center;"><a href="${directLink}" target="_blank" title="Download ${media.fileName}" style="word-break:break-all; text-decoration:none; color:#333; text-align:center;"><span style="font-size:2.5em; margin-bottom:10px; display:block;">📄</span><div style="font-size: 0.8em;">${media.fileName}</div></a></div>`; } }); html += `</div></div>`; }); html += `</div>`; }); html += `</div>`; }); gallery.innerHTML = html || "<p>No media to display.</p>"; }).catch(error => { console.error('Error fetching media gallery:', error); const gallery = document.getElementById("media-gallery"); if (gallery) gallery.innerHTML = `<p class="error-message">Error loading media: ${error.message}.</p>`; }).finally(() => hideLoading());}
+    
     window.onload = function () {
-      fetchData();
-      // showSection('meetings-section'); 
+      const trackerContentArea = document.getElementById('tracker-content-area');
+      const infographicContentArea = document.getElementById('infographic-content-area');
+      
+      if (trackerContentArea) trackerContentArea.style.display = 'none';
+      if (infographicContentArea) infographicContentArea.style.display = 'none';
+
+      const allTrackerSectionDivIds = ['meetings-section', 'media-section', 'presentations-section', 'admin-section'];
+      allTrackerSectionDivIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = 'none';
+        }
+      });
+      
+      fetchData(); // Fetch data in the background
+      // No section is shown by default
     };
   </script>
 </body>
-
 </html>

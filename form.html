@@ -5,28 +5,26 @@
   <title>BCIEP Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     /* Base body styles for the tracker page */
     body.tracker-active {
       font-family: 'Segoe UI', sans-serif;
       margin: 0 auto;
       padding: 0;
-      /* Padding will be on app-container or main-content-wrapper */
       max-width: 1300px;
-      /* Max width for tracker content */
       background: #f9f9f9;
     }
 
-    /* Ensure app-container also respects max-width for tracker view */
     body.tracker-active #app-container {
       max-width: 1300px;
       margin: 0 auto;
       padding: 0 20px;
-      /* Horizontal padding for tracker content */
     }
 
-
-    /* Styles for Infographic Page (applied via .infographic-active on body) */
+    /* Styles for Infographic Page */
     body.infographic-active {
       font-family: 'Open Sans', sans-serif;
       background-color: #E8F5E9;
@@ -34,22 +32,19 @@
       margin: 0;
       padding: 0;
       max-width: none;
-      /* Infographic can be full width if desired */
     }
 
     body.infographic-active #app-container {
       max-width: none;
-      /* Allow infographic to be wider if needed */
       margin: 0;
       padding: 0;
     }
 
-    /* General h2 for tracker sections - Themed Green */
+    /* General h2 for tracker sections */
     h2 {
       text-align: center;
       margin-top: 40px;
       background-color: #1B5E20;
-      /* Dark Green Theme */
       color: #fff;
       padding: 10px;
       border-radius: 5px;
@@ -110,7 +105,6 @@
       min-height: 100px;
     }
 
-    /* General table styling for tracker */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -131,18 +125,15 @@
 
     th {
       background-color: #e0e0e0;
-      /* Light gray, can be themed if needed */
       font-weight: bold;
     }
 
     tbody tr:nth-child(odd) {
       background-color: #f9f9f9;
-      /* Can be a very light green if desired */
     }
 
     tbody tr:hover {
       background-color: #f1f1f1;
-      /* Can be a light green hover if desired */
     }
 
     .error-message {
@@ -161,7 +152,6 @@
       text-align: center;
     }
 
-    /* Presentation specific styles (tracker view) */
     .presentation-upload-form-container {
       background: #fff;
       padding: 20px;
@@ -184,7 +174,6 @@
     .media-week-group h3 {
       text-align: left;
       background: #2F855A;
-      /* Themed Green */
       color: #fff;
       padding: 10px 15px;
       border-radius: 5px 5px 0 0;
@@ -255,7 +244,6 @@
       background-color: #c9302c;
     }
 
-    /* Custom Message Box & Loader (Global) */
     .custom-message-box-overlay {
       position: fixed;
       top: 0;
@@ -304,14 +292,12 @@
 
     .custom-message-box-buttons .confirm-button {
       background-color: #1B5E20;
-      /* Themed Green */
       color: white;
       border: none;
     }
 
     .custom-message-box-buttons .confirm-button:hover {
       background-color: #14532d;
-      /* Darker Green */
     }
 
     .custom-message-box-buttons .cancel-button {
@@ -344,11 +330,9 @@
       color: #003366;
     }
 
-    /* Can be themed green */
     .loader {
       border: 4px solid #f3f3f3;
       border-top: 4px solid #1B5E20;
-      /* Themed Green */
       border-radius: 50%;
       width: 30px;
       height: 30px;
@@ -370,9 +354,6 @@
       display: none;
     }
 
-    /* Admin controls are hidden by default */
-
-    /* Infographic specific styles (prefixed with .infographic-active) */
     body.infographic-active .chart-container {
       position: relative;
       width: 100%;
@@ -392,34 +373,26 @@
     body.infographic-active .stat-card {
       background-color: #FFFFFF;
       border-radius: 0.5rem;
-      /* rounded-lg */
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      /* shadow-md */
       padding: 1.5rem;
-      /* p-6 */
       margin-bottom: 1.5rem;
-      /* mb-6 */
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       border: 1px solid #D1FAE5;
-      /* Light green border */
     }
 
     body.infographic-active .stat-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      /* shadow-lg */
     }
 
     body.infographic-active .section-title {
       color: #1B5E20;
       font-weight: 700;
       margin-bottom: 1.5rem;
-      /* Increased margin */
     }
 
     body.infographic-active .big-number {
       font-size: 3.5rem;
-      /* Slightly larger */
       font-weight: 700;
       color: #4CAF50;
       line-height: 1;
@@ -431,16 +404,13 @@
       margin-bottom: 0.75rem;
       background-color: #F0FDF0;
       padding: 1rem;
-      /* Increased padding */
       border-radius: 0.375rem;
       border-left: 4px solid #FFC107;
     }
 
     body.infographic-active .icon-list-item .icon {
       font-size: 1.75rem;
-      /* Increased icon size */
       margin-right: 1rem;
-      /* Increased margin */
       color: #1B5E20;
     }
 
@@ -513,7 +483,6 @@
 
     body.infographic-active .org-chart-node {
       background-color: #F0FDF0;
-      /* Light green background */
       border-radius: 0.5rem;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       padding: 1rem;
@@ -522,9 +491,7 @@
       font-size: 0.9rem;
       font-weight: 600;
       color: #1B5E20;
-      /* Darker green text */
       border: 1px solid #4CAF50;
-      /* Medium Green border */
     }
 
     body.infographic-active .org-chart-level {
@@ -762,13 +729,9 @@
 
     .infographic-container {
       padding: 1rem;
-      /* Default padding */
       max-width: 1300px;
-      /* Limit max width */
       margin: 0 auto;
-      /* Center align */
       padding: 0 20px;
-      /* Horizontal padding */
     }
 
     @media (min-width: 768px) {
@@ -785,23 +748,25 @@
   </style>
 </head>
 
-<body class="tracker-active">
+<body>
   <div id="app-container">
     <div class="navigation-buttons sticky top-0 z-50 bg-green-50 shadow-md p-3 flex flex-wrap justify-center gap-2">
       <button onclick="showHomePage()"
-        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Home</button>
+    class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Home</button>
+      <button onclick="showSection('plan-section')"
+    class="w-32 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors">Plan</button>
       <button onclick="showSection('meetings-section')"
-        class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Meetings</button>
+    class="w-32 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Meetings</button>
       <button onclick="showSection('media-section')"
-        class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Media</button>
+    class="w-32 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Media</button>
       <button onclick="showSection('presentations-section')"
-        class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Presentation</button>
+    class="w-32 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Presentation</button>
       <button id="admin-nav-button" onclick="handleAdminNavClick()"
-        class="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors">Admin</button>
+    class="w-32 px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors">Admin</button>
     </div>
 
-    <div id="main-content-wrapper" class="pt-20">
-      <div id="tracker-content-area">
+    <div id="main-content-wrapper">
+      <div id="tracker-content-area" style="display:none;">
         <div id="meetings-section" style="display: none;">
           <h2>Bloomberg Cities Idea Exchange || India || Meeting & Action Tracker</h2>
           <div class="form-container">
@@ -970,42 +935,6 @@
               <div>
                 <label for="weekInfoMedia">Week:</label>
                 <select name="weekInfo" id="weekInfoMedia" required>
-                  <option value="">Select Week</option>
-                  <option value="Week 19 (May 05 - May 11)">Week 19 (May 05 - May 11)</option>
-                  <option value="Week 20 (May 12 - May 18)">Week 20 (May 12 - May 18)</option>
-                  <option value="Week 21 (May 19 - May 25)">Week 21 (May 19 - May 25)</option>
-                  <option value="Week 22 (May 26 - Jun 01)">Week 22 (May 26 - Jun 01)</option>
-                  <option value="Week 23 (Jun 02 - Jun 08)">Week 23 (Jun 02 - Jun 08)</option>
-                  <option value="Week 24 (Jun 09 – Jun 15)">Week 24 (Jun 09 – Jun 15)</option>
-                  <option value="Week 25 (Jun 16 – Jun 22)">Week 25 (Jun 16 – Jun 22)</option>
-                  <option value="Week 26 (Jun 23 – Jun 29)">Week 26 (Jun 23 – Jun 29)</option>
-                  <option value="Week 27 (Jun 30 – Jul 06)">Week 27 (Jun 30 – Jul 06)</option>
-                  <option value="Week 28 (Jul 07 – Jul 13)">Week 28 (Jul 07 – Jul 13)</option>
-                  <option value="Week 29 (Jul 14 – Jul 20)">Week 29 (Jul 14 – Jul 20)</option>
-                  <option value="Week 30 (Jul 21 – Jul 27)">Week 30 (Jul 21 – Jul 27)</option>
-                  <option value="Week 31 (Jul 28 – Aug 03)">Week 31 (Jul 28 – Aug 03)</option>
-                  <option value="Week 32 (Aug 04 – Aug 10)">Week 32 (Aug 04 – Aug 10)</option>
-                  <option value="Week 33 (Aug 11 – Aug 17)">Week 33 (Aug 11 – Aug 17)</option>
-                  <option value="Week 34 (Aug 18 – Aug 24)">Week 34 (Aug 18 – Aug 24)</option>
-                  <option value="Week 35 (Aug 25 – Aug 31)">Week 35 (Aug 25 – Aug 31)</option>
-                  <option value="Week 36 (Sep 01 – Sep 07)">Week 36 (Sep 01 – Sep 07)</option>
-                  <option value="Week 37 (Sep 08 – Sep 14)">Week 37 (Sep 08 – Sep 14)</option>
-                  <option value="Week 38 (Sep 15 – Sep 21)">Week 38 (Sep 15 – Sep 21)</option>
-                  <option value="Week 39 (Sep 22 – Sep 28)">Week 39 (Sep 22 – Sep 28)</option>
-                  <option value="Week 40 (Sep 29 – Oct 05)">Week 40 (Sep 29 – Oct 05)</option>
-                  <option value="Week 41 (Oct 06 – Oct 12)">Week 41 (Oct 06 – Oct 12)</option>
-                  <option value="Week 42 (Oct 13 – Oct 19)">Week 42 (Oct 13 – Oct 19)</option>
-                  <option value="Week 43 (Oct 20 – Oct 26)">Week 43 (Oct 20 – Oct 26)</option>
-                  <option value="Week 44 (Oct 27 – Nov 02)">Week 44 (Oct 27 – Nov 02)</option>
-                  <option value="Week 45 (Nov 03 – Nov 09)">Week 45 (Nov 03 – Nov 09)</option>
-                  <option value="Week 46 (Nov 10 – Nov 16)">Week 46 (Nov 10 – Nov 16)</option>
-                  <option value="Week 47 (Nov 17 – Nov 23)">Week 47 (Nov 17 – Nov 23)</option>
-                  <option value="Week 48 (Nov 24 – Nov 30)">Week 48 (Nov 24 – Nov 30)</option>
-                  <option value="Week 49 (Dec 01 – Dec 07)">Week 49 (Dec 01 – Dec 07)</option>
-                  <option value="Week 50 (Dec 08 – Dec 14)">Week 50 (Dec 08 – Dec 14)</option>
-                  <option value="Week 51 (Dec 15 – Dec 21)">Week 51 (Dec 15 – Dec 21)</option>
-                  <option value="Week 52 (Dec 22 – Dec 28)">Week 52 (Dec 22 – Dec 28)</option>
-                  <option value="Week 53 (Dec 29 - Dec 31)">Week 53 (Dec 29 - Dec 31)</option>
                 </select>
               </div>
               <div> <label for="zoneMedia">Zone:</label> <select name="zone" id="zoneMedia" required>
@@ -1044,7 +973,6 @@
             <form id="presentation-upload-form">
               <div> <label for="presentationWeekInfo">Week Number:</label> <select name="weekInfo"
                   id="presentationWeekInfo" required>
-                  <option value="">Select Week</option>
                 </select> </div>
               <div> <label for="presentationIframeCode">Google Slides Embed Code (iframe):</label> <textarea
                   name="iframeCode" id="presentationIframeCode" required
@@ -1080,6 +1008,11 @@
           </form>
         </div>
       </div>
+      <div id="plan-section" style="display:none;">
+        <h2>Project Plan - Gantt Chart</h2>
+        <iframe id="plan-gantt-iframe" srcdoc=""
+          style="width:100%; height:85vh; border:none; margin-top: 20px;"></iframe>
+      </div>
       <div id="infographic-content-area" style="display:none;"></div>
     </div>
     <div id="loadingIndicator" class="loading-indicator">
@@ -1095,25 +1028,14 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <script>
-      // scriptURL for Google Apps Script deployment. This needs to be replaced with a live deployment URL for full functionality.
-      var scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
+  <script>
+    // --- APP-WIDE CONSTANTS & STATE ---
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
+    let isAdminLoggedIn = false;
 
-      let isAdminLoggedIn = false;
-
-      // Store original head and body styles for switching back from infographic view
-      const originalTrackerHeadContent = document.head.innerHTML;
-      const originalTrackerBodyClasses = document.body.className;
-      const originalTrackerBodyStyles = {
-        fontFamily: document.body.style.fontFamily,
-        margin: document.body.style.margin,
-        padding: document.body.style.padding,
-        maxWidth: document.body.style.maxWidth,
-        backgroundColor: document.body.style.backgroundColor
-      };
-
-      // Infographic specific HTML content and Chart.js script
+    // --- HTML CONTENT FOR DYNAMIC PAGES ---
       const infographicPageHeadHTML_Base = `
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1570,190 +1492,387 @@
     </footer>
   </div> 
     `;
-      const infographicPageChartScript = `
+
+    const infographicPageChartScript = `
         function wrapLabels(label, maxLength = 16) { if (typeof label !== 'string') return label; if (label.length <= maxLength) return label; const words = label.split(' '); const lines = []; let currentLine = ''; for (const word of words) { if ((currentLine + word).length > maxLength && currentLine.length > 0) { lines.push(currentLine.trim()); currentLine = word + ' '; } else { currentLine += word + ' '; } } if (currentLine.trim().length > 0) lines.push(currentLine.trim()); return lines.length > 0 ? lines : [label]; }
         if (typeof Chart !== 'undefined' && document.getElementById('sitesChart')) { const sitesChartCtx = document.getElementById('sitesChart').getContext('2d'); new Chart(sitesChartCtx, { type: 'doughnut', data: { labels: [wrapLabels('Existing Cold Storage Installations'), wrapLabels('Brand New Upcoming Installations')], datasets: [{ label: 'Site Distribution', data: [31, 10], backgroundColor: ['#4CAF50', '#FFC107'], borderColor: ['#FFFFFF', '#FFFFFF'], borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 12, family: 'Open Sans' }, color: '#333333', padding: 15, boxWidth: 15 } }, tooltip: { backgroundColor: '#333333', titleFont: { size: 14, family: 'Montserrat', weight: 'bold' }, bodyFont: { size: 12, family: 'Open Sans' }, padding: 10, callbacks: { title: function(tooltipItems) { const item = tooltipItems[0]; let label = item.chart.data.labels[item.dataIndex]; return Array.isArray(label) ? label.join(' ') : label; } } } } } }); } else { console.error("Chart.js is not defined or canvas not found."); }
     `;
 
-      const loadingIndicator = document.getElementById('loadingIndicator');
-      function showLoading() { if (loadingIndicator) loadingIndicator.style.display = 'block'; }
-      function hideLoading() { if (loadingIndicator) loadingIndicator.style.display = 'none'; }
-      function showMessage(message, isConfirm = false, onConfirm = null) {
-        const overlay = document.getElementById('customMessageBoxOverlay');
-        const textEl = document.getElementById('customMessageText');
-        const confirmBtn = document.getElementById('customMessageConfirm');
-        const cancelBtn = document.getElementById('customMessageCancel');
-        if (!overlay || !textEl || !confirmBtn || !cancelBtn) {
-          // Fallback if message box elements are not found
-          alert(message);
-          if (isConfirm && onConfirm) onConfirm();
-          return;
-        }
-        textEl.textContent = message;
-        window.confirmCallback = onConfirm; // Store callback globally for confirmation
-        if (isConfirm) {
-          confirmBtn.textContent = 'Confirm';
-          cancelBtn.style.display = 'inline-block';
-        } else {
-          confirmBtn.textContent = 'OK';
-          cancelBtn.style.display = 'none';
-        }
-        overlay.classList.add('active'); // Show message box
-      }
+    // A single, self-contained HTML document for the Gantt chart iframe
+    const planGanttHTML = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Gantt Chart</title>
+          <script src="https://cdn.tailwindcss.com"><\/script>
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+          <style>
+            body { font-family: 'Inter', sans-serif; background-color: #f9f9f9; color: #334155; padding: 20px 0; display: flex; flex-direction: column; height: 98vh; }
+            .chart-scroll-wrapper { overflow: auto; flex-grow: 1; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #ddd; position: relative; }
+            .gantt-chart-container { width: fit-content; background-color: #ffffff; padding: 20px; }
+            .gantt-header { font-weight: bold; background-color: #e0e0e0; padding: 10px 5px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .gantt-row { display: flex; align-items: center; padding: 8px 5px; border-bottom: 1px solid #e2e8f0; position: relative; background-color: #ffffff; z-index: 20; }
+            .gantt-row:last-child { border-bottom: none; }
+            .gantt-row-category { background-color: #f0fdf4; font-weight: bold; color: #1B5E20; }
+            .gantt-row-main-category { border-bottom: none; margin-top: 15px; background-color: #dcfce7 !important; }
+            .serial-number { flex-shrink: 0; width: 50px; text-align: center; font-size: 0.85em; color: #64748b; position: sticky; left: 0; z-index: 50; box-shadow: 2px 0 3px rgba(0,0,0,0.05); background-color: inherit; }
+            .task-name { flex-shrink: 0; width: 300px; font-size: 0.9em; word-wrap: break-word; padding-right: 10px; position: sticky; left: 50px; z-index: 50; box-shadow: 2px 0 3px rgba(0,0,0,0.05); background-color: inherit; }
+            .gantt-header .serial-number, .gantt-header .task-name { background-color: #e0e0e0; box-shadow: none; z-index: 101; }
+            .timeline { flex-grow: 1; display: grid; grid-template-columns: repeat(17, minmax(75px, 1fr)); gap: 2px; align-items: center; position: relative; }
+            .month-header { text-align: center; font-size: 0.8em; color: #475569; padding-bottom: 2px; }
+            .year-header { text-align: center; font-size: 0.7em; color: #64748b; }
+            .timeline-grid-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(17, minmax(75px, 1fr)); gap: 2px; z-index: 5; }
+            .timeline-grid-bg > div { border-right: 1px solid #e2e8f0; }
+            .gantt-header .timeline > div { border-right: 1px solid #d1d5db; }
+            .gantt-header .timeline > div:last-child { border-right: none; }
+            .task-bar { background-color: #4CAF50; height: 20px; border-radius: 5px; position: relative; z-index: 10; cursor: grab; display: flex; justify-content: space-between; align-items: center; min-width: 20px; }
+            .resize-handle { width: 8px; height: 100%; background-color: rgba(255,255,255,0.4); border-radius: 2px; cursor: ew-resize; z-index: 20; }
+            .resize-handle.left { border-top-left-radius: 5px; border-bottom-left-radius: 5px; }
+            .resize-handle.right { border-top-right-radius: 5px; border-bottom-right-radius: 5px; }
+          </style>
+      </head>
+      <body>
+          <div class="chart-scroll-wrapper">
+              <div class="gantt-chart-container">
+                  <div class="gantt-header rounded-lg">
+                      <div class="serial-number px-2 text-slate-700">No.</div>
+                      <div class="task-name px-2 text-slate-700">Workstreams, Sub-Workstreams, and Deliverables</div>
+                      <div class="timeline">
+                          <div class="text-center"><div class="month-header">May</div><div class="year-header">2025</div></div><div class="text-center"><div class="month-header">June</div><div class="year-header">2025</div></div><div class="text-center"><div class="month-header">July</div><div class="year-header">2025</div></div><div class="text-center"><div class="month-header">August</div><div class="year-header">2025</div></div><div class="text-center"><div class="month-header">September</div><div class="year-header">2025</div></div><div class="text-center"><div class="month-header">October</div><div class="year-header">2025</div></div><div class="text-center"><div class="month-header">November</div><div class="year-header">2025</div></div><div class="text-center"><div class="month-header">December</div><div class="year-header">2025</div></div><div class="text-center"><div class="month-header">January</div><div class="year-header">2026</div></div><div class="text-center"><div class="month-header">February</div><div class="year-header">2026</div></div><div class="text-center"><div class="month-header">March</div><div class="year-header">2026</div></div><div class="text-center"><div class="month-header">April</div><div class="year-header">2026</div></div><div class="text-center"><div class="month-header">May</div><div class="year-header">2026</div></div><div class="text-center"><div class="month-header">June</div><div class="year-header">2026</div></div><div class="text-center"><div class="month-header">July</div><div class="year-header">2026</div></div><div class="text-center"><div class="month-header">August</div><div class="year-header">2026</div></div><div class="text-center"><div class="month-header">September</div><div class="year-header">2026</div></div>
+                      </div>
+                  </div>
+                  <div id="gantt-rows-container">
+                    <!-- Gantt chart rows will be dynamically inserted here -->
+                  </div>
+              </div>
+          </div>
+          <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const ganttData = [
+                    { name: 'Operational excellence', type: 'main-category' },
+                    { name: 'Infrastructure upkeep and maintenance', type: 'category', start: 1, end: 18 },
+                    { name: 'Infrastructure gaps identified and reported', type: 'task', start: 3, end: 5 },
+                    { name: 'Cold room open and operational for beneficiaries', type: 'task', start: 2, end: 18 },
+                    { name: 'Process for infrastructure issue resolution established', type: 'task', start: 3, end: 6 },
+                    { name: 'Infrastructure gaps addressed', type: 'task', start: 6, end: 9 },
+                    { name: 'Technician assigned to cold room', type: 'task', start: 6, end: 11 },
+                    { name: 'Digitization', type: 'category', start: 3, end: 8 },
+                    { name: 'Plan for workflow digitization complete', type: 'task', start: 4, end: 7 },
+                    { name: 'Asset monitoring setup', type: 'task', start: 5, end: 9 },
+                    { name: 'Inventory system rollout complete', type: 'task', start: 7, end: 11 },
+                    { name: 'Daily facility operations', type: 'category', start: 1, end: 4 },
+                    { name: 'Operational readiness tools in place', type: 'task', start: 1, end: 3 },
+                    { name: 'SOPs and guidelines for daily functioning created', type: 'task', start: 1, end: 4 },
+                    { name: 'All operators comfortable with daily operations', type: 'task', start: 3, end: 6 },
+                    { name: 'Operator mid year readiness check complete', type: 'task', start: 6, end: 8 },
+                    { name: 'Revenue Diversification', type: 'main-category' },
+                    { name: 'Bulk and institutional Supplies', type: 'category', start: 1, end: 4 },
+                    { name: 'Bulk institutions/market linkage/VAS survey work complete', type: 'task', start: 1, end: 4 },
+                    { name: 'Surveys results analysed and consolidated', type: 'task', start: 4, end: 6 },
+                    { name: 'First batch supplied to bulk institution', type: 'task', start: 6, end: 8 },
+                    { name: 'Value added services', type: 'category', start: 6, end: 15 },
+                    { name: 'New idea generated', type: 'task', start: 6, end: 9 },
+                    { name: 'Idea piloted', type: 'task', start: 9, end: 12 },
+                    { name: 'Idea institutionalized', type: 'task', start: 12, end: 15 },
+                    { name: 'Production modelling and rationalization', type: 'category', start: 8, end: 14 },
+                    { name: 'Opportunity analysis for cold room complete', type: 'task', start: 8, end: 10 },
+                    { name: 'Changes proposed', type: 'task', start: 10, end: 12 },
+                    { name: 'Changes initiated', type: 'task', start: 12, end: 14 },
+                    { name: 'Farmer Vendor Engagement', type: 'main-category' },
+                    { name: 'Data collection and onboarding', type: 'category', start: 1, end: 7 },
+                    { name: 'Baseline survey work complete', type: 'task', start: 1, end: 3 },
+                    { name: 'Data analyzed', type: 'task', start: 3, end: 5 },
+                    { name: 'Farmers/vendors tagged and registered', type: 'task', start: 5, end: 7 },
+                    { name: 'Awareness programs', type: 'category', start: 4, end: 12 },
+                    { name: 'Materials for awareness programs completed', type: 'task', start: 4, end: 6 },
+                    { name: 'Market level awareness programs completed', type: 'task', start: 6, end: 8 },
+                    { name: 'Village level awareness programs completed', type: 'task', start: 8, end: 10 },
+                    { name: 'Ambassador program launched', type: 'task', start: 10, end: 12 },
+                    { name: 'Feedback collection', type: 'category', start: 5, end: 18 },
+                    { name: 'Regular user feedback collected', type: 'task', start: 5, end: 18 },
+                    { name: 'Non user feedback collected', type: 'task', start: 13, end: 15 },
+                    { name: 'One time user feedback collected', type: 'task', start: 11, end: 13 },
+                    { name: 'Feedback consolidated', type: 'task', start: 15, end: 17 },
+                    { name: 'Operator Mentorship and Skill Building', type: 'main-category' },
+                    { name: 'Phase 1 trainings', type: 'category', start: 1, end: 5 },
+                    { name: 'Training plan ready', type: 'task', start: 1, end: 3 },
+                    { name: 'Training completed', type: 'task', start: 3, end: 5 },
+                    { name: 'Phase 2 trainings', type: 'category', start: 5, end: 10 },
+                    { name: 'Needs assessment complete', type: 'task', start: 5, end: 7 },
+                    { name: 'Training plan ready', type: 'task', start: 6, end: 8 },
+                    { name: 'Training completed', type: 'task', start: 8, end: 10 },
+                    { name: 'Phase 3 trainings', type: 'category', start: 10, end: 15 },
+                    { name: 'Needs assessment complete', type: 'task', start: 10, end: 12 },
+                    { name: 'Training plan ready', type: 'task', start: 11, end: 13 },
+                    { name: 'Training completed', type: 'task', start: 13, end: 15 },
+                    { name: 'Ongoing mentorship', type: 'category', start: 4, end: 13 },
+                    { name: 'Plan for ongoing mentorship created', type: 'task', start: 4, end: 7 },
+                    { name: 'Ongoing mentorship', type: 'task', start: 7, end: 13 },
+                    { name: 'Project governance and stakeholder engagement', type: 'main-category' },
+                    { name: 'Stakeholder engagement/awareness building', type: 'category', start: 1, end: 6 },
+                    { name: 'Kickoff meeting with key stakeholders complete', type: 'task', start: 1, end: 3 },
+                    { name: 'NGOs mapped and briefed', type: 'task', start: 2, end: 4 },
+                    { name: 'At least one NGO partnership is established', type: 'task', start: 4, end: 6 },
+                    { name: 'Project review and monitoring', type: 'category', start: 4, end: 18 },
+                    { name: 'District workplans complete', type: 'task', start: 1, end: 3 },
+                    { name: 'District level PMU formed', type: 'task', start: 2, end: 4 },
+                    { name: 'Monthly district level PMU meeting complete', type: 'task', start: 4, end: 18 },
+                    { name: 'Steering committee formed at state level', type: 'task', start: 5, end: 7 },
+                    { name: 'Quarterly steering committee meeting complete', type: 'task', start: 7, end: 18 },
+                    { name: 'Data systems and management', type: 'category', start: 1, end: 6 },
+                    { name: 'Impact reporting plan in place', type: 'task', start: 1, end: 3 },
+                    { name: 'Data collection plan created', type: 'task', start: 2, end: 4 },
+                    { name: 'Data reporting dashboard established', type: 'task', start: 3, end: 6 },
+                    { name: 'Operational data collection begun', type: 'task', start: 4, end: 18 },
+                ];
+                const container = document.getElementById('gantt-rows-container');
+                ganttData.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'gantt-row';
+                    if(item.type === 'main-category') {
+                        row.classList.add('gantt-row-category', 'gantt-row-main-category', 'bg-main-category', 'rounded-lg', 'mt-4');
+                        row.dataset.mainCategory = "true";
+                        row.innerHTML = \`<div class="serial-number"></div><div class="task-name px-2">\${item.name}</div><div class="timeline"></div>\`;
+                    } else if (item.type === 'category') {
+                        row.classList.add('gantt-row-category');
+                        row.innerHTML = \`<div class="serial-number"></div><div class="task-name px-2 pl-6">\${item.name}</div><div class="timeline"><div class="task-bar" data-start-month="\${item.start}" data-end-month="\${item.end}"><div class="resize-handle left"></div><div class="resize-handle right"></div></div></div>\`;
+                    } else {
+                        row.innerHTML = \`<div class="serial-number"></div><div class="task-name px-2 pl-8">\${item.name}</div><div class="timeline"><div class="task-bar" data-start-month="\${item.start}" data-end-month="\${item.end}"><div class="resize-handle left"></div><div class="resize-handle right"></div></div></div>\`;
+                    }
+                    container.appendChild(row);
+                });
+                
+                document.querySelectorAll('.gantt-row .timeline').forEach(timeline => {
+                    const bgGrid = document.createElement('div');
+                    bgGrid.classList.add('timeline-grid-bg');
+                    for(let i=0; i<17; i++) {
+                        const lineCell = document.createElement('div');
+                        bgGrid.appendChild(lineCell);
+                    }
+                    timeline.prepend(bgGrid);
+                });
+                const assignSerialNumbers = () => {
+                    const rowsToNumber = document.querySelectorAll('.gantt-row:not([data-main-category="true"])');
+                    let serialNum = 1;
+                    rowsToNumber.forEach(row => {
+                        const serialNumDiv = row.querySelector('.serial-number');
+                        if (serialNumDiv) serialNumDiv.textContent = serialNum++;
+                    });
+                };
+                assignSerialNumbers();
+                const initializeTaskBars = () => {
+                    document.querySelectorAll('.task-bar').forEach(bar => {
+                        updateTaskBarPosition(bar);
+                        attachDragListeners(bar);
+                    });
+                };
+                const updateTaskBarPosition = (bar) => {
+                    const startMonth = parseInt(bar.dataset.startMonth);
+                    const endMonth = parseInt(bar.dataset.endMonth);
+                    bar.style.gridColumn = \`\${startMonth} / \${endMonth}\`;
+                };
+                const attachDragListeners = (bar) => {
+                    const parentRow = bar.closest('.gantt-row');
+                    if (parentRow && parentRow.dataset.mainCategory === 'true') {
+                        bar.style.cursor = 'default';
+                        bar.querySelectorAll('.resize-handle').forEach(h => h.style.display = 'none');
+                        return;
+                    }
+                    let isDragging = false, dragType = '', initialMouseX = 0, initialStartMonth = 0, initialEndMonth = 0;
+                    const timeline = document.querySelector('.timeline');
+                    let monthColumnWidth = timeline.offsetWidth / 17;
+                    const onMouseDown = (e) => {
+                        if (e.button !== 0) return;
+                        isDragging = true;
+                        initialMouseX = e.clientX;
+                        initialStartMonth = parseInt(bar.dataset.startMonth);
+                        initialEndMonth = parseInt(bar.dataset.endMonth);
+                        monthColumnWidth = timeline.offsetWidth / 17;
+                        dragType = e.target.classList.contains('resize-handle') ? (e.target.classList.contains('left') ? 'left' : 'right') : 'move';
+                        bar.style.cursor = 'grabbing';
+                        document.body.style.userSelect = 'none';
+                        document.addEventListener('mousemove', onMouseMove);
+                        document.addEventListener('mouseup', onMouseUp);
+                        e.preventDefault();
+                    };
+                    const onMouseMove = (e) => {
+                        if (!isDragging) return;
+                        const deltaX = e.clientX - initialMouseX;
+                        const colDelta = Math.round(deltaX / monthColumnWidth);
+                        let newStart = initialStartMonth, newEnd = initialEndMonth;
+                        const duration = initialEndMonth - initialStartMonth;
+                        if (dragType === 'left') {
+                            newStart = Math.max(1, Math.min(initialEndMonth - 1, initialStartMonth + colDelta));
+                        } else if (dragType === 'right') {
+                            newEnd = Math.min(18, Math.max(initialStartMonth + 1, initialEndMonth + colDelta));
+                        } else {
+                            newStart = Math.max(1, initialStartMonth + colDelta);
+                            newEnd = newStart + duration;
+                            if (newEnd > 18) { newStart = 18 - duration; newEnd = 18; }
+                        }
+                        bar.dataset.startMonth = newStart;
+                        bar.dataset.endMonth = newEnd;
+                        updateTaskBarPosition(bar);
+                    };
+                    const onMouseUp = () => {
+                        isDragging = false;
+                        bar.style.cursor = 'grab';
+                        document.body.style.userSelect = '';
+                        document.removeEventListener('mousemove', onMouseMove);
+                        document.removeEventListener('mouseup', onMouseUp);
+                    };
+                    bar.addEventListener('mousedown', onMouseDown);
+                };
+                initializeTaskBars();
+            });
+          <\/script>
+      </body>
+      </html>
+    `;
 
-      // Event listeners for the custom message box buttons
-      document.getElementById('customMessageConfirm')?.addEventListener('click', () => {
-        document.getElementById('customMessageBoxOverlay').classList.remove('active');
-        if (window.confirmCallback) {
-          window.confirmCallback(); // Execute the stored callback
-          window.confirmCallback = null; // Clear the callback
-        }
+
+    // --- UI & NAVIGATION ---
+    function showLoading() {
+      document.getElementById('loadingIndicator').style.display = 'block';
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingIndicator').style.display = 'none';
+    }
+
+    function showMessage(message, isConfirm = false, onConfirm = null) {
+      const overlay = document.getElementById('customMessageBoxOverlay');
+      const textEl = document.getElementById('customMessageText');
+      const confirmBtn = document.getElementById('customMessageConfirm');
+      const cancelBtn = document.getElementById('customMessageCancel');
+      if (!overlay || !textEl || !confirmBtn || !cancelBtn) {
+        alert(message);
+        if (isConfirm && onConfirm) onConfirm();
+        return;
+      }
+      textEl.textContent = message;
+      window.confirmCallback = onConfirm;
+      confirmBtn.textContent = isConfirm ? 'Confirm' : 'OK';
+      cancelBtn.style.display = isConfirm ? 'inline-block' : 'none';
+      overlay.classList.add('active');
+    }
+
+    function showHomePage() {
+      showLoading();
+      document.body.className = 'infographic-active';
+
+      document.getElementById('tracker-content-area').style.display = 'none';
+      document.getElementById('plan-section').style.display = 'none';
+      const infographicContentArea = document.getElementById('infographic-content-area');
+      infographicContentArea.innerHTML = infographicPageBodyHTML;
+      infographicContentArea.style.display = 'block';
+
+      const chartJsScript = document.createElement('script');
+      chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
+      chartJsScript.onload = () => {
+        const chartInitScriptElement = document.createElement('script');
+        chartInitScriptElement.textContent = infographicPageChartScript;
+        document.body.appendChild(chartInitScriptElement);
+        hideLoading();
+      };
+      chartJsScript.onerror = () => {
+        console.error("Failed to load Chart.js.");
+        hideLoading();
+      };
+      document.head.appendChild(chartJsScript);
+    }
+
+    function showSection(sectionIdToShow) {
+      document.body.className = 'tracker-active';
+      document.getElementById('infographic-content-area').style.display = 'none';
+
+      const mainContentSections = ['tracker-content-area', 'plan-section'];
+      const trackerSubSections = ['meetings-section', 'media-section', 'presentations-section', 'admin-section'];
+
+      const mainSectionToShow = trackerSubSections.includes(sectionIdToShow) ? 'tracker-content-area' : sectionIdToShow;
+
+      mainContentSections.forEach(id => {
+        document.getElementById(id).style.display = (id === mainSectionToShow) ? 'block' : 'none';
       });
-      document.getElementById('customMessageCancel')?.addEventListener('click', () => {
-        document.getElementById('customMessageBoxOverlay').classList.remove('active');
-        window.confirmCallback = null; // Clear the callback if canceled
-      });
 
-
-      // Function to update the visibility of elements with 'admin-only' class
-      function updateAdminUI(isLoggedIn) {
-        const adminElements = document.querySelectorAll('.admin-only');
-        adminElements.forEach(el => {
-          el.style.display = isLoggedIn ? 'inline-block' : 'none';
-        });
-      }
-
-      // Handler for the Admin navigation button click
-      function handleAdminNavClick() {
-        if (isAdminLoggedIn) {
-          // If already logged in, log out
-          isAdminLoggedIn = false;
-          document.getElementById('admin-nav-button').textContent = 'Admin';
-          updateAdminUI(false); // Hide admin controls
-          showMessage('You have been logged out.', false); // Show logout message
-        } else {
-          // If not logged in, show the admin login section
-          showSection('admin-section');
-        }
-      }
-
-      // Event listener for the admin login form submission
-      document.getElementById('admin-login-form')?.addEventListener('submit', function (e) {
-        e.preventDefault(); // Prevent default form submission
-        const username = this.username.value;
-        const password = this.password.value;
-
-        // Simple hardcoded admin credentials for demonstration
-        if (username === 'admin' && password === 'admin') {
-          isAdminLoggedIn = true;
-          document.getElementById('admin-nav-button').textContent = 'Logout'; // Change button text
-          updateAdminUI(true); // Show admin controls
-          showHomePage(); // Redirect to home page after login
-          showMessage('Admin login successful.', false);
-        } else {
-          showMessage('Invalid username or password.', false);
-          this.password.value = ''; // Clear password field
-        }
-      });
-
-      // Function to show the Home (Infographic) page
-      function showHomePage() {
-        showLoading(); // Show loading indicator
-        const trackerContentArea = document.getElementById('tracker-content-area');
-        const infographicContentArea = document.getElementById('infographic-content-area');
-
-        // Apply infographic-specific body class
-        document.body.className = 'infographic-active';
-        // Hide tracker content
-        if (trackerContentArea) trackerContentArea.style.display = 'none';
-
-        // Set infographic content and display it
-        if (infographicContentArea) {
-          infographicContentArea.innerHTML = infographicPageBodyHTML;
-          infographicContentArea.style.display = 'block';
-        }
-
-        // Remove any existing Chart.js script to prevent conflicts
-        const existingChartScript = document.head.querySelector('script[src="https://cdn.jsdelivr.net/npm/chart.js"]');
-        if (existingChartScript) existingChartScript.remove();
-
-        // Dynamically load Chart.js
-        const chartJsScript = document.createElement('script');
-        chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
-        chartJsScript.onload = () => {
-          // Once Chart.js is loaded, initialize the chart
-          const chartInitScriptElement = document.createElement('script');
-          chartInitScriptElement.textContent = infographicPageChartScript;
-          document.body.appendChild(chartInitScriptElement);
-          hideLoading(); // Hide loading indicator after chart is rendered
-        };
-        chartJsScript.onerror = () => {
-          console.error("Failed to load Chart.js.");
-          hideLoading();
-          showMessage("Error loading chart library.", false);
-        };
-        document.head.appendChild(chartJsScript);
-      }
-
-
-      function showSection(sectionIdToShow) {
-        const trackerContentArea = document.getElementById('tracker-content-area');
-        const infographicContentArea = document.getElementById('infographic-content-area');
-
-        document.body.className = 'tracker-active';
-        document.head.innerHTML = originalTrackerHeadContent;
-
-        if (infographicContentArea) infographicContentArea.style.display = 'none';
-        if (trackerContentArea) trackerContentArea.style.display = 'block';
-
-        const allTrackerSectionDivIds = ['meetings-section', 'media-section', 'presentations-section', 'admin-section'];
-        allTrackerSectionDivIds.forEach(id => {
+      if (mainSectionToShow === 'tracker-content-area') {
+        trackerSubSections.forEach(id => {
           const el = document.getElementById(id);
-          if (el) {
-            el.style.display = (id === sectionIdToShow) ? 'block' : 'none';
-          }
+          if (el) el.style.display = (id === sectionIdToShow) ? 'block' : 'none';
         });
 
         if (sectionIdToShow === 'media-section') fetchMediaGallery();
         if (sectionIdToShow === 'presentations-section') fetchPresentations();
-
-        if (!document.querySelector('script[src="https://cdn.tailwindcss.com"]')) {
-          const tailwindScript = document.createElement('script');
-          tailwindScript.src = "https://cdn.tailwindcss.com";
-          document.head.appendChild(tailwindScript);
-        }
       }
 
-      function fetchPresentations() {
+      if (mainSectionToShow === 'plan-section') {
+        const iframe = document.getElementById('plan-gantt-iframe');
+        if (iframe && !iframe.getAttribute('srcdoc')) {
+          iframe.srcdoc = planGanttHTML;
+        }
+      }
+    }
+
+    // --- ADMIN & AUTH ---
+    function updateAdminUI(isLoggedIn) {
+      document.querySelectorAll('.admin-only').forEach(el => {
+        el.style.display = isLoggedIn ? 'inline-block' : 'none';
+      });
+    }
+
+    function handleAdminNavClick() {
+      if (isAdminLoggedIn) {
+        isAdminLoggedIn = false;
+        document.getElementById('admin-nav-button').textContent = 'Admin';
+        updateAdminUI(false);
+        showMessage('You have been logged out.', false);
+      } else {
+        showSection('admin-section');
+      }
+    }
+
+    // --- DATA FETCHING & RENDERING ---
+    function fetchData() {
+      showLoading();
+      Promise.all([
+        fetch(scriptURL + '?action=get_meetings&sheetName=Meetings').then(res => res.json()),
+        fetch(scriptURL + '?action=get_actions&sheetName=Action Items').then(res => res.json())
+      ]).then(([meetingsData, actionsData]) => {
+        renderTable(meetingsData, 'meeting-table', 'meeting');
+        renderTable(actionsData, 'action-table', 'action');
+      }).catch(error => {
+        console.error('Error fetching tracker data:', error);
+        document.querySelector('#meeting-table tbody').innerHTML = `<tr><td colspan="10" class="error-message">Error loading meetings.</td></tr>`;
+        document.querySelector('#action-table tbody').innerHTML = `<tr><td colspan="6" class="error-message">Error loading actions.</td></tr>`;
+      }).finally(() => hideLoading());
+    }
+    
+    function fetchPresentations() {
         const presentationsContainer = document.getElementById('presentations-display-area');
-        if (!presentationsContainer) { console.error("Presentations display area not found!"); return; }
-        presentationsContainer.innerHTML = '<p style="text-align:center;">Loading presentations...</p>'; showLoading();
-        // FIXED: Added sheetName parameter
+        if (!presentationsContainer) return;
+        presentationsContainer.innerHTML = '<p style="text-align:center;">Loading presentations...</p>';
+        showLoading();
         fetch(scriptURL + '?action=get_presentations&sheetName=Presentations')
           .then(res => res.json())
           .then(data => {
             if (data && data.error) throw new Error(data.error);
             const [headers, ...rows] = data;
-            if (!Array.isArray(headers)) throw new Error("Invalid data format");
             const uniqueIdIndex = headers.indexOf('UniqueID');
             const weekIndex = headers.indexOf('Week');
-            const titleIndex = headers.indexOf('Title');
             const iframeCodeIndex = headers.indexOf('IframeCode');
-
             let html = '';
             if (rows.length > 0) {
               const groupedByWeek = rows.reduce((acc, row) => {
                 const week = row[weekIndex] || 'Uncategorized';
                 if (!acc[week]) acc[week] = [];
-                acc[week].push({
-                  uniqueID: row[uniqueIdIndex],
-                  title: row[titleIndex],
-                  iframeCode: row[iframeCodeIndex]
-                });
+                acc[week].push({ uniqueID: row[uniqueIdIndex], iframeCode: row[iframeCodeIndex] });
                 return acc;
               }, {});
-
-              Object.keys(groupedByWeek).sort((a, b) => (a.match(/\d+/) || [0])[0] - (b.match(/\d+/) || [0])[0]).forEach(week => {
+              Object.keys(groupedByWeek).sort((a,b) => (a.match(/\d+/)||[0])[0] - (b.match(/\d+/)||[0])[0]).forEach(week => {
                 html += `<div class="presentation-week-group"><h3>${week}</h3>`;
                 groupedByWeek[week].forEach(p => {
                   const responsiveIframeCode = p.iframeCode.replace(/width="[^"]*"/ig, '').replace(/height="[^"]*"/ig, '');
@@ -1762,215 +1881,67 @@
                 html += `</div>`;
               });
             } else {
-              html = '<p style="text-align:center; margin-top:20px;">No presentations have been added yet.</p>';
+              html = '<p style="text-align:center; margin-top:20px;">No presentations added yet.</p>';
             }
             presentationsContainer.innerHTML = html;
-            updateAdminUI(isAdminLoggedIn); // Ensure admin controls visibility is correct
+            updateAdminUI(isAdminLoggedIn);
           })
-          .catch(error => { console.error('Error fetching presentations:', error); presentationsContainer.innerHTML = `<p class="error-message">Error: ${error.message}</p>`; })
+          .catch(error => { presentationsContainer.innerHTML = `<p class="error-message">Error: ${error.message}</p>`; })
           .finally(() => hideLoading());
-      }
+    }
 
-      function renderTable(data, tableId, sectionType) {
-        const tbody = document.querySelector(`#${tableId} tbody`);
-        const thead = document.querySelector(`#${tableId} thead`);
-        if (!thead || !tbody) { console.error(`Table elements not found for ${tableId}`); return; }
-        thead.innerHTML = ""; tbody.innerHTML = "";
-
-        if (!Array.isArray(data) || data.length === 0) {
-          thead.innerHTML = `<tr><th>Notice</th></tr>`;
-          tbody.innerHTML = `<tr><td>No entries found for ${sectionType}.</td></tr>`;
-          return;
-        }
-
-        let [originalHeaders, ...rows] = data;
-        let headersToDisplay = originalHeaders;
-        let columnIndicesToKeep = Array.from({ length: originalHeaders.length }, (_, i) => i); // Default: keep all
-
-        // Specific filtering for meeting-table
-        if (tableId === 'meeting-table') {
-          const excludedMeetingHeader = 'Photo URL'; // The header to exclude
-          const photoUrlIndex = originalHeaders.indexOf(excludedMeetingHeader);
-
-          if (photoUrlIndex > -1) {
-            headersToDisplay = originalHeaders.filter(header => header !== excludedMeetingHeader);
-            columnIndicesToKeep = originalHeaders
-              .map((header, index) => ({ header, index }))
-              .filter(item => item.header !== excludedMeetingHeader)
-              .map(item => item.index);
-          }
-        }
-
-        // Render table headers, adding an "Actions" column for admin
-        thead.innerHTML = "<tr>" + headersToDisplay.map(h => `<th>${h}</th>`).join('') + "<th class='admin-only'>Actions</th></tr>";
-
-        // Render table rows
-        rows.forEach((row, i) => {
-          const tr = tbody.insertRow();
-          columnIndicesToKeep.forEach((colIndex) => {
-            const td = tr.insertCell();
-            const cellValue = row[colIndex] || '';
-            
-            // Check if this is a date column (Meeting Date or Deadline)
-            const headerText = headersToDisplay[colIndex];
-            if (headerText === 'Meeting Date' || headerText === 'Deadline') {
-              // Handle different date formats
-              if (cellValue) {
-                let date;
-                if (cellValue.includes('T')) {
-                  // Handle ISO date string format
-                  date = new Date(cellValue);
-                } else if (cellValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                  // Handle YYYY-MM-DD format
-                  date = new Date(cellValue);
-                } else {
-                  // If not a recognized format, display as is
-                  td.textContent = cellValue;
-                  return;
-                }
-                
-                // Format date as DD-MM-YYYY
-                const day = date.getDate().toString().padStart(2, '0');
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const year = date.getFullYear();
-                td.textContent = `${day}-${month}-${year}`;
-              } else {
-                td.textContent = cellValue;
-              }
-            } else {
-              td.innerHTML = cellValue;
-            }
-          });
-          const actionCell = tr.insertCell();
-          actionCell.className = 'admin-only';
-          actionCell.innerHTML = `<button class="px-3 py-1 text-xs font-medium text-white bg-yellow-500 rounded hover:bg-yellow-600" onclick="edit${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}(${i + 2}, this.closest('tr'))">Edit</button>
-                                  <button class="ml-1 px-3 py-1 text-xs font-medium text-white bg-red-600 rounded hover:bg-red-700" onclick="delete${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}(${i + 2})">Delete</button>`;
-        });
-        updateAdminUI(isAdminLoggedIn);
-      }
-
-      function fetchData() {
-        showLoading();
-        const meetingsUrl = scriptURL + '?action=get_meetings&sheetName=Meetings';
-        const actionsUrl = scriptURL + '?action=get_actions&sheetName=Action Items';
-
-        console.log("Fetching meetings from URL:", meetingsUrl);
-        console.log("Fetching actions from URL:", actionsUrl);
-
-        Promise.all([
-          fetch(meetingsUrl).then(res => res.json()),
-          fetch(actionsUrl).then(res => res.json())
-        ])
-          .then(([meetingsData, actionsData]) => {
-            renderTable(meetingsData, 'meeting-table', 'meeting');
-            renderTable(actionsData, 'action-table', 'action');
-          })
-          .catch(error => {
-            console.error('Error fetching tracker data:', error);
-            const meetingsColspan = 10;
-            const actionsColspan = 6;
-            document.querySelector('#meeting-table tbody').innerHTML = `<tr><td colspan="${meetingsColspan}" class="error-message">Error loading meetings: ${error.message}</td></tr>`;
-            document.querySelector('#action-table tbody').innerHTML = `<tr><td colspan="${actionsColspan}" class="error-message">Error loading action items: ${error.message}</td></tr>`;
-          })
-          .finally(() => hideLoading());
-      }
-
-      function fetchMediaGallery() {
+    function fetchMediaGallery() {
         const mediaGalleryDiv = document.getElementById('media-gallery');
         if (!mediaGalleryDiv) return;
         mediaGalleryDiv.innerHTML = '<p style="text-align:center;">Loading media gallery...</p>';
         showLoading();
-        const fetchUrl = scriptURL + '?action=get_media_gallery&sheetName=Media';
-        console.log("Fetching media gallery from URL:", fetchUrl);
-
-        fetch(fetchUrl)
+        fetch(scriptURL + '?action=get_media_gallery&sheetName=Media')
           .then(res => res.json())
           .then(data => {
             if (data && data.error) throw new Error(data.error);
             const [headers, ...rows] = data;
-            if (!Array.isArray(headers)) throw new Error("Invalid data format");
-
-            // Get indices for grouping
             const uniqueIdIndex = headers.indexOf('UniqueID');
             const weekInfoIndex = headers.indexOf('WeekInfo');
             const zoneIndex = headers.indexOf('Zone');
             const districtIndex = headers.indexOf('District');
             const fileUrlIndex = headers.indexOf('File URL');
             const fileTypeIndex = headers.indexOf('File Type');
-            const fileNameIndex = headers.indexOf('File Name'); // Add this with other index declarations
-
+            const fileNameIndex = headers.indexOf('File Name');
             let html = '';
             if (rows.length > 0) {
-              // Group by week, then by zone, then by district
-              const grouped = {};
-              rows.forEach(row => {
-                const week = (weekInfoIndex !== -1 && row[weekInfoIndex]) ? String(row[weekInfoIndex]) : 'No Week Info';
-                const zone = (zoneIndex !== -1 && row[zoneIndex]) ? String(row[zoneIndex]) : 'No Zone';
-                const district = (districtIndex !== -1 && row[districtIndex]) ? String(row[districtIndex]) : 'No District';
-                if (!grouped[week]) grouped[week] = {};
-                if (!grouped[week][zone]) grouped[week][zone] = {};
-                if (!grouped[week][zone][district]) grouped[week][zone][district] = [];
-                grouped[week][zone][district].push({
-                  uniqueID: row[uniqueIdIndex],
-                  fileUrl: row[fileUrlIndex],
-                  fileType: row[fileTypeIndex],
-                  fileName: row[fileNameIndex] // Add this line
+              const grouped = rows.reduce((acc, row) => {
+                const week = row[weekInfoIndex] || 'Uncategorized';
+                const zone = row[zoneIndex] || 'Uncategorized';
+                const district = row[districtIndex] || 'Uncategorized';
+                if (!acc[week]) acc[week] = {};
+                if (!acc[week][zone]) acc[week][zone] = {};
+                if (!acc[week][zone][district]) acc[week][zone][district] = [];
+                acc[week][zone][district].push({
+                  uniqueID: row[uniqueIdIndex], fileUrl: row[fileUrlIndex], fileType: row[fileTypeIndex], fileName: row[fileNameIndex]
                 });
-              });
-
-              Object.keys(grouped).sort((a, b) => {
-                if (a === 'No Week Info') return 1;
-                if (b === 'No Week Info') return -1;
-                const numA = (a.match(/\d+/) || [0])[0];
-                const numB = (b.match(/\d+/) || [0])[0];
-                return numA - numB;
-              }).forEach(week => {
+                return acc;
+              }, {});
+              Object.keys(grouped).sort((a,b) => (a.match(/\d+/)||[0])[0] - (b.match(/\d+/)||[0])[0]).forEach(week => {
                 html += `<div class="media-week-group"><h3>${week}</h3>`;
                 Object.keys(grouped[week]).sort().forEach(zone => {
-                  html += `<div class="mb-4"><h4 style="color:#1B5E20;">${zone}</h4>`;
-                  Object.keys(grouped[week][zone]).sort().forEach(district => {
-                    html += `<div class="mb-2"><h5 style="color:#388e3c;">District: ${district}</h5><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-4 p-2">`;
-                    grouped[week][zone][district].forEach(media => {
-                      let mediaHtml = '';
-                      if (media.fileType && media.fileType.startsWith('image')) {
-                        // Extract Drive file ID from URL - support both formats
-                        const driveFileIdMatch = media.fileUrl.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
-                        const driveFileId = driveFileIdMatch ? driveFileIdMatch[1] : null;
-                        
-                        if (driveFileId) {
-                            // Use the thumbnail URL format for preview
-                            const imageUrl = `https://drive.google.com/thumbnail?id=${driveFileId}&sz=w800`;
-                            const fileName = media.fileName || 'Unnamed File'; // Add fallback name if fileName is undefined
-                            mediaHtml = `
-        <div class="flex flex-col items-center">
-            <a href="${media.fileUrl}" target="_blank">
-                <img src="${imageUrl}" 
-                     alt="Media" 
-                     class="w-full h-48 object-cover rounded-md mb-2" 
-                     onerror="this.onerror=null;this.src='https://placehold.co/400x240/cccccc/333333?text=Image+Load+Error';"
-                />
-            </a>
-            <p class="text-sm text-gray-600 truncate w-full text-center" title="${fileName}">${fileName}</p>
-        </div>`;
-                        } else {
-                            mediaHtml = `<img src="https://placehold.co/400x240/cccccc/333333?text=Invalid+Image+URL" alt="Invalid Image URL" class="w-full h-48 object-cover rounded-md mb-2"/>`;
-                        }
-                      } else if (media.fileType && media.fileType.startsWith('video')) {
-                        const driveFileIdMatch = media.fileUrl.match(/(?:(?:drive\.google\.com\/(?:file\/d\/|open\?id=))|(?:docs\.google\.com\/file\/d\/))([a-zA-Z0-9_-]+)(?:[\/\?&]|$)/);
-                        const driveFileId = driveFileIdMatch ? driveFileIdMatch[1] : null;
-                        let videoSrc = media.fileUrl;
-                        if (driveFileId) {
-                          videoSrc = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
-                        }
-                        mediaHtml = `<video controls playsinline src="${videoSrc}" class="w-full h-48 object-cover rounded-md mb-2" onerror="this.onerror=null;this.src='https://placehold.co/400x240/cccccc/333333?text=Video+Thumbnail';"></video>`;
-                      } else {
-                        mediaHtml = `<img src="https://placehold.co/400x240/cccccc/333333?text=Unsupported+File" alt="Unsupported File" class="w-full h-48 object-cover rounded-md mb-2"/>`;
-                      }
-                      html += `<div class="media-item bg-gray-100 p-3 rounded-lg shadow-sm">${mediaHtml}<span class="admin-only"><button class="delete-button" onclick="deleteMedia('${media.uniqueID}')">Delete</button></span></div>`;
+                    html += `<div class="mb-4"><h4 style="color:#1B5E20; padding-left: 15px;">${zone}</h4>`;
+                    Object.keys(grouped[week][zone]).sort().forEach(district => {
+                        html += `<div class="mb-2" style="padding: 0 15px;"><h5 style="color:#388e3c;">District: ${district}</h5><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-4 p-2">`;
+                        grouped[week][zone][district].forEach(media => {
+                            let mediaHtml = '';
+                            if (media.fileType && media.fileType.startsWith('image')) {
+                                const driveFileIdMatch = media.fileUrl.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
+                                const driveFileId = driveFileIdMatch ? driveFileIdMatch[1] : null;
+                                const imageUrl = driveFileId ? `https://drive.google.com/thumbnail?id=${driveFileId}&sz=w800` : 'https://placehold.co/400x240/cccccc/333333?text=Invalid+URL';
+                                mediaHtml = `<a href="${media.fileUrl}" target="_blank"><img src="${imageUrl}" alt="${media.fileName || 'Media'}" class="w-full h-48 object-cover rounded-md mb-2" onerror="this.onerror=null;this.src='https://placehold.co/400x240/cccccc/333333?text=Image+Error';"></a>`;
+                            } else if (media.fileType && media.fileType.startsWith('video')) {
+                                mediaHtml = `<video controls playsinline src="${media.fileUrl}" class="w-full h-48 object-cover rounded-md mb-2"></video>`;
+                            }
+                            html += `<div class="media-item bg-gray-100 p-3 rounded-lg shadow-sm">${mediaHtml}<span class="admin-only"><button class="delete-button" onclick="deleteMedia('${media.uniqueID}')">Delete</button></span></div>`;
+                        });
+                        html += `</div></div>`;
                     });
-                    html += `</div></div>`;
-                  });
-                  html += `</div>`;
+                    html += `</div>`;
                 });
                 html += `</div>`;
               });
@@ -1979,473 +1950,278 @@
             }
             mediaGalleryDiv.innerHTML = html;
             updateAdminUI(isAdminLoggedIn);
-          })
-          .catch(error => {
-            console.error('Error fetching media gallery:', error);
+          }).catch(error => {
             mediaGalleryDiv.innerHTML = `<p class="error-message">Error: ${error.message}</p>`;
-          })
-          .finally(() => hideLoading());
+          }).finally(() => hideLoading());
+    }
+
+    function renderTable(data, tableId, sectionType) {
+      const tbody = document.querySelector(`#${tableId} tbody`);
+      const thead = document.querySelector(`#${tableId} thead`);
+      if (!thead || !tbody) { console.error(`Table elements not found for ${tableId}`); return; }
+      thead.innerHTML = ""; tbody.innerHTML = "";
+
+      if (!Array.isArray(data) || data.length < 2) {
+        thead.innerHTML = `<tr><th>Notice</th></tr>`;
+        tbody.innerHTML = `<tr><td>No entries found for ${sectionType}.</td></tr>`;
+        return;
       }
 
+      let [originalHeaders, ...rows] = data;
+      let headersToDisplay = originalHeaders;
+      let columnIndicesToKeep = Array.from({ length: originalHeaders.length }, (_, i) => i);
 
-      // --- Functions for Meeting Form Operations ---
-      const meetingForm = document.getElementById('meeting-form');
-      const actionForm = document.getElementById('action-form');
-      const meetingModeDiv = document.getElementById('meeting-mode');
-      const actionModeDiv = document.getElementById('action-mode');
+      if (tableId === 'meeting-table') {
+        const excludedMeetingHeader = 'Photo URL';
+        const photoUrlIndex = originalHeaders.indexOf(excludedMeetingHeader);
+        if (photoUrlIndex > -1) {
+          headersToDisplay = originalHeaders.filter(h => h !== excludedMeetingHeader);
+          columnIndicesToKeep = originalHeaders.map((h, i) => h !== excludedMeetingHeader ? i : -1).filter(i => i !== -1);
+        }
+      }
+      
+      thead.innerHTML = "<tr>" + headersToDisplay.map(h => `<th>${h}</th>`).join('') + "<th class='admin-only'>Actions</th></tr>";
 
-      // Function to generate a simple unique ID
-      function generateUniqueId() {
+      rows.forEach((row, i) => {
+        const tr = tbody.insertRow();
+        columnIndicesToKeep.forEach((colIndex, displayIndex) => {
+          const td = tr.insertCell();
+          const cellValue = row[colIndex] || '';
+          const headerText = headersToDisplay[displayIndex];
+          if (headerText === 'Meeting Date' || headerText === 'Deadline') {
+            if (cellValue) {
+              const date = new Date(cellValue);
+              td.textContent = !isNaN(date) ? `${String(date.getDate()).padStart(2,'0')}-${String(date.getMonth()+1).padStart(2,'0')}-${date.getFullYear()}` : cellValue;
+            }
+          } else {
+            td.innerHTML = cellValue;
+          }
+        });
+        const actionCell = tr.insertCell();
+        actionCell.className = 'admin-only';
+        actionCell.innerHTML = `<button class="px-3 py-1 text-xs font-medium text-white bg-yellow-500 rounded hover:bg-yellow-600" onclick="edit${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}(${i + 2}, this.closest('tr'))">Edit</button>
+                              <button class="ml-1 px-3 py-1 text-xs font-medium text-white bg-red-600 rounded hover:bg-red-700" onclick="delete${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}(${i + 2})">Delete</button>`;
+      });
+      updateAdminUI(isAdminLoggedIn);
+    }
+    
+    // --- FORM HANDLING & DATA SUBMISSION ---
+    function generateUniqueId() {
         return 'M' + Date.now() + Math.floor(Math.random() * 1000);
-      }
+    }
 
-      // Populate unique ID for new meeting
-      if (meetingForm) {
-        meetingForm.addEventListener('reset', () => {
-          document.getElementById('meetingId').value = generateUniqueId();
-          meetingModeDiv.textContent = 'Mode: Add New Meeting';
-          meetingForm.querySelector('button[type="submit"]').textContent = 'Save Meeting';
-        });
-        document.getElementById('meetingId').value = generateUniqueId(); // Initial ID
-      }
-
-      if (actionForm) {
-        actionForm.addEventListener('reset', () => {
-          document.getElementById('action-meetingId').value = ''; // Action ID should be linked to Meeting ID
-          actionModeDiv.textContent = 'Mode: Add New Action Item';
-          actionForm.querySelector('button[type="submit"]').textContent = 'Add Action Item';
-        });
-      }
-
-
-      // Function to post data to Google Apps Script
-      function postData(formData, action, successMessage, formElement, isEditMode = false) {
+    function postData(formData, action, successMessage, formElement, isEditMode = false) {
         showLoading();
         let sheetName;
-        // Determine sheetName based on action
-        if (action.includes('meeting')) {
-          sheetName = 'Meetings';
-        } else if (action.includes('action')) {
-          sheetName = 'Action Items'; // Corrected sheetName
-        } else if (action.includes('media')) {
-          sheetName = 'Media';
-        } else if (action.includes('presentation')) {
-          sheetName = 'Presentations';
-        }
+        if (action.includes('meeting')) sheetName = 'Meetings';
+        else if (action.includes('action')) sheetName = 'Action Items';
+        else if (action.includes('media')) sheetName = 'Media';
+        else if (action.includes('presentation')) sheetName = 'Presentations';
 
-        // Append sheetName to formData for POST requests
-        formData.append('sheetName', sheetName);
+        if (sheetName) formData.append('sheetName', sheetName);
 
-        console.log(`Posting data for action: ${action} to URL: ${scriptURL}`);
-        // Log formData content for debugging POST requests
-        for (let pair of formData.entries()) {
-          console.log(pair[0] + ': ' + pair[1]);
-        }
-
-        fetch(scriptURL + `?action=${action}`, {
-          method: 'POST',
-          body: formData
-        })
-          .then(response => response.json())
-          .then(data => {
-            if (data.result === 'success') {
-              showMessage(successMessage, false);
-              formElement.reset(); // Clear form on success
-              if (action.includes('meeting')) {
-                fetchData(); // Refresh meeting/action tables
-                document.getElementById('meetingId').value = generateUniqueId(); // Generate new ID for next entry
-              } else if (action.includes('action')) {
-                fetchData(); // Refresh meeting/action tables
-              }
-              else if (action.includes('media')) {
-                fetchMediaGallery(); // Refresh media gallery
-              } else if (action.includes('presentation')) {
-                fetchPresentations(); // Refresh presentations
-              }
-            } else {
-              throw new Error(data.error || 'Unknown error occurred.');
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            showMessage('Error: ' + error.message, false);
-          })
-          .finally(() => {
-            hideLoading();
-            // Reset form mode if it was an edit operation
-            if (isEditMode) {
-              if (action.includes('meeting')) {
-                meetingModeDiv.textContent = 'Mode: Add New Meeting';
-                formElement.querySelector('button[type="submit"]').textContent = 'Save Meeting';
-              } else if (action.includes('action')) {
-                actionModeDiv.textContent = 'Mode: Add New Action Item';
-                formElement.querySelector('button[type="submit"]').textContent = 'Add Action Item';
-              }
-            }
-          });
-      }
-
-      // Meeting Form Submission
-      meetingForm?.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const rowToEdit = this.row.value;
-        if (rowToEdit) {
-          // Editing existing meeting
-          formData.append('row', rowToEdit);
-          postData(formData, 'edit_meeting', 'Meeting updated successfully!', this, true);
-        } else {
-          // Adding new meeting
-          postData(formData, 'add_meeting', 'Meeting added successfully!', this);
-        }
-      });
-
-      // Action Form Submission
-      actionForm?.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const rowToEdit = this.row.value;
-        if (rowToEdit) {
-          // Editing existing action
-          formData.append('row', rowToEdit);
-          postData(formData, 'edit_action', 'Action item updated successfully!', this, true);
-        } else {
-          // Adding new action
-          postData(formData, 'add_action', 'Action item added successfully!', this);
-        }
-      });
-
-      // Media Upload Form Submission
-      document.getElementById('media-upload-form')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const form = this; // Store reference to form
-        const fileInput = document.getElementById('mediaFileMedia');
-        const file = fileInput.files[0];
-        
-        if (!file) {
-            showMessage('Please select a file to upload.', false);
-            return;
-        }
-
-        showLoading();
-
-        // Create a FileReader to read the file as base64
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            // Extract the base64 data (remove the data URL prefix)
-            const base64String = e.target.result.split(',')[1];
-            
-            const formData = new FormData();
-            formData.append('action', 'add_media');
-            formData.append('sheetName', 'Media');
-            formData.append('weekInfo', document.getElementById('weekInfoMedia').value);
-            formData.append('zone', document.getElementById('zoneMedia').value);
-            formData.append('district', document.getElementById('districtMedia').value);
-            formData.append('dataBase64', base64String);
-            formData.append('fileName', file.name);
-            formData.append('mimeType', file.type);
-
-            fetch(scriptURL, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
+        fetch(scriptURL + `?action=${action}`, { method: 'POST', body: formData })
+            .then(res => res.json())
             .then(data => {
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                showMessage('Media uploaded successfully!', false);
-                form.reset(); // Use stored form reference
-                fetchMediaGallery();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showMessage('Error uploading media: ' + error.message, false);
-            })
-            .finally(() => hideLoading());
-        };
-
-        // Read the file as a data URL (will trigger reader.onload)
-        reader.readAsDataURL(file);
-      });
-
-      // Presentation Upload Form Submission
-      document.getElementById('presentation-upload-form')?.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        postData(formData, 'add_presentation', 'Presentation added successfully!', this);
-      });
-
-      // --- Edit Functions ---
-      function editMeeting(rowNum, trElement) {
-        if (!isAdminLoggedIn) {
-          showMessage("Admin login required to edit entries.", false);
-          return;
-        }
-        
-        showMessage('Editing meeting at row ' + rowNum, false);
-        meetingModeDiv.textContent = 'Mode: Edit Existing Meeting';
-        meetingForm.querySelector('button[type="submit"]').textContent = 'Update Meeting';
-        meetingForm.row.value = rowNum;
-
-        const cells = Array.from(trElement.children);
-        const headers = Array.from(document.querySelector('#meeting-table thead tr').children)
-            .map(th => th.textContent.trim());
-
-        // Create a mapping of header names to cell values
-        const cellData = {};
-        headers.forEach((header, index) => {
-            if (header !== 'Actions') { // Skip the Actions column
-                cellData[header] = cells[index]?.textContent?.trim() || '';
-            }
-        });
-
-        // Map table headers to form field IDs
-        const fieldMapping = {
-            'Meeting ID': 'meetingId',
-            'Meeting Date': 'meetingDate',
-            'Zone': 'zoneM',
-            'District': 'districtM',
-            'Cold Room Location (Optional)': 'coldRoomM',
-            'Meeting Title': 'meetingTitle',
-            'Conducted By': 'conductedByM',
-            'Attendees': 'attendeesM',
-            'Meeting Agenda': 'meetingAgendaM',
-            'Meeting Discussion Points': 'meetingDiscussionM'  // Updated this line to match exact column header
-        };
-
-        // Populate form fields
-        Object.entries(fieldMapping).forEach(([header, fieldId]) => {
-            const field = document.getElementById(fieldId);
-            if (field && cellData[header] !== undefined) {
-                // Special handling for date field
-                if (fieldId === 'meetingDate' && cellData[header]) {
-                    // Convert DD-MM-YYYY to YYYY-MM-DD for date input
-                    const [day, month, year] = cellData[header].split('-');
-                    if (day && month && year) {
-                        field.value = `${year}-${month}-${day}`;
-                    } else {
-                        field.value = cellData[header];
+                if (data.result === 'success') {
+                    showMessage(successMessage, false);
+                    if (formElement) formElement.reset();
+                    if (action.includes('meeting') || action.includes('action')) {
+                        fetchData();
+                    } else if (action.includes('media')) {
+                        fetchMediaGallery();
+                    } else if (action.includes('presentation')) {
+                        fetchPresentations();
                     }
-                } else {
-                    field.value = cellData[header];
-                }
-            }
-        });
-
-        // Scroll to the form
-        meetingForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-
-      function editAction(rowNum, trElement) {
-        if (!isAdminLoggedIn) {
-            showMessage("Admin login required to edit entries.", false);
-            return;
-        }
-        
-        showMessage('Editing action at row ' + rowNum, false);
-        actionModeDiv.textContent = 'Mode: Edit Existing Action Item';
-        actionForm.querySelector('button[type="submit"]').textContent = 'Update Action Item';
-        actionForm.row.value = rowNum;
-
-        const cells = Array.from(trElement.children);
-        const headers = Array.from(document.querySelector('#action-table thead tr').children)
-            .map(th => th.textContent.trim());
-
-        // Create a mapping of header names to cell values
-        const cellData = {};
-        headers.forEach((header, index) => {
-            if (header !== 'Actions') { // Skip the Actions column
-                cellData[header] = cells[index]?.textContent?.trim() || '';
-            }
-        });
-
-        // Map table headers to form field IDs
-        const fieldMapping = {
-            'Meeting ID': 'action-meetingId',
-            'Action Item': 'actionItemA',
-            'Assigned To': 'assignedToA',
-            'Deadline': 'deadlineA',
-            'Status': 'statusA'
-        };
-
-        // Populate form fields
-        Object.entries(fieldMapping).forEach(([header, fieldId]) => {
-            const field = document.getElementById(fieldId);
-            if (field && cellData[header] !== undefined) {
-                // Special handling for date field
-                if (fieldId === 'deadlineA' && cellData[header]) {
-                    // Convert DD-MM-YYYY to YYYY-MM-DD for date input
-                    const [day, month, year] = cellData[header].split('-');
-                    if (day && month && year) {
-                        field.value = `${year}-${month}-${day}`;
-                    } else {
-                        field.value = cellData[header];
+                } else { throw new Error(data.error || 'Unknown error'); }
+            })
+            .catch(error => showMessage(`Error: ${error.message}`, false))
+            .finally(() => {
+                hideLoading();
+                if (isEditMode) {
+                    if (action.includes('meeting')) {
+                        document.getElementById('meeting-mode').textContent = 'Mode: Add New Meeting';
+                        formElement.querySelector('button[type="submit"]').textContent = 'Save Meeting';
+                    } else if (action.includes('action')) {
+                        document.getElementById('action-mode').textContent = 'Mode: Add New Action Item';
+                        formElement.querySelector('button[type="submit"]').textContent = 'Add Action Item';
                     }
-                } else {
-                    field.value = cellData[header];
                 }
-            }
-        });
+            });
+    }
 
-        // Scroll to the form
-        actionForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+    function editMeeting(rowNum, trElement) {
+        if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
+        const form = document.getElementById('meeting-form');
+        form.querySelector('#meeting-mode').textContent = 'Mode: Edit Existing Meeting';
+        form.querySelector('button[type="submit"]').textContent = 'Update Meeting';
+        form.row.value = rowNum;
 
-      // --- Delete Functions ---
-      function deleteEntry(rowNum, actionType, confirmMessage, successMessage) {
-        if (!isAdminLoggedIn) {
-          showMessage("Admin login required to delete entries.", false);
-          return;
+        const cells = Array.from(trElement.cells);
+        const headers = Array.from(document.querySelector('#meeting-table thead tr').cells).map(th => th.textContent.trim());
+        const cellData = headers.reduce((obj, header, i) => { if(header !== 'Actions') obj[header] = cells[i]?.textContent.trim(); return obj; }, {});
+
+        form.meetingId.value = cellData['Meeting ID'];
+        if (cellData['Meeting Date']) {
+            const [day, month, year] = cellData['Meeting Date'].split('-');
+            if(day && month && year) form.meetingDate.value = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
         }
+        form.zoneM.value = cellData['Zone'];
+        form.districtM.value = cellData['District'];
+        form.coldRoomM.value = cellData['Cold Room Location (Optional)'];
+        form.meetingTitle.value = cellData['Meeting Title'];
+        form.conductedByM.value = cellData['Conducted By'];
+        form.attendeesM.value = cellData['Attendees'];
+        form.meetingAgendaM.value = cellData['Meeting Agenda'];
+        form.meetingDiscussionM.value = cellData['What points were discussed during the meeting?'];
+        form.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function editAction(rowNum, trElement) {
+        if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
+        const form = document.getElementById('action-form');
+        form.querySelector('#action-mode').textContent = 'Mode: Edit Existing Action Item';
+        form.querySelector('button[type="submit"]').textContent = 'Update Action Item';
+        form.row.value = rowNum;
+
+        const cells = Array.from(trElement.cells);
+        const headers = Array.from(document.querySelector('#action-table thead tr').cells).map(th => th.textContent.trim());
+        const cellData = headers.reduce((obj, header, i) => { if(header !== 'Actions') obj[header] = cells[i]?.textContent.trim(); return obj; }, {});
+
+        form['action-meetingId'].value = cellData['Meeting ID'];
+        form.actionItemA.value = cellData['Action Item'];
+        form.assignedToA.value = cellData['Assigned To'];
+        if (cellData['Deadline']) {
+            const [day, month, year] = cellData['Deadline'].split('-');
+            if(day && month && year) form.deadlineA.value = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+        }
+        form.statusA.value = cellData['Status'];
+        form.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function deleteEntry(identifier, actionType, sheetName, confirmMessage, successMessage, callback) {
+        if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
         showMessage(confirmMessage, true, () => {
+            showLoading();
+            const formData = new FormData();
+            const key = (actionType === 'delete_media' || actionType === 'delete_presentation') ? 'uniqueID' : 'row';
+            formData.append(key, identifier);
+            formData.append('sheetName', sheetName);
+            fetch(scriptURL + `?action=${actionType}`, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        showMessage(successMessage, false);
+                        callback();
+                    } else { throw new Error(data.error || 'Unknown error'); }
+                })
+                .catch(error => showMessage(`Error: ${error.message}`, false))
+                .finally(() => hideLoading());
+        });
+    }
+    
+    function deleteMeeting(rowNum) { deleteEntry(rowNum, 'delete_meeting', 'Meetings', 'Are you sure?', 'Meeting deleted.', fetchData); }
+    function deleteAction(rowNum) { deleteEntry(rowNum, 'delete_action', 'Action Items', 'Are you sure?', 'Action item deleted.', fetchData); }
+    function deleteMedia(uniqueID) { deleteEntry(uniqueID, 'delete_media', 'Media', 'Are you sure?', 'Media file deleted.', fetchMediaGallery); }
+    function deletePresentation(uniqueID) { deleteEntry(uniqueID, 'delete_presentation', 'Presentations', 'Are you sure?', 'Presentation deleted.', fetchPresentations); }
+
+
+    // --- INITIALIZATION ---
+    window.onload = function () {
+      // Event Listeners for Buttons
+      document.getElementById('admin-login-form')?.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (this.username.value === 'admin' && this.password.value === 'admin') {
+              isAdminLoggedIn = true;
+              document.getElementById('admin-nav-button').textContent = 'Logout';
+              updateAdminUI(true);
+              showHomePage();
+              showMessage('Admin login successful.', false);
+          } else {
+              showMessage('Invalid username or password.', false);
+              this.password.value = '';
+          }
+      });
+      document.getElementById('customMessageConfirm')?.addEventListener('click', () => {
+          document.getElementById('customMessageBoxOverlay').classList.remove('active');
+          if (window.confirmCallback) { window.confirmCallback(); window.confirmCallback = null; }
+      });
+      document.getElementById('customMessageCancel')?.addEventListener('click', () => {
+          document.getElementById('customMessageBoxOverlay').classList.remove('active');
+          window.confirmCallback = null;
+      });
+
+      // Event Listeners for Forms
+      document.getElementById('meeting-form')?.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          const isEdit = !!this.row.value;
+          const action = isEdit ? 'edit_meeting' : 'add_meeting';
+          const message = isEdit ? 'Meeting updated.' : 'Meeting added.';
+          if(isEdit) formData.append('row', this.row.value);
+          postData(formData, action, message, this, isEdit);
+      });
+      
+      document.getElementById('meeting-form')?.addEventListener('reset', () => {
+           document.getElementById('meetingId').value = generateUniqueId();
+           document.getElementById('meeting-mode').textContent = 'Mode: Add New Meeting';
+           document.querySelector('#meeting-form button[type="submit"]').textContent = 'Save Meeting';
+      });
+
+      document.getElementById('action-form')?.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          const isEdit = !!this.row.value;
+          const action = isEdit ? 'edit_action' : 'add_action';
+          const message = isEdit ? 'Action item updated.' : 'Action item added.';
+          if(isEdit) formData.append('row', this.row.value);
+          postData(formData, action, message, this, isEdit);
+      });
+
+      document.getElementById('media-upload-form')?.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const file = this.mediaFileMedia.files[0];
+          if (!file) { showMessage('Please select a file.', false); return; }
           showLoading();
-          const formData = new FormData();
-          formData.append('row', rowNum);
+          const reader = new FileReader();
+          reader.onload = (event) => {
+              const formData = new FormData();
+              formData.append('weekInfo', this.weekInfo.value);
+              formData.append('zone', this.zone.value);
+              formData.append('district', this.district.value);
+              formData.append('dataBase64', event.target.result.split(',')[1]);
+              formData.append('fileName', file.name);
+              formData.append('mimeType', file.type);
+              postData(formData, 'add_media', 'Media uploaded.', this);
+          };
+          reader.readAsDataURL(file);
+      });
 
-          let sheetName;
-          // Determine sheetName based on action
-          if (actionType.includes('meeting')) {
-            sheetName = 'Meetings';
-          } else if (actionType.includes('action')) {
-            sheetName = 'Action Items'; // Corrected sheetName
-          } else if (actionType.includes('media')) {
-            sheetName = 'Media';
-          } else if (actionType.includes('presentation')) {
-            sheetName = 'Presentations';
-          }
-          formData.append('sheetName', sheetName); // Add sheetName for delete operations
+      document.getElementById('presentation-upload-form')?.addEventListener('submit', function (e) {
+          e.preventDefault();
+          postData(new FormData(this), 'add_presentation', 'Presentation added.', this);
+      });
 
-          console.log(`Deleting entry for action: ${actionType} to URL: ${scriptURL}`);
-          // Log formData content for debugging DELETE requests
-          for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-          }
-
-          fetch(scriptURL + `?action=${actionType}`, {
-            method: 'POST',
-            body: formData
-          })
-            .then(response => response.json())
-            .then(data => {
-              if (data.result === 'success') {
-                showMessage(successMessage, false);
-                if (actionType.includes('meeting') || actionType.includes('action')) {
-                  fetchData(); // Refresh meeting/action tables
-                } else if (actionType.includes('media')) {
-                  fetchMediaGallery(); // Refresh media gallery
-                } else if (actionType.includes('presentation')) {
-                  fetchPresentations(); // Refresh presentations
-                }
-              } else {
-                throw new Error(data.error || 'Unknown error occurred.');
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              showMessage('Error: ' + error.message, false);
-            })
-            .finally(() => hideLoading());
-        });
-      }
-
-      function deleteMeeting(rowNum) {
-        deleteEntry(rowNum, 'delete_meeting', 'Are you sure you want to delete this meeting entry?', 'Meeting deleted successfully!');
-      }
-
-      function deleteAction(rowNum) {
-        deleteEntry(rowNum, 'delete_action', 'Are you sure you want to delete this action item?', 'Action item deleted successfully!');
-      }
-
-      function deleteMedia(uniqueID) {
-        deleteEntry(uniqueID, 'delete_media', 'Are you sure you want to delete this media file?', 'Media file deleted successfully!');
-      }
-
-      function deletePresentation(uniqueID) {
-        deleteEntry(uniqueID, 'delete_presentation', 'Are you sure you want to delete this presentation?', 'Presentation deleted successfully!');
-      }
-
-
-      // --- Populate Week Select Options for Media and Presentations ---
-      function populateWeekSelects() {
-        const weekOptions = [
-          "Week 19 (May 05 - May 11)",
-          "Week 20 (May 12 - May 18)",
-          "Week 21 (May 19 - May 25)",
-          "Week 22 (May 26 - Jun 01)",
-          "Week 23 (Jun 02 - Jun 08)",
-          "Week 24 (Jun 09 – Jun 15)",
-          "Week 25 (Jun 16 – Jun 22)",
-          "Week 26 (Jun 23 – Jun 29)",
-          "Week 27 (Jun 30 – Jul 06)",
-          "Week 28 (Jul 07 – Jul 13)",
-          "Week 29 (Jul 14 – Jul 20)",
-          "Week 30 (Jul 21 – Jul 27)",
-          "Week 31 (Jul 28 – Aug 03)",
-          "Week 32 (Aug 04 – Aug 10)",
-          "Week 33 (Aug 11 – Aug 17)",
-          "Week 34 (Aug 18 – Aug 24)",
-          "Week 35 (Aug 25 – Aug 31)",
-          "Week 36 (Sep 01 – Sep 07)",
-          "Week 37 (Sep 08 – Sep 14)",
-          "Week 38 (Sep 15 – Sep 21)",
-          "Week 39 (Sep 22 – Sep 28)",
-          "Week 40 (Sep 29 – Oct 05)",
-          "Week 41 (Oct 06 – Oct 12)",
-          "Week 42 (Oct 13 – Oct 19)",
-          "Week 43 (Oct 20 – Oct 26)",
-          "Week 44 (Oct 27 – Nov 02)",
-          "Week 45 (Nov 03 – Nov 09)",
-          "Week 46 (Nov 10 – Nov 16)",
-          "Week 47 (Nov 17 – Nov 23)",
-          "Week 48 (Nov 24 – Nov 30)",
-          "Week 49 (Dec 01 – Dec 07)",
-          "Week 50 (Dec 08 – Dec 14)",
-          "Week 51 (Dec 15 – Dec 21)",
-          "Week 52 (Dec 22 – Dec 28)",
-          "Week 53 (Dec 29 - Dec 31)"
-        ];
-
-        const weekSelectMedia = document.getElementById('weekInfoMedia');
-        const weekSelectPresentation = document.getElementById('presentationWeekInfo');
-
-        function fillSelect(select) {
-          if (!select) return;
+      // Initial setup
+      document.getElementById('meetingId').value = generateUniqueId();
+      populateWeekSelects();
+      fetchData();
+      showHomePage();
+    };
+    
+    // Helper to populate week dropdowns
+    function populateWeekSelects() {
+      const weekOptions = ["Week 19 (May 05 - May 11)", "Week 20 (May 12 - May 18)", "Week 21 (May 19 - May 25)", "Week 22 (May 26 - Jun 01)", "Week 23 (Jun 02 - Jun 08)", "Week 24 (Jun 09 – Jun 15)", "Week 25 (Jun 16 – Jun 22)", "Week 26 (Jun 23 – Jun 29)", "Week 27 (Jun 30 – Jul 06)", "Week 28 (Jul 07 – Jul 13)", "Week 29 (Jul 14 – Jul 20)", "Week 30 (Jul 21 – Jul 27)", "Week 31 (Jul 28 – Aug 03)", "Week 32 (Aug 04 – Aug 10)", "Week 33 (Aug 11 – Aug 17)", "Week 34 (Aug 18 – Aug 24)", "Week 35 (Aug 25 – Aug 31)", "Week 36 (Sep 01 – Sep 07)", "Week 37 (Sep 08 – Sep 14)", "Week 38 (Sep 15 – Sep 21)", "Week 39 (Sep 22 – Sep 28)", "Week 40 (Sep 29 – Oct 05)", "Week 41 (Oct 06 – Oct 12)", "Week 42 (Oct 13 – Oct 19)", "Week 43 (Oct 20 – Oct 26)", "Week 44 (Oct 27 – Nov 02)", "Week 45 (Nov 03 – Nov 09)", "Week 46 (Nov 10 – Nov 16)", "Week 47 (Nov 17 – Nov 23)", "Week 48 (Nov 24 – Nov 30)", "Week 49 (Dec 01 – Dec 07)", "Week 50 (Dec 08 – Dec 14)", "Week 51 (Dec 15 – Dec 21)", "Week 52 (Dec 22 – Dec 28)", "Week 53 (Dec 29 - Dec 31)"];
+      const selects = [document.getElementById('weekInfoMedia'), document.getElementById('presentationWeekInfo')];
+      selects.forEach(select => {
+        if(select) {
           select.innerHTML = '<option value="">Select Week</option>';
-          weekOptions.forEach(week => {
-            const option = document.createElement('option');
-            option.value = week;
-            option.textContent = week;
-            select.appendChild(option);
-          });
+          weekOptions.forEach(week => select.add(new Option(week, week)));
         }
+      });
+    }
 
-        fillSelect(weekSelectMedia);
-        fillSelect(weekSelectPresentation);
-      }
-
-      // Call this after DOM is loaded
-      window.onload = function () {
-        const trackerContentArea = document.getElementById('tracker-content-area');
-        const infographicContentArea = document.getElementById('infographic-content-area');
-
-        // Initially hide both content areas
-        if (trackerContentArea) trackerContentArea.style.display = 'none';
-        if (infographicContentArea) infographicContentArea.style.display = 'none';
-
-        const allTrackerSectionDivIds = ['meetings-section', 'media-section', 'presentations-section', 'admin-section'];
-        allTrackerSectionDivIds.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) {
-            el.style.display = 'none';
-          }
-        });
-
-        fetchData(); // Fetch data in the background
-        populateWeekSelects();
-        // No section is shown by default
-      };
-    </script>
+  </script>
 </body>
 
 </html>

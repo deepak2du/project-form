@@ -754,13 +754,13 @@
       <button onclick="showHomePage()"
         class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Home</button>
       <button onclick="showSection('plan-section')"
-        class="w-32 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors">Plan</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Plan</button>
       <button onclick="showSection('meetings-section')"
-        class="w-32 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Meetings</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Meetings</button>
       <button onclick="showSection('media-section')"
-        class="w-32 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Media</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Media</button>
       <button onclick="showSection('presentations-section')"
-        class="w-32 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors">Presentation</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Presentation</button>
       <button id="admin-nav-button" onclick="handleAdminNavClick()"
         class="w-32 px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors">Admin</button>
     </div>
@@ -1036,16 +1036,7 @@
     let isAdminLoggedIn = false;
 
     // --- HTML CONTENT FOR DYNAMIC PAGES ---
-    const infographicPageHeadHTML_Base = `
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Bloomberg Cities Idea Exchange - Project Infographic</title>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-        <style>
-            /* Styles for Infographic Page are now primarily handled by Tailwind via .infographic-active on body */
-        </style>
-    `;
-    const infographicPageBodyHTML = `
+const infographicPageBodyHTML = `
   <div class="infographic-container">
     <header class="text-center mb-16"> <h1 class="text-4xl md:text-5xl font-bold" style="color: #1B5E20;">Bloomberg Cities Idea Exchange</h1> <h2 class="text-2xl md:text-3xl mt-3" style="color: #4CAF50;">Economic Vulnerability Project: Powering Cold Storage with Solar Energy & Community Cooperatives</h2> </header>
     <main class="space-y-16">
@@ -1498,7 +1489,6 @@
         if (typeof Chart !== 'undefined' && document.getElementById('sitesChart')) { const sitesChartCtx = document.getElementById('sitesChart').getContext('2d'); new Chart(sitesChartCtx, { type: 'doughnut', data: { labels: [wrapLabels('Existing Cold Storage Installations'), wrapLabels('Brand New Upcoming Installations')], datasets: [{ label: 'Site Distribution', data: [31, 10], backgroundColor: ['#4CAF50', '#FFC107'], borderColor: ['#FFFFFF', '#FFFFFF'], borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 12, family: 'Open Sans' }, color: '#333333', padding: 15, boxWidth: 15 } }, tooltip: { backgroundColor: '#333333', titleFont: { size: 14, family: 'Montserrat', weight: 'bold' }, bodyFont: { size: 12, family: 'Open Sans' }, padding: 10, callbacks: { title: function(tooltipItems) { const item = tooltipItems[0]; let label = item.chart.data.labels[item.dataIndex]; return Array.isArray(label) ? label.join(' ') : label; } } } } } }); } else { console.error("Chart.js is not defined or canvas not found."); }
     `;
 
-    // A single, self-contained HTML document for the Gantt chart iframe
     const planGanttHTML = `
       <!DOCTYPE html>
       <html lang="en">
@@ -1546,7 +1536,6 @@
                       </div>
                   </div>
                   <div id="gantt-rows-container">
-                    <!-- Gantt chart rows will be dynamically inserted here -->
                   </div>
               </div>
           </div>
@@ -1724,22 +1713,45 @@
                         document.body.style.userSelect = '';
                         document.removeEventListener('mousemove', onMouseMove);
                         document.removeEventListener('mouseup', onMouseUp);
-                        
-                        // Save changes after dragging
                         saveGanttData();
                     };
                     bar.addEventListener('mousedown', onMouseDown);
                 };
-                assignSerialNumbers();
-                initializeTaskBars();
+                
+                function saveGanttData() {
+                    const tasks = [];
+                    document.querySelectorAll('#gantt-rows-container .task-bar').forEach(bar => {
+                        tasks.push({ start: bar.dataset.startMonth, end: bar.dataset.endMonth });
+                    });
+                    localStorage.setItem('ganttChartData', JSON.stringify(tasks));
+                }
 
-                // Load saved data
+                function loadGanttData() {
+                    const savedData = localStorage.getItem('ganttChartData');
+                    if (savedData) {
+                        try {
+                            const tasks = JSON.parse(savedData);
+                            document.querySelectorAll('#gantt-rows-container .task-bar').forEach((bar, index) => {
+                                if (tasks[index]) {
+                                    bar.dataset.startMonth = tasks[index].start;
+                                    bar.dataset.endMonth = tasks[index].end;
+                                    updateTaskBarPosition(bar);
+                                }
+                            });
+                        } catch(e) {
+                            console.error("Error parsing saved Gantt data:", e);
+                        }
+                    }
+                }
+
+                initializeTaskBars();
                 loadGanttData();
             });
           <\/script>
       </body>
       </html>
     `;
+
 
     // --- UI & NAVIGATION ---
     function showLoading() {
@@ -1813,19 +1825,6 @@
 
         if (sectionIdToShow === 'media-section') fetchMediaGallery();
         if (sectionIdToShow === 'presentations-section') fetchPresentations();
-        if (sectionIdToShow === 'plan-section') {
-          const iframe = document.getElementById('plan-gantt-iframe');
-          if (iframe && iframe.srcdoc !== planGanttHTML) {
-            iframe.srcdoc = planGanttHTML;
-            // Add event listener for iframe load
-            iframe.onload = () => {
-              // Wait for iframe content to be ready
-              setTimeout(() => {
-                iframe.contentWindow.loadGanttData();
-              }, 500);
-            };
-          }
-        }
       }
 
       if (mainSectionToShow === 'plan-section') {
@@ -1869,109 +1868,109 @@
         document.querySelector('#action-table tbody').innerHTML = `<tr><td colspan="6" class="error-message">Error loading actions.</td></tr>`;
       }).finally(() => hideLoading());
     }
-
+    
     function fetchPresentations() {
-      const presentationsContainer = document.getElementById('presentations-display-area');
-      if (!presentationsContainer) return;
-      presentationsContainer.innerHTML = '<p style="text-align:center;">Loading presentations...</p>';
-      showLoading();
-      fetch(scriptURL + '?action=get_presentations&sheetName=Presentations')
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.error) throw new Error(data.error);
-          const [headers, ...rows] = data;
-          const uniqueIdIndex = headers.indexOf('UniqueID');
-          const weekIndex = headers.indexOf('Week');
-          const iframeCodeIndex = headers.indexOf('IframeCode');
-          let html = '';
-          if (rows.length > 0) {
-            const groupedByWeek = rows.reduce((acc, row) => {
-              const week = row[weekIndex] || 'Uncategorized';
-              if (!acc[week]) acc[week] = [];
-              acc[week].push({ uniqueID: row[uniqueIdIndex], iframeCode: row[iframeCodeIndex] });
-              return acc;
-            }, {});
-            Object.keys(groupedByWeek).sort((a, b) => (a.match(/\d+/) || [0])[0] - (b.match(/\d+/) || [0])[0]).forEach(week => {
-              html += `<div class="presentation-week-group"><h3>${week}</h3>`;
-              groupedByWeek[week].forEach(p => {
-                const responsiveIframeCode = p.iframeCode.replace(/width="[^"]*"/ig, '').replace(/height="[^"]*"/ig, '');
-                html += `<div class="presentation-item"><div class="presentation-container">${responsiveIframeCode}</div><span class="admin-only"><button class="delete-button" onclick="deletePresentation('${p.uniqueID}')">Delete</button></span></div>`;
-              });
-              html += `</div>`;
-            });
-          } else {
-            html = '<p style="text-align:center; margin-top:20px;">No presentations added yet.</p>';
-          }
-          presentationsContainer.innerHTML = html;
-          updateAdminUI(isAdminLoggedIn);
-        })
-        .catch(error => { presentationsContainer.innerHTML = `<p class="error-message">Error: ${error.message}</p>`; })
-        .finally(() => hideLoading());
-    }
-
-    function fetchMediaGallery() {
-      const mediaGalleryDiv = document.getElementById('media-gallery');
-      if (!mediaGalleryDiv) return;
-      mediaGalleryDiv.innerHTML = '<p style="text-align:center;">Loading media gallery...</p>';
-      showLoading();
-      fetch(scriptURL + '?action=get_media_gallery&sheetName=Media')
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.error) throw new Error(data.error);
-          const [headers, ...rows] = data;
-          const uniqueIdIndex = headers.indexOf('UniqueID');
-          const weekInfoIndex = headers.indexOf('WeekInfo');
-          const zoneIndex = headers.indexOf('Zone');
-          const districtIndex = headers.indexOf('District');
-          const fileUrlIndex = headers.indexOf('File URL');
-          const fileTypeIndex = headers.indexOf('File Type');
-          const fileNameIndex = headers.indexOf('File Name');
-          let html = '';
-          if (rows.length > 0) {
-            const grouped = rows.reduce((acc, row) => {
-              const week = row[weekInfoIndex] || 'Uncategorized';
-              const zone = row[zoneIndex] || 'Uncategorized';
-              const district = row[districtIndex] || 'Uncategorized';
-              if (!acc[week]) acc[week] = {};
-              if (!acc[week][zone]) acc[week][zone] = {};
-              if (!acc[week][zone][district]) acc[week][zone][district] = [];
-              acc[week][zone][district].push({
-                uniqueID: row[uniqueIdIndex], fileUrl: row[fileUrlIndex], fileType: row[fileTypeIndex], fileName: row[fileNameIndex]
-              });
-              return acc;
-            }, {});
-            Object.keys(grouped).sort((a, b) => (a.match(/\d+/) || [0])[0] - (b.match(/\d+/) || [0])[0]).forEach(week => {
-              html += `<div class="media-week-group"><h3>${week}</h3>`;
-              Object.keys(grouped[week]).sort().forEach(zone => {
-                html += `<div class="mb-4"><h4 style="color:#1B5E20; padding-left: 15px;">${zone}</h4>`;
-                Object.keys(grouped[week][zone]).sort().forEach(district => {
-                  html += `<div class="mb-2" style="padding: 0 15px;"><h5 style="color:#388e3c;">District: ${district}</h5><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-4 p-2">`;
-                  grouped[week][zone][district].forEach(media => {
-                    let mediaHtml = '';
-                    if (media.fileType && media.fileType.startsWith('image')) {
-                      const driveFileIdMatch = media.fileUrl.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
-                      const driveFileId = driveFileIdMatch ? driveFileIdMatch[1] : null;
-                      const imageUrl = driveFileId ? `https://drive.google.com/thumbnail?id=${driveFileId}&sz=w800` : 'https://placehold.co/400x240/cccccc/333333?text=Invalid+URL';
-                      mediaHtml = `<a href="${media.fileUrl}" target="_blank"><img src="${imageUrl}" alt="${media.fileName || 'Media'}" class="w-full h-48 object-cover rounded-md mb-2" onerror="this.onerror=null;this.src='https://placehold.co/400x240/cccccc/333333?text=Image+Error';"></a>`;
-                    } else if (media.fileType && media.fileType.startsWith('video')) {
-                      mediaHtml = `<video controls playsinline src="${media.fileUrl}" class="w-full h-48 object-cover rounded-md mb-2"></video>`;
-                    }
-                    html += `<div class="media-item bg-gray-100 p-3 rounded-lg shadow-sm">${mediaHtml}<span class="admin-only"><button class="delete-button" onclick="deleteMedia('${media.uniqueID}')">Delete</button></span></div>`;
-                  });
-                  html += `</div></div>`;
+        const presentationsContainer = document.getElementById('presentations-display-area');
+        if (!presentationsContainer) return;
+        presentationsContainer.innerHTML = '<p style="text-align:center;">Loading presentations...</p>';
+        showLoading();
+        fetch(scriptURL + '?action=get_presentations&sheetName=Presentations')
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.error) throw new Error(data.error);
+            const [headers, ...rows] = data;
+            const uniqueIdIndex = headers.indexOf('UniqueID');
+            const weekIndex = headers.indexOf('Week');
+            const iframeCodeIndex = headers.indexOf('IframeCode');
+            let html = '';
+            if (rows.length > 0) {
+              const groupedByWeek = rows.reduce((acc, row) => {
+                const week = row[weekIndex] || 'Uncategorized';
+                if (!acc[week]) acc[week] = [];
+                acc[week].push({ uniqueID: row[uniqueIdIndex], iframeCode: row[iframeCodeIndex] });
+                return acc;
+              }, {});
+              Object.keys(groupedByWeek).sort((a,b) => (a.match(/\d+/)||[0])[0] - (b.match(/\d+/)||[0])[0]).forEach(week => {
+                html += `<div class="presentation-week-group"><h3>${week}</h3>`;
+                groupedByWeek[week].forEach(p => {
+                  const responsiveIframeCode = p.iframeCode.replace(/width="[^"]*"/ig, '').replace(/height="[^"]*"/ig, '');
+                  html += `<div class="presentation-item"><div class="presentation-container">${responsiveIframeCode}</div><span class="admin-only"><button class="delete-button" onclick="deletePresentation('${p.uniqueID}')">Delete</button></span></div>`;
                 });
                 html += `</div>`;
               });
-              html += `</div>`;
-            });
-          } else {
-            html = '<p style="text-align:center; margin-top:20px;">No media files have been uploaded yet.</p>';
-          }
-          mediaGalleryDiv.innerHTML = html;
-          updateAdminUI(isAdminLoggedIn);
-        }).catch(error => {
-          mediaGalleryDiv.innerHTML = `<p class="error-message">Error: ${error.message}</p>`;
-        }).finally(() => hideLoading());
+            } else {
+              html = '<p style="text-align:center; margin-top:20px;">No presentations added yet.</p>';
+            }
+            presentationsContainer.innerHTML = html;
+            updateAdminUI(isAdminLoggedIn);
+          })
+          .catch(error => { presentationsContainer.innerHTML = `<p class="error-message">Error: ${error.message}</p>`; })
+          .finally(() => hideLoading());
+    }
+
+    function fetchMediaGallery() {
+        const mediaGalleryDiv = document.getElementById('media-gallery');
+        if (!mediaGalleryDiv) return;
+        mediaGalleryDiv.innerHTML = '<p style="text-align:center;">Loading media gallery...</p>';
+        showLoading();
+        fetch(scriptURL + '?action=get_media_gallery&sheetName=Media')
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.error) throw new Error(data.error);
+            const [headers, ...rows] = data;
+            const uniqueIdIndex = headers.indexOf('UniqueID');
+            const weekInfoIndex = headers.indexOf('WeekInfo');
+            const zoneIndex = headers.indexOf('Zone');
+            const districtIndex = headers.indexOf('District');
+            const fileUrlIndex = headers.indexOf('File URL');
+            const fileTypeIndex = headers.indexOf('File Type');
+            const fileNameIndex = headers.indexOf('File Name');
+            let html = '';
+            if (rows.length > 0) {
+              const grouped = rows.reduce((acc, row) => {
+                const week = row[weekInfoIndex] || 'Uncategorized';
+                const zone = row[zoneIndex] || 'Uncategorized';
+                const district = row[districtIndex] || 'Uncategorized';
+                if (!acc[week]) acc[week] = {};
+                if (!acc[week][zone]) acc[week][zone] = {};
+                if (!acc[week][zone][district]) acc[week][zone][district] = [];
+                acc[week][zone][district].push({
+                  uniqueID: row[uniqueIdIndex], fileUrl: row[fileUrlIndex], fileType: row[fileTypeIndex], fileName: row[fileNameIndex]
+                });
+                return acc;
+              }, {});
+              Object.keys(grouped).sort((a,b) => (a.match(/\d+/)||[0])[0] - (b.match(/\d+/)||[0])[0]).forEach(week => {
+                html += `<div class="media-week-group"><h3>${week}</h3>`;
+                Object.keys(grouped[week]).sort().forEach(zone => {
+                    html += `<div class="mb-4"><h4 style="color:#1B5E20; padding-left: 15px;">${zone}</h4>`;
+                    Object.keys(grouped[week][zone]).sort().forEach(district => {
+                        html += `<div class="mb-2" style="padding: 0 15px;"><h5 style="color:#388e3c;">District: ${district}</h5><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-4 p-2">`;
+                        grouped[week][zone][district].forEach(media => {
+                            let mediaHtml = '';
+                            if (media.fileType && media.fileType.startsWith('image')) {
+                                const driveFileIdMatch = media.fileUrl.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
+                                const driveFileId = driveFileIdMatch ? driveFileIdMatch[1] : null;
+                                const imageUrl = driveFileId ? `https://drive.google.com/thumbnail?id=${driveFileId}&sz=w800` : 'https://placehold.co/400x240/cccccc/333333?text=Invalid+URL';
+                                mediaHtml = `<a href="${media.fileUrl}" target="_blank"><img src="${imageUrl}" alt="${media.fileName || 'Media'}" class="w-full h-48 object-cover rounded-md mb-2" onerror="this.onerror=null;this.src='https://placehold.co/400x240/cccccc/333333?text=Image+Error';"></a>`;
+                            } else if (media.fileType && media.fileType.startsWith('video')) {
+                                mediaHtml = `<video controls playsinline src="${media.fileUrl}" class="w-full h-48 object-cover rounded-md mb-2"></video>`;
+                            }
+                            html += `<div class="media-item bg-gray-100 p-3 rounded-lg shadow-sm">${mediaHtml}<span class="admin-only"><button class="delete-button" onclick="deleteMedia('${media.uniqueID}')">Delete</button></span></div>`;
+                        });
+                        html += `</div></div>`;
+                    });
+                    html += `</div>`;
+                });
+                html += `</div>`;
+              });
+            } else {
+              html = '<p style="text-align:center; margin-top:20px;">No media files have been uploaded yet.</p>';
+            }
+            mediaGalleryDiv.innerHTML = html;
+            updateAdminUI(isAdminLoggedIn);
+          }).catch(error => {
+            mediaGalleryDiv.innerHTML = `<p class="error-message">Error: ${error.message}</p>`;
+          }).finally(() => hideLoading());
     }
 
     function renderTable(data, tableId, sectionType) {
@@ -1998,7 +1997,7 @@
           columnIndicesToKeep = originalHeaders.map((h, i) => h !== excludedMeetingHeader ? i : -1).filter(i => i !== -1);
         }
       }
-
+      
       thead.innerHTML = "<tr>" + headersToDisplay.map(h => `<th>${h}</th>`).join('') + "<th class='admin-only'>Actions</th></tr>";
 
       rows.forEach((row, i) => {
@@ -2010,7 +2009,7 @@
           if (headerText === 'Meeting Date' || headerText === 'Deadline') {
             if (cellValue) {
               const date = new Date(cellValue);
-              td.textContent = !isNaN(date) ? `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}` : cellValue;
+              td.textContent = !isNaN(date) ? `${String(date.getDate()).padStart(2,'0')}-${String(date.getMonth()+1).padStart(2,'0')}-${date.getFullYear()}` : cellValue;
             }
           } else {
             td.innerHTML = cellValue;
@@ -2023,122 +2022,122 @@
       });
       updateAdminUI(isAdminLoggedIn);
     }
-
+    
     // --- FORM HANDLING & DATA SUBMISSION ---
     function generateUniqueId() {
-      return 'M' + Date.now() + Math.floor(Math.random() * 1000);
+        return 'M' + Date.now() + Math.floor(Math.random() * 1000);
     }
 
     function postData(formData, action, successMessage, formElement, isEditMode = false) {
-      showLoading();
-      let sheetName;
-      if (action.includes('meeting')) sheetName = 'Meetings';
-      else if (action.includes('action')) sheetName = 'Action Items';
-      else if (action.includes('media')) sheetName = 'Media';
-      else if (action.includes('presentation')) sheetName = 'Presentations';
+        showLoading();
+        let sheetName;
+        if (action.includes('meeting')) sheetName = 'Meetings';
+        else if (action.includes('action')) sheetName = 'Action Items';
+        else if (action.includes('media')) sheetName = 'Media';
+        else if (action.includes('presentation')) sheetName = 'Presentations';
 
-      if (sheetName) formData.append('sheetName', sheetName);
+        if (sheetName) formData.append('sheetName', sheetName);
 
-      fetch(scriptURL + `?action=${action}`, { method: 'POST', body: formData })
-        .then(res => res.json())
-        .then(data => {
-          if (data.result === 'success') {
-            showMessage(successMessage, false);
-            if (formElement) formElement.reset();
-            if (action.includes('meeting') || action.includes('action')) {
-              fetchData();
-            } else if (action.includes('media')) {
-              fetchMediaGallery();
-            } else if (action.includes('presentation')) {
-              fetchPresentations();
-            }
-          } else { throw new Error(data.error || 'Unknown error'); }
-        })
-        .catch(error => showMessage(`Error: ${error.message}`, false))
-        .finally(() => {
-          hideLoading();
-          if (isEditMode) {
-            if (action.includes('meeting')) {
-              document.getElementById('meeting-mode').textContent = 'Mode: Add New Meeting';
-              formElement.querySelector('button[type="submit"]').textContent = 'Save Meeting';
-            } else if (action.includes('action')) {
-              document.getElementById('action-mode').textContent = 'Mode: Add New Action Item';
-              formElement.querySelector('button[type="submit"]').textContent = 'Add Action Item';
-            }
-          }
-        });
+        fetch(scriptURL + `?action=${action}`, { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                if (data.result === 'success') {
+                    showMessage(successMessage, false);
+                    if (formElement) formElement.reset();
+                    if (action.includes('meeting') || action.includes('action')) {
+                        fetchData();
+                    } else if (action.includes('media')) {
+                        fetchMediaGallery();
+                    } else if (action.includes('presentation')) {
+                        fetchPresentations();
+                    }
+                } else { throw new Error(data.error || 'Unknown error'); }
+            })
+            .catch(error => showMessage(`Error: ${error.message}`, false))
+            .finally(() => {
+                hideLoading();
+                if (isEditMode) {
+                    if (action.includes('meeting')) {
+                        document.getElementById('meeting-mode').textContent = 'Mode: Add New Meeting';
+                        formElement.querySelector('button[type="submit"]').textContent = 'Save Meeting';
+                    } else if (action.includes('action')) {
+                        document.getElementById('action-mode').textContent = 'Mode: Add New Action Item';
+                        formElement.querySelector('button[type="submit"]').textContent = 'Add Action Item';
+                    }
+                }
+            });
     }
 
     function editMeeting(rowNum, trElement) {
-      if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
-      const form = document.getElementById('meeting-form');
-      form.querySelector('#meeting-mode').textContent = 'Mode: Edit Existing Meeting';
-      form.querySelector('button[type="submit"]').textContent = 'Update Meeting';
-      form.row.value = rowNum;
+        if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
+        const form = document.getElementById('meeting-form');
+        form.querySelector('#meeting-mode').textContent = 'Mode: Edit Existing Meeting';
+        form.querySelector('button[type="submit"]').textContent = 'Update Meeting';
+        form.row.value = rowNum;
 
-      const cells = Array.from(trElement.cells);
-      const headers = Array.from(document.querySelector('#meeting-table thead tr').cells).map(th => th.textContent.trim());
-      const cellData = headers.reduce((obj, header, i) => { if (header !== 'Actions') obj[header] = cells[i]?.textContent.trim(); return obj; }, {});
+        const cells = Array.from(trElement.cells);
+        const headers = Array.from(document.querySelector('#meeting-table thead tr').cells).map(th => th.textContent.trim());
+        const cellData = headers.reduce((obj, header, i) => { if (header !== 'Actions') obj[header] = cells[i]?.textContent.trim(); return obj; }, {});
 
-      form.meetingId.value = cellData['Meeting ID'];
-      if (cellData['Meeting Date']) {
-        const [day, month, year] = cellData['Meeting Date'].split('-');
-        if (day && month && year) form.meetingDate.value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-      }
-      form.zoneM.value = cellData['Zone'];
-      form.districtM.value = cellData['District'];
-      form.coldRoomM.value = cellData['Cold Room Location (Optional)'];
-      form.meetingTitle.value = cellData['Meeting Title'];
-      form.conductedByM.value = cellData['Conducted By'];
-      form.attendeesM.value = cellData['Attendees'];
-      form.meetingAgendaM.value = cellData['Meeting Agenda'];
-      form.meetingDiscussionM.value = cellData['What points were discussed during the meeting?'];
-      form.scrollIntoView({ behavior: 'smooth' });
+        form.meetingId.value = cellData['Meeting ID'];
+        if (cellData['Meeting Date']) {
+            const [day, month, year] = cellData['Meeting Date'].split('-');
+            if(day && month && year) form.meetingDate.value = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+        }
+        form.zoneM.value = cellData['Zone'];
+        form.districtM.value = cellData['District'];
+        form.coldRoomM.value = cellData['Cold Room Location (Optional)'];
+        form.meetingTitle.value = cellData['Meeting Title'];
+        form.conductedByM.value = cellData['Conducted By'];
+        form.attendeesM.value = cellData['Attendees'];
+        form.meetingAgendaM.value = cellData['Meeting Agenda'];
+        form.meetingDiscussionM.value = cellData['What points were discussed during the meeting?'];
+        form.scrollIntoView({ behavior: 'smooth' });
     }
 
     function editAction(rowNum, trElement) {
-      if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
-      const form = document.getElementById('action-form');
-      form.querySelector('#action-mode').textContent = 'Mode: Edit Existing Action Item';
-      form.querySelector('button[type="submit"]').textContent = 'Update Action Item';
-      form.row.value = rowNum;
+        if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
+        const form = document.getElementById('action-form');
+        form.querySelector('#action-mode').textContent = 'Mode: Edit Existing Action Item';
+        form.querySelector('button[type="submit"]').textContent = 'Update Action Item';
+        form.row.value = rowNum;
 
-      const cells = Array.from(trElement.cells);
-      const headers = Array.from(document.querySelector('#action-table thead tr').cells).map(th => th.textContent.trim());
-      const cellData = headers.reduce((obj, header, i) => { if (header !== 'Actions') obj[header] = cells[i]?.textContent.trim(); return obj; }, {});
+        const cells = Array.from(trElement.cells);
+        const headers = Array.from(document.querySelector('#action-table thead tr').cells).map(th => th.textContent.trim());
+        const cellData = headers.reduce((obj, header, i) => { if (header !== 'Actions') obj[header] = cells[i]?.textContent.trim(); return obj; }, {});
 
-      form['action-meetingId'].value = cellData['Meeting ID'];
-      form.actionItemA.value = cellData['Action Item'];
-      form.assignedToA.value = cellData['Assigned To'];
-      if (cellData['Deadline']) {
-        const [day, month, year] = cellData['Deadline'].split('-');
-        if (day && month && year) form.deadlineA.value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-      }
-      form.statusA.value = cellData['Status'];
-      form.scrollIntoView({ behavior: 'smooth' });
+        form['action-meetingId'].value = cellData['Meeting ID'];
+        form.actionItemA.value = cellData['Action Item'];
+        form.assignedToA.value = cellData['Assigned To'];
+        if (cellData['Deadline']) {
+            const [day, month, year] = cellData['Deadline'].split('-');
+            if(day && month && year) form.deadlineA.value = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+        }
+        form.statusA.value = cellData['Status'];
+        form.scrollIntoView({ behavior: 'smooth' });
     }
-
+    
     function deleteEntry(identifier, actionType, sheetName, confirmMessage, successMessage, callback) {
-      if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
-      showMessage(confirmMessage, true, () => {
-        showLoading();
-        const formData = new FormData();
-        const key = (actionType === 'delete_media' || actionType === 'delete_presentation') ? 'uniqueID' : 'row';
-        formData.append(key, identifier);
-        formData.append('sheetName', sheetName);
-        fetch(scriptURL + `?action=${actionType}`, { method: 'POST', body: formData })
-          .then(res => res.json())
-          .then(data => {
-            if (data.result === 'success') {
-              showMessage(successMessage, false);
-              callback();
-            } else { throw new Error(data.error || 'Unknown error'); }
-          })
-          .catch(error => showMessage(`Error: ${error.message}`, false))
-          .finally(() => hideLoading());
-      });
+        if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
+        showMessage(confirmMessage, true, () => {
+            showLoading();
+            const formData = new FormData();
+            const key = (actionType === 'delete_media' || actionType === 'delete_presentation') ? 'uniqueID' : 'row';
+            formData.append(key, identifier);
+            formData.append('sheetName', sheetName);
+            fetch(scriptURL + `?action=${actionType}`, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        showMessage(successMessage, false);
+                        callback();
+                    } else { throw new Error(data.error || 'Unknown error'); }
+                })
+                .catch(error => showMessage(`Error: ${error.message}`, false))
+                .finally(() => hideLoading());
+        });
     }
-
+    
     function deleteMeeting(rowNum) { deleteEntry(rowNum, 'delete_meeting', 'Meetings', 'Are you sure?', 'Meeting deleted.', fetchData); }
     function deleteAction(rowNum) { deleteEntry(rowNum, 'delete_action', 'Action Items', 'Are you sure?', 'Action item deleted.', fetchData); }
     function deleteMedia(uniqueID) { deleteEntry(uniqueID, 'delete_media', 'Media', 'Are you sure?', 'Media file deleted.', fetchMediaGallery); }
@@ -2226,7 +2225,6 @@
       populateWeekSelects();
       fetchData();
       showHomePage();
-      loadGanttData();
     };
 
     // Helper to populate week dropdowns

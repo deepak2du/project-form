@@ -1541,8 +1541,8 @@ const infographicPageBodyHTML = `
           </div>
           <script>
             document.addEventListener('DOMContentLoaded', () => {
-                const ganttData = [
-                    { name: 'Operational excellence', type: 'main-category' },
+                const defaultGanttData = [
+{ name: 'Operational excellence', type: 'main-category' },
                     { name: 'Infrastructure upkeep and maintenance', type: 'category', start: 1, end: 8 },
                     { name: 'Infrastructure gaps identified and reported', type: 'task', start: 1, end: 3 },
                     { name: 'Cold room open and operational for beneficiaries', type: 'task', start: 2, end: 4 },
@@ -1619,133 +1619,148 @@ const infographicPageBodyHTML = `
                     { name: 'Operational data collection begun', type: 'task', start: 3, end: 3 },
                 ];
                 const container = document.getElementById('gantt-rows-container');
-                ganttData.forEach(item => {
-                    const row = document.createElement('div');
-                    row.className = 'gantt-row';
-                    if(item.type === 'main-category') {
-                        row.classList.add('gantt-row-category', 'gantt-row-main-category', 'bg-main-category', 'rounded-lg', 'mt-4');
-                        row.dataset.mainCategory = "true";
-                        row.innerHTML = \`<div class="serial-number"></div><div class="task-name px-2">\${item.name}</div><div class="timeline"></div>\`;
-                    } else if (item.type === 'category') {
-                        row.classList.add('gantt-row-category');
-                        row.innerHTML = \`<div class="serial-number"></div><div class="task-name px-2 pl-6">\${item.name}</div><div class="timeline"><div class="task-bar" data-start-month="\${item.start}" data-end-month="\${item.end}"><div class="resize-handle left"></div><div class="resize-handle right"></div></div></div>\`;
-                    } else {
-                        row.innerHTML = \`<div class="serial-number"></div><div class="task-name px-2 pl-8">\${item.name}</div><div class="timeline"><div class="task-bar" data-start-month="\${item.start}" data-end-month="\${item.end}"><div class="resize-handle left"></div><div class="resize-handle right"></div></div></div>\`;
-                    }
-                    container.appendChild(row);
-                });
-                
-                document.querySelectorAll('.gantt-row .timeline').forEach(timeline => {
-                    const bgGrid = document.createElement('div');
-                    bgGrid.classList.add('timeline-grid-bg');
-                    for(let i=0; i<17; i++) {
-                        const lineCell = document.createElement('div');
-                        bgGrid.appendChild(lineCell);
-                    }
-                    timeline.prepend(bgGrid);
-                });
-                const assignSerialNumbers = () => {
-                    const rowsToNumber = document.querySelectorAll('.gantt-row:not([data-main-category="true"])');
-                    let serialNum = 1;
-                    rowsToNumber.forEach(row => {
-                        const serialNumDiv = row.querySelector('.serial-number');
-                        if (serialNumDiv) serialNumDiv.textContent = serialNum++;
-                    });
-                };
-                assignSerialNumbers();
-                const initializeTaskBars = () => {
-                    document.querySelectorAll('.task-bar').forEach(bar => {
-                        updateTaskBarPosition(bar);
-                        attachDragListeners(bar);
-                    });
-                };
-                const updateTaskBarPosition = (bar) => {
-                    const startMonth = parseInt(bar.dataset.startMonth);
-                    const endMonth = parseInt(bar.dataset.endMonth);
-                    bar.style.gridColumn = \`\${startMonth} / \${endMonth}\`;
-                };
-                const attachDragListeners = (bar) => {
-                    const parentRow = bar.closest('.gantt-row');
-                    if (parentRow && parentRow.dataset.mainCategory === 'true') {
-                        bar.style.cursor = 'default';
-                        bar.querySelectorAll('.resize-handle').forEach(h => h.style.display = 'none');
-                        return;
-                    }
-                    let isDragging = false, dragType = '', initialMouseX = 0, initialStartMonth = 0, initialEndMonth = 0;
-                    const timeline = document.querySelector('.timeline');
-                    let monthColumnWidth = timeline.offsetWidth / 17;
-                    const onMouseDown = (e) => {
-                        if (e.button !== 0) return;
-                        isDragging = true;
-                        initialMouseX = e.clientX;
-                        initialStartMonth = parseInt(bar.dataset.startMonth);
-                        initialEndMonth = parseInt(bar.dataset.endMonth);
-                        monthColumnWidth = timeline.offsetWidth / 17;
-                        dragType = e.target.classList.contains('resize-handle') ? (e.target.classList.contains('left') ? 'left' : 'right') : 'move';
-                        bar.style.cursor = 'grabbing';
-                        document.body.style.userSelect = 'none';
-                        document.addEventListener('mousemove', onMouseMove);
-                        document.addEventListener('mouseup', onMouseUp);
-                        e.preventDefault();
-                    };
-                    const onMouseMove = (e) => {
-                        if (!isDragging) return;
-                        const deltaX = e.clientX - initialMouseX;
-                        const colDelta = Math.round(deltaX / monthColumnWidth);
-                        let newStart = initialStartMonth, newEnd = initialEndMonth;
-                        const duration = initialEndMonth - initialStartMonth;
-                        if (dragType === 'left') {
-                            newStart = Math.max(1, Math.min(initialEndMonth - 1, initialStartMonth + colDelta));
-                        } else if (dragType === 'right') {
-                            newEnd = Math.min(18, Math.max(initialStartMonth + 1, initialEndMonth + colDelta));
-                        } else {
-                            newStart = Math.max(1, initialStartMonth + colDelta);
-                            newEnd = newStart + duration;
-                            if (newEnd > 18) { newStart = 18 - duration; newEnd = 18; }
-                        }
-                        bar.dataset.startMonth = newStart;
-                        bar.dataset.endMonth = newEnd;
-                        updateTaskBarPosition(bar);
-                    };
-                    const onMouseUp = () => {
-                        isDragging = false;
-                        bar.style.cursor = 'grab';
-                        document.body.style.userSelect = '';
-                        document.removeEventListener('mousemove', onMouseMove);
-                        document.removeEventListener('mouseup', onMouseUp);
-                        saveGanttData();
-                    };
-                    bar.addEventListener('mousedown', onMouseDown);
-                };
-                
-                function saveGanttData() {
-                    const tasks = [];
-                    document.querySelectorAll('#gantt-rows-container .task-bar').forEach(bar => {
-                        tasks.push({ start: bar.dataset.startMonth, end: bar.dataset.endMonth });
-                    });
-                    localStorage.setItem('ganttChartData', JSON.stringify(tasks));
-                }
+                let ganttDataToLoad = defaultGanttData;
 
                 function loadGanttData() {
                     const savedData = localStorage.getItem('ganttChartData');
                     if (savedData) {
                         try {
                             const tasks = JSON.parse(savedData);
-                            document.querySelectorAll('#gantt-rows-container .task-bar').forEach((bar, index) => {
-                                if (tasks[index]) {
-                                    bar.dataset.startMonth = tasks[index].start;
-                                    bar.dataset.endMonth = tasks[index].end;
-                                    updateTaskBarPosition(bar);
-                                }
-                            });
-                        } catch(e) {
-                            console.error("Error parsing saved Gantt data:", e);
-                        }
+                            if (tasks.length === defaultGanttData.length) {
+                                ganttDataToLoad = tasks;
+                            }
+                        } catch(e) { console.error("Error parsing saved Gantt data:", e); }
                     }
+
+                    container.innerHTML = ''; // Clear previous rows
+
+                    ganttDataToLoad.forEach(item => {
+                        const row = document.createElement('div');
+                        row.className = 'gantt-row';
+                        if(item.type === 'main-category') {
+                            row.classList.add('gantt-row-category', 'gantt-row-main-category', 'bg-main-category', 'rounded-lg', 'mt-4');
+                            row.dataset.mainCategory = "true";
+                            row.innerHTML = \`<div class="serial-number"></div><div class="task-name px-2">\${item.name}</div><div class="timeline"></div>\`;
+                        } else if (item.type === 'category') {
+                            row.classList.add('gantt-row-category');
+                            row.innerHTML = \`<div class="serial-number"></div><div class="task-name px-2 pl-6">\${item.name}</div><div class="timeline"><div class="task-bar" data-start-month="\${item.start}" data-end-month="\${item.end}"><div class="resize-handle left"></div><div class="resize-handle right"></div></div></div>\`;
+                        } else {
+                            row.innerHTML = \`<div class="serial-number"></div><div class="task-name px-2 pl-8">\${item.name}</div><div class="timeline"><div class="task-bar" data-start-month="\${item.start}" data-end-month="\${item.end}"><div class="resize-handle left"></div><div class="resize-handle right"></div></div></div>\`;
+                        }
+                        container.appendChild(row);
+                    });
+                }
+                
+                function saveGanttData() {
+                    const currentGanttData = [];
+                     document.querySelectorAll('#gantt-rows-container .gantt-row').forEach(row => {
+                        const taskName = row.querySelector('.task-name').textContent.trim();
+                        const taskBar = row.querySelector('.task-bar');
+                        let item = { name: taskName, type: 'task' };
+
+                        if(row.classList.contains('gantt-row-main-category')) {
+                             item.type = 'main-category';
+                        } else if(row.classList.contains('gantt-row-category')) {
+                             item.type = 'category';
+                        }
+
+                        if(taskBar) {
+                            item.start = taskBar.dataset.startMonth;
+                            item.end = taskBar.dataset.endMonth;
+                        }
+                        currentGanttData.push(item);
+                    });
+                    localStorage.setItem('ganttChartData', JSON.stringify(currentGanttData));
                 }
 
-                initializeTaskBars();
-                loadGanttData();
+                function initializeGantt() {
+                    loadGanttData();
+                    document.querySelectorAll('.gantt-row .timeline').forEach(timeline => {
+                        const bgGrid = document.createElement('div');
+                        bgGrid.classList.add('timeline-grid-bg');
+                        for(let i=0; i<17; i++) {
+                            const lineCell = document.createElement('div');
+                            bgGrid.appendChild(lineCell);
+                        }
+                        timeline.prepend(bgGrid);
+                    });
+                    const assignSerialNumbers = () => {
+                        const rowsToNumber = document.querySelectorAll('.gantt-row:not([data-main-category="true"])');
+                        let serialNum = 1;
+                        rowsToNumber.forEach(row => {
+                            const serialNumDiv = row.querySelector('.serial-number');
+                            if (serialNumDiv) serialNumDiv.textContent = serialNum++;
+                        });
+                    };
+                    assignSerialNumbers();
+                    const initializeTaskBars = () => {
+                        document.querySelectorAll('.task-bar').forEach(bar => {
+                            updateTaskBarPosition(bar);
+                            attachDragListeners(bar);
+                        });
+                    };
+                    const updateTaskBarPosition = (bar) => {
+                        const startMonth = parseInt(bar.dataset.startMonth);
+                        const endMonth = parseInt(bar.dataset.endMonth);
+                        bar.style.gridColumn = \`\${startMonth} / \${endMonth}\`;
+                    };
+                    const attachDragListeners = (bar) => {
+                        const parentRow = bar.closest('.gantt-row');
+                        if (parentRow && parentRow.dataset.mainCategory === 'true') {
+                            bar.style.cursor = 'default';
+                            bar.querySelectorAll('.resize-handle').forEach(h => h.style.display = 'none');
+                            return;
+                        }
+                        let isDragging = false, dragType = '', initialMouseX = 0, initialStartMonth = 0, initialEndMonth = 0;
+                        const timeline = document.querySelector('.timeline');
+                        let monthColumnWidth = timeline.offsetWidth / 17;
+                        const onMouseDown = (e) => {
+                            if (e.button !== 0) return;
+                            isDragging = true;
+                            initialMouseX = e.clientX;
+                            initialStartMonth = parseInt(bar.dataset.startMonth);
+                            initialEndMonth = parseInt(bar.dataset.endMonth);
+                            monthColumnWidth = timeline.offsetWidth / 17;
+                            dragType = e.target.classList.contains('resize-handle') ? (e.target.classList.contains('left') ? 'left' : 'right') : 'move';
+                            bar.style.cursor = 'grabbing';
+                            document.body.style.userSelect = 'none';
+                            document.addEventListener('mousemove', onMouseMove);
+                            document.addEventListener('mouseup', onMouseUp);
+                            e.preventDefault();
+                        };
+                        const onMouseMove = (e) => {
+                            if (!isDragging) return;
+                            const deltaX = e.clientX - initialMouseX;
+                            const colDelta = Math.round(deltaX / monthColumnWidth);
+                            let newStart = initialStartMonth, newEnd = initialEndMonth;
+                            const duration = initialEndMonth - initialStartMonth;
+                            if (dragType === 'left') {
+                                newStart = Math.max(1, Math.min(initialEndMonth - 1, initialStartMonth + colDelta));
+                            } else if (dragType === 'right') {
+                                newEnd = Math.min(18, Math.max(initialStartMonth + 1, initialEndMonth + colDelta));
+                            } else {
+                                newStart = Math.max(1, initialStartMonth + colDelta);
+                                newEnd = newStart + duration;
+                                if (newEnd > 18) { newStart = 18 - duration; newEnd = 18; }
+                            }
+                            bar.dataset.startMonth = newStart;
+                            bar.dataset.endMonth = newEnd;
+                            updateTaskBarPosition(bar);
+                        };
+                        const onMouseUp = () => {
+                            isDragging = false;
+                            bar.style.cursor = 'grab';
+                            document.body.style.userSelect = '';
+                            document.removeEventListener('mousemove', onMouseMove);
+                            document.removeEventListener('mouseup', onMouseUp);
+                            saveGanttData();
+                        };
+                        bar.addEventListener('mousedown', onMouseDown);
+                    };
+                    initializeTaskBars();
+                }
+
+                initializeGantt();
             });
           <\/script>
       </body>
@@ -1946,16 +1961,30 @@ const infographicPageBodyHTML = `
                     Object.keys(grouped[week][zone]).sort().forEach(district => {
                         html += `<div class="mb-2" style="padding: 0 15px;"><h5 style="color:#388e3c;">District: ${district}</h5><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-4 p-2">`;
                         grouped[week][zone][district].forEach(media => {
-                            let mediaHtml = '';
+                            let mediaElementHtml = '';
+                            const fileName = media.fileName || 'Unnamed File';
+
                             if (media.fileType && media.fileType.startsWith('image')) {
                                 const driveFileIdMatch = media.fileUrl.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
                                 const driveFileId = driveFileIdMatch ? driveFileIdMatch[1] : null;
                                 const imageUrl = driveFileId ? `https://drive.google.com/thumbnail?id=${driveFileId}&sz=w800` : 'https://placehold.co/400x240/cccccc/333333?text=Invalid+URL';
-                                mediaHtml = `<a href="${media.fileUrl}" target="_blank"><img src="${imageUrl}" alt="${media.fileName || 'Media'}" class="w-full h-48 object-cover rounded-md mb-2" onerror="this.onerror=null;this.src='https://placehold.co/400x240/cccccc/333333?text=Image+Error';"></a>`;
+                                mediaElementHtml = `<a href="${media.fileUrl}" target="_blank"><img src="${imageUrl}" alt="${fileName}" class="w-full h-48 object-cover rounded-md mb-2" onerror="this.onerror=null;this.src='https://placehold.co/400x240/cccccc/333333?text=Image+Error';"></a>`;
                             } else if (media.fileType && media.fileType.startsWith('video')) {
-                                mediaHtml = `<video controls playsinline src="${media.fileUrl}" class="w-full h-48 object-cover rounded-md mb-2"></video>`;
+                                mediaElementHtml = `<video controls playsinline src="${media.fileUrl}" class="w-full h-48 object-cover rounded-md mb-2"></video>`;
+                            } else {
+                                mediaElementHtml = `<div class="w-full h-48 bg-gray-200 flex items-center justify-center rounded-md mb-2 text-gray-500">Unsupported</div>`;
                             }
-                            html += `<div class="media-item bg-gray-100 p-3 rounded-lg shadow-sm">${mediaHtml}<span class="admin-only"><button class="delete-button" onclick="deleteMedia('${media.uniqueID}')">Delete</button></span></div>`;
+
+                            html += `
+                                <div class="media-item bg-gray-100 p-3 rounded-lg shadow-sm flex flex-col justify-between">
+                                    ${mediaElementHtml}
+                                    <div class="mt-auto text-center">
+                                        <p class="text-xs text-gray-700 truncate" title="${fileName}">${fileName}</p>
+                                        <span class="admin-only" style="display: block; margin-top: 4px;">
+                                            <button class="delete-button text-xs px-2 py-1" onclick="deleteMedia('${media.uniqueID}')">Delete</button>
+                                        </span>
+                                    </div>
+                                </div>`;
                         });
                         html += `</div></div>`;
                     });

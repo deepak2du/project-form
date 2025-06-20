@@ -2735,7 +2735,8 @@
       else if (action.includes('presentation')) sheetName = 'Presentations';
 
       if (sheetName) formData.append('sheetName', sheetName);
-
+      formData.append('action', action);
+      
       fetch(scriptURL, { method: 'POST', body: formData })
         .then(res => res.json())
         .then(data => {

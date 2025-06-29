@@ -152,7 +152,8 @@
       text-align: center;
     }
 
-    .presentation-upload-form-container {
+    .presentation-upload-form-container,
+    #repository-upload-form-container {
       background: #fff;
       padding: 20px;
       border-radius: 6px;
@@ -161,7 +162,8 @@
     }
 
     .presentation-week-group,
-    .media-week-group {
+    .media-week-group,
+    .repository-title-group {
       margin-bottom: 30px;
       border: 1px solid #ddd;
       padding: 20px 0;
@@ -171,13 +173,14 @@
     }
 
     .presentation-week-group h3,
-    .media-week-group h3 {
+    .media-week-group h3,
+    .repository-title-group h3 {
       text-align: left;
       background: #2F855A;
       color: #fff;
       padding: 10px 15px;
       border-radius: 5px 5px 0 0;
-      margin: -20px 0 20px 0;
+      margin: -20px 0 20px -0;
       font-size: 1.3em;
     }
 
@@ -191,6 +194,40 @@
       padding-bottom: 8px;
       padding-left: 15px;
       padding-right: 15px;
+    }
+
+    .repository-files-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .repository-file-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      text-align: center;
+      transition: box-shadow 0.2s;
+    }
+
+    .repository-file-item:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .repository-file-item a {
+      text-decoration: none;
+      color: #333;
+    }
+
+    .repository-file-item .file-icon {
+      font-size: 4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .repository-file-item .file-name {
+      font-size: 0.875rem;
+      word-break: break-all;
+      font-weight: 500;
     }
 
     .presentation-item {
@@ -1386,19 +1423,21 @@
   <div id="app-container">
     <div class="navigation-buttons sticky top-0 z-50 bg-green-50 shadow-md p-3 flex flex-wrap justify-center gap-2">
       <button onclick="showHomePage()"
-        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Home</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Home</button>
       <button onclick="showSection('plan-section')"
-        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Plan</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Plan</button>
       <button onclick="showSection('meetings-section')"
-        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Meetings</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Meetings</button>
       <button onclick="showSection('media-section')"
-        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Media</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Gallery</button>
       <button onclick="showSection('presentations-section')"
-        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Presentation</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Reports</button>
       <button onclick="showSection('progress-section')"
-        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Progress</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Progress</button>
+      <button onclick="showSection('repository-section')"
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Repository</button>
       <button id="admin-nav-button" onclick="handleAdminNavClick()"
-        class="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors">Admin</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors">Admin</button>
     </div>
 
     <div id="main-content-wrapper">
@@ -1642,6 +1681,30 @@
               </button>
             </div>
           </form>
+        </div>
+        <div id="repository-section" style="display:none;">
+          <h2>Document Repository</h2>
+          <div id="repository-upload-form-container">
+            <h3>Add New File</h3>
+            <form id="repository-upload-form">
+              <label for="repositoryTitle">Title (Select existing or type a new one):</label>
+              <input list="repository-titles" id="repositoryTitle" name="title" required>
+              <datalist id="repository-titles"></datalist>
+
+              <label for="repositoryDocName">Document Name:</label>
+              <input type="text" id="repositoryDocName" name="docName" required>
+
+              <label for="repositoryFileLink">File Link (Google Drive, OneDrive, etc.):</label>
+              <input type="url" id="repositoryFileLink" name="fileLink" required>
+
+              <button type="submit"
+                class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700">Add
+                File</button>
+            </form>
+          </div>
+          <div id="repository-display-area" class="mt-8">
+            <!-- Repository files will be displayed here -->
+          </div>
         </div>
       </div>
       <div id="plan-section" style="display:none;">
@@ -2485,7 +2548,7 @@
         if (el) el.style.display = 'none';
       });
 
-      const trackerSubSections = ['meetings-section', 'media-section', 'presentations-section', 'admin-section'];
+      const trackerSubSections = ['meetings-section', 'media-section', 'presentations-section', 'admin-section', 'repository-section'];
       let mainSectionToShow = sectionIdToShow;
       if (trackerSubSections.includes(sectionIdToShow)) {
         mainSectionToShow = 'tracker-content-area';
@@ -2504,6 +2567,7 @@
 
         if (sectionIdToShow === 'media-section') fetchMediaGallery();
         if (sectionIdToShow === 'presentations-section') fetchPresentations();
+        if (sectionIdToShow === 'repository-section') fetchRepositoryData();
       }
 
       if (mainSectionToShow === 'plan-section') {
@@ -2733,10 +2797,11 @@
       else if (action.includes('action')) sheetName = 'Action Items';
       else if (action.includes('media')) sheetName = 'Media';
       else if (action.includes('presentation')) sheetName = 'Presentations';
+      else if (action.includes('repository')) sheetName = 'Repository';
 
       if (sheetName) formData.append('sheetName', sheetName);
       formData.append('action', action);
-      
+
       fetch(scriptURL, { method: 'POST', body: formData })
         .then(res => res.json())
         .then(data => {
@@ -2749,6 +2814,8 @@
               fetchMediaGallery();
             } else if (action.includes('presentation')) {
               fetchPresentations();
+            } else if (action.includes('repository')) {
+              fetchRepositoryData();
             }
           } else { throw new Error(data.error || 'Unknown error'); }
         })
@@ -2821,9 +2888,10 @@
       showMessage(confirmMessage, true, () => {
         showLoading();
         const formData = new FormData();
-        const key = (actionType === 'delete_media' || actionType === 'delete_presentation') ? 'uniqueID' : 'row';
+        const key = (actionType === 'delete_media' || actionType === 'delete_presentation' || actionType.includes('repository')) ? 'uniqueID' : 'row';
         formData.append(key, identifier);
         formData.append('sheetName', sheetName);
+        formData.append('action', actionType);
         fetch(scriptURL, { method: 'POST', body: formData })
           .then(res => res.json())
           .then(data => {
@@ -2841,6 +2909,7 @@
     function deleteAction(rowNum) { deleteEntry(rowNum, 'delete_action', 'Action Items', 'Are you sure?', 'Action item deleted.', fetchData); }
     function deleteMedia(uniqueID) { deleteEntry(uniqueID, 'delete_media', 'Media', 'Are you sure?', 'Media file deleted.', fetchMediaGallery); }
     function deletePresentation(uniqueID) { deleteEntry(uniqueID, 'delete_presentation', 'Presentations', 'Are you sure?', 'Presentation deleted.', fetchPresentations); }
+    function deleteRepositoryFile(uniqueID) { deleteEntry(uniqueID, 'delete_repository_file', 'Repository', 'Are you sure?', 'File deleted.', fetchRepositoryData); }
 
 
     // --- INITIALIZATION ---
@@ -2919,6 +2988,11 @@
         postData(new FormData(this), 'add_presentation', 'Presentation added.', this);
       });
 
+      document.getElementById('repository-upload-form')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        postData(new FormData(this), 'add_repository_file', 'File added to repository.', this);
+      });
+
       // Initial setup
       document.getElementById('meetingId').value = generateUniqueId();
       populateWeekSelects();
@@ -2933,6 +3007,90 @@
       weekSelects.forEach(select => {
         select.innerHTML = '<option value="">Select Week</option>' + weekOptions.map(week => `<option value="${week}">${week}</option>`).join('');
       });
+    }
+
+    // --- REPOSITORY FUNCTIONS ---
+    function fetchRepositoryData() {
+      showLoading();
+      fetch(scriptURL + '?action=get_data&sheetName=Repository')
+        .then(res => res.json())
+        .then(data => {
+          renderRepository(data);
+        }).catch(err => {
+          console.error("Error fetching repository data:", err);
+          document.getElementById('repository-display-area').innerHTML = `<p class="error-message">Could not load repository data.</p>`;
+        }).finally(() => {
+          hideLoading();
+        });
+    }
+
+    function renderRepository(data) {
+      const displayArea = document.getElementById('repository-display-area');
+      const datalist = document.getElementById('repository-titles');
+      if (!displayArea || !datalist) return;
+
+      if (!Array.isArray(data) || data.length < 2) {
+        displayArea.innerHTML = '<p class="text-center text-gray-500">No files in the repository yet.</p>';
+        return;
+      }
+
+      const [headers, ...rows] = data;
+      const titleIndex = headers.indexOf('Title');
+      const linkIndex = headers.indexOf('FileLink');
+      const idIndex = headers.indexOf('UniqueID');
+      const nameIndex = headers.indexOf('DocName'); // Use the new column
+
+      const uniqueTitles = [...new Set(rows.map(row => row[titleIndex]))];
+      datalist.innerHTML = uniqueTitles.map(title => `<option value="${title}"></option>`).join('');
+
+      const groupedByTitle = rows.reduce((acc, row) => {
+        const title = row[titleIndex] || 'Uncategorized';
+        if (!acc[title]) acc[title] = [];
+        acc[title].push({
+          link: row[linkIndex],
+          id: row[idIndex],
+          name: row[nameIndex] // Get the name from the sheet
+        });
+        return acc;
+      }, {});
+
+      let html = '';
+      for (const title in groupedByTitle) {
+        html += `<div class="repository-title-group"><h3>${title}</h3><div class="repository-files-grid">`;
+        groupedByTitle[title].forEach(file => {
+          html += `
+                <div class="repository-file-item">
+                    <a href="${file.link}" target="_blank" rel="noopener noreferrer">
+                        <div class="file-icon">${getIconForFile(file.link)}</div>
+                        <p class="file-name">${file.name || 'Unnamed File'}</p>
+                    </a>
+                    <span class="admin-only"><button class="delete-button" onclick="deleteRepositoryFile('${file.id}')">Delete</button></span>
+                </div>
+            `;
+        });
+        html += `</div></div>`;
+      }
+
+      displayArea.innerHTML = html;
+      updateAdminUI(isAdminLoggedIn);
+    }
+
+    function getIconForFile(link) {
+      const lowerLink = link.toLowerCase();
+      // Google Drive icons
+      if (lowerLink.includes('docs.google.com/document')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4285F4"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
+      if (lowerLink.includes('docs.google.com/spreadsheets')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#0F9D58"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
+      if (lowerLink.includes('docs.google.com/presentation')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#F4B400"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
+      // Microsoft file types
+      if (lowerLink.endsWith('.pdf')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#DB4437"><path d="M20 2H8c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 14H9v-2h3v2zm4-4H9v-2h7v2zm0-4H9V6h7v2z"/></svg>`;
+      if (lowerLink.endsWith('.doc') || lowerLink.endsWith('.docx')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4285F4"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
+      if (lowerLink.endsWith('.ppt') || lowerLink.endsWith('.pptx')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#F4B400"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
+      if (lowerLink.endsWith('.xls') || lowerLink.endsWith('.xlsx')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#0F9D58"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
+      // Generic link icon
+      return `<div style="display: flex; justify-content: center; align-items: center; height: 150px;"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 text-gray-400">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.875v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9a1.125 1.125 0 00-1.125-1.125h-2.25z" />
+</svg>
+</div>`;
     }
 
     // --- PROGRESS TRACKER FUNCTIONS ---

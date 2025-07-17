@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>BCIEP Odisha</title>
+  <title>BCIEP Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1437,14 +1437,14 @@
       <button onclick="showSection('repository-section')"
         class="w-32 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">Repository</button>
       <button id="admin-nav-button" onclick="handleAdminNavClick()"
-        class="w-32 px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors">Admin</button>
+        class="w-32 px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors">Login</button>
     </div>
 
     <div id="main-content-wrapper">
       <div id="tracker-content-area" style="display:none;">
         <div id="meetings-section" style="display: none;">
-          <h2>Bloomberg Cities Idea Exchange || India || Meeting & Action Tracker</h2>
-          <div class="form-container">
+          <h2 class="admin-only">Bloomberg Cities Idea Exchange || India || Meeting & Action Tracker</h2>
+          <div class="form-container admin-only">
             <form id="meeting-form" style="margin-top: 0; border: 2px solid #ccc;">
               <h3 style="margin-top: 0px;">Meeting Agenda and Discussions</h3>
               <div id="meeting-mode"
@@ -1603,9 +1603,10 @@
           </table>
         </div>
         <div id="media-section" style="display:none; text-align:center;">
-          <h2>Upload Weekly Media Files</h2>
+          <h2 class="admin-only">Upload Weekly Media Files</h2>
           <form id="media-upload-form" method="post" enctype="multipart/form-data"
-            style="max-width: 800px; margin:0 auto; border:2px solid #ccc; padding:20px; border-radius:8px;">
+            style="max-width: 800px; margin:0 auto; border:2px solid #ccc; padding:20px; border-radius:8px;"
+            class="admin-only">
             <div class="form-grid">
               <div>
                 <label for="weekInfoMedia">Week:</label>
@@ -1636,14 +1637,14 @@
               class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700">Upload
               Media</button>
           </form>
-          <h3>Uploaded Media Gallery</h3>
+          <h3 class="admin-only">Uploaded Media Gallery</h3>
           <div id="media-gallery" style="margin-top: 40px;">
             <p>Loading media gallery...</p>
           </div>
         </div>
         <div id="presentations-section" style="display:none;">
-          <h2>Project Presentations</h2>
-          <div class="presentation-upload-form-container">
+          <h2 class="admin-only">Project Presentations</h2>
+          <div class="presentation-upload-form-container admin-only">
             <h3>Add New Presentation</h3>
             <form id="presentation-upload-form">
               <div> <label for="presentationWeekInfo">Week Number:</label> <select name="weekInfo"
@@ -1663,7 +1664,7 @@
         </div>
         <div id="admin-section" style="display: none;" class="max-w-md mx-auto mt-10">
           <form id="admin-login-form" class="bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-2xl font-bold mb-6 text-center" style="color: #fff;">Admin Login</h2>
+            <h2 class="text-2xl font-bold mb-6 text-center" style="color: #fff;">Login</h2>
             <div class="mb-4">
               <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
               <input type="text" id="username" name="username"
@@ -1683,8 +1684,8 @@
           </form>
         </div>
         <div id="repository-section" style="display:none;">
-          <h2>Document Repository</h2>
-          <div id="repository-upload-form-container">
+          <h2 class="admin-only">Document Repository</h2>
+          <div id="repository-upload-form-container" class="admin-only">
             <h3>Add New File</h3>
             <form id="repository-upload-form">
               <label for="repositoryTitle">Title (Select existing or type a new one):</label>
@@ -1708,7 +1709,7 @@
         </div>
       </div>
       <div id="plan-section" style="display:none;">
-        <h2>Project Plan - Gantt Chart</h2>
+        <h2 style="text-align: center; margin-top: 20px">Project Plan - Gantt Chart</h2>
         <iframe id="plan-gantt-iframe" srcdoc=""
           style="width:100%; height:85vh; border:none; margin-top: 20px;"></iframe>
       </div>
@@ -1735,7 +1736,7 @@
   <script>
     // --- APP-WIDE CONSTANTS & STATE ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyoLTLQaMjJXBnN3luRiscIiOM1fnYEcpfUY3yLmWAICTGhkU8DOukytwfB-yh8sJUMwQ/exec';
-    let isAdminLoggedIn = false;
+    window.userRole = null; // Use window object to make it accessible to iframes
 
     // --- HTML CONTENT FOR DYNAMIC PAGES ---
     const infographicPageBodyHTML = `
@@ -2348,6 +2349,12 @@
                     };
 
                     const attachDragListeners = (bar) => {
+                        // Check the admin status from the parent window.
+                        if (window.parent.userRole !== 'super-admin') {
+                            bar.style.cursor = 'default';
+                            bar.querySelectorAll('.resize-handle').forEach(h => h.style.display = 'none');
+                            return; // Exit if not a super-admin
+                        }
                         let isDragging = false, dragType = '', initialMouseX = 0, initialStartMonth = 0, initialEndMonth = 0;
                         const timeline = bar.closest('.timeline');
                         if (!timeline) return;
@@ -2478,11 +2485,6 @@
       const textEl = document.getElementById('customMessageText');
       const confirmBtn = document.getElementById('customMessageConfirm');
       const cancelBtn = document.getElementById('customMessageCancel');
-      if (!overlay || !textEl || !confirmBtn || !cancelBtn) {
-        alert(message);
-        if (isConfirm && onConfirm) onConfirm();
-        return;
-      }
       textEl.textContent = message;
       window.confirmCallback = onConfirm;
       confirmBtn.textContent = isConfirm ? 'Confirm' : 'OK';
@@ -2493,10 +2495,7 @@
     function showHomePage() {
       showLoading();
       document.body.className = 'infographic-active';
-
-      document.getElementById('tracker-content-area').style.display = 'none';
-      document.getElementById('plan-section').style.display = 'none';
-      document.getElementById('progress-section').style.display = 'none';
+      ['tracker-content-area', 'plan-section', 'progress-section'].forEach(id => document.getElementById(id).style.display = 'none');
       const infographicContentArea = document.getElementById('infographic-content-area');
 
       if (!infographicContentArea.innerHTML.trim()) {
@@ -2574,6 +2573,8 @@
         const iframe = document.getElementById('plan-gantt-iframe');
         if (iframe && !iframe.getAttribute('srcdoc')) {
           iframe.srcdoc = planGanttHTML;
+        } else if (iframe) {
+          iframe.contentWindow.location.reload();
         }
       }
       if (mainSectionToShow === 'progress-section') {
@@ -2582,18 +2583,45 @@
     }
 
     // --- ADMIN & AUTH ---
-    function updateAdminUI(isLoggedIn) {
+
+    function updateAdminUI() {
+      const isLoggedIn = window.userRole !== null;
+      const isSuperAdmin = window.userRole === 'super-admin';
+
+      // Elements visible to any logged-in user (uploader or super-admin)
       document.querySelectorAll('.admin-only').forEach(el => {
-        el.style.display = isLoggedIn ? 'inline-block' : 'none';
+        if (isLoggedIn) {
+          const displayStyle = el.classList.contains('form-container') ? 'flex' : 'block';
+          el.style.display = displayStyle;
+        } else {
+          el.style.display = 'none';
+        }
       });
+
+      // Elements visible ONLY to the super-admin
+      document.querySelectorAll('.super-admin-only').forEach(el => {
+        el.style.display = isSuperAdmin ? 'inline-block' : 'none';
+      });
+
+      // Disable/enable interactive elements based on role
+      document.querySelectorAll('.progress-dropdown').forEach(dropdown => {
+        dropdown.disabled = !isSuperAdmin;
+      });
+
+      const ganttFrame = document.getElementById('plan-gantt-iframe');
+      if (ganttFrame && ganttFrame.contentWindow && ganttFrame.contentWindow.location.href !== 'about:blank') {
+        // Reload iframe to apply new permissions to its internal script
+        ganttFrame.contentWindow.location.reload();
+      }
     }
 
     function handleAdminNavClick() {
-      if (isAdminLoggedIn) {
-        isAdminLoggedIn = false;
-        document.getElementById('admin-nav-button').textContent = 'Admin';
-        updateAdminUI(false);
+      if (window.userRole) {
+        window.userRole = null;
+        document.getElementById('admin-nav-button').textContent = 'Login';
+        updateAdminUI();
         showMessage('You have been logged out.', false);
+        showHomePage();
       } else {
         showSection('admin-section');
       }
@@ -2640,7 +2668,7 @@
               html += `<div class="presentation-week-group"><h3>${week}</h3>`;
               groupedByWeek[week].forEach(p => {
                 const responsiveIframeCode = p.iframeCode.replace(/width="[^"]*"/ig, '').replace(/height="[^"]*"/ig, '');
-                html += `<div class="presentation-item"><div class="presentation-container">${responsiveIframeCode}</div><span class="admin-only"><button class="delete-button" onclick="deletePresentation('${p.uniqueID}')">Delete</button></span></div>`;
+                html += `<div class="presentation-item"><div class="presentation-container">${responsiveIframeCode}</div><span class="super-admin-only"><button class="delete-button" onclick="deletePresentation('${p.uniqueID}')">Delete</button></span></div>`;
               });
               html += `</div>`;
             });
@@ -2648,7 +2676,7 @@
             html = '<p style="text-align:center; margin-top:20px;">No presentations added yet.</p>';
           }
           presentationsContainer.innerHTML = html;
-          updateAdminUI(isAdminLoggedIn);
+          updateAdminUI();
         })
         .catch(error => { presentationsContainer.innerHTML = `<p class="error-message">Error: ${error.message}</p>`; })
         .finally(() => hideLoading());
@@ -2713,7 +2741,7 @@
                             ${mediaElementHtml}
                             <div class="mt-auto text-center">
                                 <p class="text-xs text-gray-700 truncate" title="${fileName}">${fileName}</p>
-                                <span class="admin-only" style="display: block; margin-top: 4px;">
+                                <span class="super-admin-only" style="display: block; margin-top: 4px;">
                                     <button class="delete-button text-xs px-2 py-1" onclick="deleteMedia('${media.uniqueID}')">Delete</button>
                                 </span>
                             </div>
@@ -2729,7 +2757,7 @@
             html = '<p style="text-align:center; margin-top:20px;">No media files have been uploaded yet.</p>';
           }
           mediaGalleryDiv.innerHTML = html;
-          updateAdminUI(isAdminLoggedIn);
+          updateAdminUI();
         }).catch(error => {
           mediaGalleryDiv.innerHTML = `<p class="error-message">Error: ${error.message}</p>`;
         }).finally(() => hideLoading());
@@ -2738,7 +2766,7 @@
     function renderTable(data, tableId, sectionType) {
       const tbody = document.querySelector(`#${tableId} tbody`);
       const thead = document.querySelector(`#${tableId} thead`);
-      if (!thead || !tbody) { console.error(`Table elements not found for ${tableId}`); return; }
+      if (!thead || !tbody) { return; }
       thead.innerHTML = ""; tbody.innerHTML = "";
 
       if (!Array.isArray(data) || data.length < 2) {
@@ -2747,42 +2775,22 @@
         return;
       }
 
-      let [originalHeaders, ...rows] = data;
-      let headersToDisplay = originalHeaders;
-      let columnIndicesToKeep = Array.from({ length: originalHeaders.length }, (_, i) => i);
-
-      if (tableId === 'meeting-table') {
-        const excludedMeetingHeader = 'Photo URL';
-        const photoUrlIndex = originalHeaders.indexOf(excludedMeetingHeader);
-        if (photoUrlIndex > -1) {
-          headersToDisplay = originalHeaders.filter(h => h !== excludedMeetingHeader);
-          columnIndicesToKeep = originalHeaders.map((h, i) => h !== excludedMeetingHeader ? i : -1).filter(i => i !== -1);
-        }
-      }
-
-      thead.innerHTML = "<tr>" + headersToDisplay.map(h => `<th>${h}</th>`).join('') + "<th class='admin-only'>Actions</th></tr>";
+      const [headers, ...rows] = data;
+      thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "<th class='super-admin-only'>Actions</th></tr>";
 
       rows.forEach((row, i) => {
         const tr = tbody.insertRow();
-        columnIndicesToKeep.forEach((colIndex, displayIndex) => {
-          const td = tr.insertCell();
-          const cellValue = row[colIndex] || '';
-          const headerText = headersToDisplay[displayIndex];
-          if (headerText === 'Meeting Date' || headerText === 'Deadline') {
-            if (cellValue) {
-              const date = new Date(cellValue);
-              td.textContent = !isNaN(date) ? `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}` : cellValue;
-            }
-          } else {
-            td.innerHTML = cellValue;
-          }
+        row.forEach(cellValue => {
+          tr.insertCell().innerHTML = cellValue;
         });
         const actionCell = tr.insertCell();
-        actionCell.className = 'admin-only';
-        actionCell.innerHTML = `<button class="px-3 py-1 text-xs font-medium text-white bg-yellow-500 rounded hover:bg-yellow-600" onclick="edit${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}(${i + 2}, this.closest('tr'))">Edit</button>
-                              <button class="ml-1 px-3 py-1 text-xs font-medium text-white bg-red-600 rounded hover:bg-red-700" onclick="delete${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}(${i + 2})">Delete</button>`;
+        actionCell.className = 'super-admin-only';
+        actionCell.innerHTML = `
+    <button class="px-3 py-1 text-xs font-medium text-white bg-yellow-500 rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400" onclick="edit${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}(${i + 2}, this.closest('tr'))">Edit</button>
+    <button class="ml-1 px-3 py-1 text-xs font-medium text-white bg-red-600 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500" onclick="delete${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}(${i + 2})">Delete</button>
+`;
       });
-      updateAdminUI(isAdminLoggedIn);
+      updateAdminUI();
     }
 
     // --- FORM HANDLING & DATA SUBMISSION ---
@@ -2917,16 +2925,22 @@
       // Event Listeners for Buttons
       document.getElementById('admin-login-form')?.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (this.username.value === 'admin' && this.password.value === 'admin') {
-          isAdminLoggedIn = true;
-          document.getElementById('admin-nav-button').textContent = 'Logout';
-          updateAdminUI(true);
-          showHomePage();
-          showMessage('Admin login successful.', false);
+        const username = this.username.value;
+        const password = this.password.value;
+
+        if (username === 'admin' && password === 'admin') {
+          window.userRole = 'super-admin';
+        } else if (username === 'koelfresh' && password === 'koelfresh') {
+          window.userRole = 'uploader';
         } else {
+          window.userRole = null;
           showMessage('Invalid username or password.', false);
-          this.password.value = '';
+          return;
         }
+        document.getElementById('admin-nav-button').textContent = 'Logout';
+        updateAdminUI();
+        showHomePage();
+        showMessage('Login successful.', false);
       });
       document.getElementById('customMessageConfirm')?.addEventListener('click', () => {
         document.getElementById('customMessageBoxOverlay').classList.remove('active');
@@ -3064,7 +3078,7 @@
                         <div class="file-icon">${getIconForFile(file.link)}</div>
                         <p class="file-name">${file.name || 'Unnamed File'}</p>
                     </a>
-                    <span class="admin-only"><button class="delete-button" onclick="deleteRepositoryFile('${file.id}')">Delete</button></span>
+                    <span class="super-admin-only"><button class="delete-button" onclick="deleteRepositoryFile('${file.id}')">Delete</button></span>
                 </div>
             `;
         });
@@ -3072,7 +3086,7 @@
       }
 
       displayArea.innerHTML = html;
-      updateAdminUI(isAdminLoggedIn);
+      updateAdminUI();
     }
 
     function getIconForFile(link) {
@@ -3213,6 +3227,8 @@
           select.dataset.locationId = locationId;
           select.dataset.taskName = taskName;
           select.dataset.statusIndex = index;
+          select.disabled = true;
+          select.classList.add('progress-dropdown');
           const currentStatus = progressMap.get(`${locationId}_${taskName}`) || 'Not started';
           ['Not started', 'In progress', 'Complete'].forEach(optionText => {
             const option = document.createElement('option');
@@ -3236,6 +3252,7 @@
       percentageRow.innerHTML = html;
 
       updateColumnVisibility();
+      updateAdminUI();
     }
 
     function handleStatusChange(event) {

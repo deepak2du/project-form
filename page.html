@@ -1643,8 +1643,8 @@
           </div>
         </div>
         <div id="presentations-section" style="display:none;">
-          <h2 class="admin-only">Project Presentations</h2>
-          <div class="presentation-upload-form-container admin-only">
+          <h2 class="super-admin-only">Project Presentations</h2>
+          <div class="presentation-upload-form-container super-admin-only">
             <h3>Add New Presentation</h3>
             <form id="presentation-upload-form">
               <div> <label for="presentationWeekInfo">Week Number:</label> <select name="weekInfo"
@@ -1684,8 +1684,38 @@
           </form>
         </div>
         <div id="repository-section" style="display:none;">
-          <h2 class="admin-only">Document Repository</h2>
-          <div id="repository-upload-form-container" class="admin-only">
+          <!-- Create User Form (for super-admin only) -->
+          <div id="create-user-container" class="super-admin-only">
+            <h2>Create New User</h2>
+            <div id="create-user-form-container" class="bg-white p-4 rounded-lg shadow-md mb-8">
+              <form id="create-user-form">
+                <div class="form-grid">
+                  <div>
+                    <label for="newEmail">User Email:</label>
+                    <input type="email" id="newEmail" name="newEmail" required>
+                  </div>
+                  <div>
+                    <label for="newPassword">Password:</label>
+                    <input type="password" id="newPassword" name="newPassword" required>
+                  </div>
+                  <div class="full-width">
+                    <label for="newRole">Role:</label>
+                    <select id="newRole" name="newRole" required>
+                      <option value="uploader">Uploader (Can add content)</option>
+                      <option value="super-admin">Super Admin (Full access)</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit"
+                  class="px-4 py-2 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Create
+                  User</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Add File Section (for all logged-in users) -->
+          <h2 class="super-admin-only">Document Repository</h2>
+          <div id="repository-upload-form-container" class="super-admin-only">
             <h3>Add New File</h3>
             <form id="repository-upload-form">
               <label for="repositoryTitle">Title (Select existing or type a new one):</label>
@@ -1698,11 +1728,19 @@
               <label for="repositoryFileLink">File Link (Google Drive, OneDrive, etc.):</label>
               <input type="url" id="repositoryFileLink" name="fileLink" required>
 
+              <label>Visibility:</label>
+              <div class="flex gap-4 mb-4">
+                <label class="font-normal"><input type="radio" name="visibility" value="Public" checked> Public</label>
+                <label class="font-normal"><input type="radio" name="visibility" value="Internal"> Internal (Login
+                  Required)</label>
+              </div>
+
               <button type="submit"
                 class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700">Add
                 File</button>
             </form>
           </div>
+
           <div id="repository-display-area" class="mt-8">
             <!-- Repository files will be displayed here -->
           </div>
@@ -2588,30 +2626,61 @@
       const isLoggedIn = window.userRole !== null;
       const isSuperAdmin = window.userRole === 'super-admin';
 
-      // Elements visible to any logged-in user (uploader or super-admin)
+      // --- Hide/Show elements for ANY logged-in user (admin-only) ---
       document.querySelectorAll('.admin-only').forEach(el => {
         if (isLoggedIn) {
-          const displayStyle = el.classList.contains('form-container') ? 'flex' : 'block';
-          el.style.display = displayStyle;
+          // Use a switch to set the correct display property for each element type
+          switch (el.tagName.toLowerCase()) {
+            case 'div':
+              el.style.display = el.classList.contains('form-container') ? 'flex' : 'block';
+              break;
+            case 'h2':
+            case 'h3':
+            case 'form':
+              el.style.display = 'block';
+              break;
+            default:
+              el.style.display = 'inline-block';
+              break;
+          }
         } else {
           el.style.display = 'none';
         }
       });
 
-      // Elements visible ONLY to the super-admin
+      // --- Hide/Show elements for SUPER ADMIN ONLY (super-admin-only) ---
       document.querySelectorAll('.super-admin-only').forEach(el => {
-        el.style.display = isSuperAdmin ? 'inline-block' : 'none';
+        if (isSuperAdmin) {
+          switch (el.tagName.toLowerCase()) {
+            case 'th':
+            case 'td':
+              el.style.display = 'table-cell'; // Correct display for table cells
+              break;
+            case 'span':
+              el.style.display = 'inline-block'; // Correct for spans wrapping buttons
+              break;
+            default:
+              el.style.display = 'block'; // Default for other elements like divs
+              break;
+          }
+        } else {
+          el.style.display = 'none';
+        }
       });
 
-      // Disable/enable interactive elements based on role
+      // --- Enable/Disable interactive elements based on role ---
       document.querySelectorAll('.progress-dropdown').forEach(dropdown => {
         dropdown.disabled = !isSuperAdmin;
       });
 
       const ganttFrame = document.getElementById('plan-gantt-iframe');
       if (ganttFrame && ganttFrame.contentWindow && ganttFrame.contentWindow.location.href !== 'about:blank') {
-        // Reload iframe to apply new permissions to its internal script
         ganttFrame.contentWindow.location.reload();
+      }
+
+      // Refresh repository view if it's the active section
+      if (document.getElementById('repository-section').style.display === 'block') {
+        fetchRepositoryData();
       }
     }
 
@@ -2843,7 +2912,7 @@
     }
 
     function editMeeting(rowNum, trElement) {
-      if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
+      if (window.userRole !== 'super-admin') { showMessage("Super admin permission required to edit.", false); return; }
       const form = document.getElementById('meeting-form');
       form.querySelector('#meeting-mode').textContent = 'Mode: Edit Existing Meeting';
       form.querySelector('button[type="submit"]').textContent = 'Update Meeting';
@@ -2870,7 +2939,7 @@
     }
 
     function editAction(rowNum, trElement) {
-      if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
+      if (window.userRole !== 'super-admin') { showMessage("Super admin permission required to edit.", false); return; }
       const form = document.getElementById('action-form');
       form.querySelector('#action-mode').textContent = 'Mode: Edit Existing Action Item';
       form.querySelector('button[type="submit"]').textContent = 'Update Action Item';
@@ -2892,7 +2961,7 @@
     }
 
     function deleteEntry(identifier, actionType, sheetName, confirmMessage, successMessage, callback) {
-      if (!isAdminLoggedIn) { showMessage("Admin login required.", false); return; }
+      if (window.userRole !== 'super-admin') { showMessage("Super admin permission required to delete.", false); return; }
       showMessage(confirmMessage, true, () => {
         showLoading();
         const formData = new FormData();
@@ -2925,22 +2994,27 @@
       // Event Listeners for Buttons
       document.getElementById('admin-login-form')?.addEventListener('submit', function (e) {
         e.preventDefault();
-        const username = this.username.value;
-        const password = this.password.value;
+        const formData = new FormData();
+        formData.append('action', 'login_user');
+        formData.append('email', this.username.value);
+        formData.append('password', this.password.value);
 
-        if (username === 'admin' && password === 'admin') {
-          window.userRole = 'super-admin';
-        } else if (username === 'koelfresh' && password === 'koelfresh') {
-          window.userRole = 'uploader';
-        } else {
-          window.userRole = null;
-          showMessage('Invalid username or password.', false);
-          return;
-        }
-        document.getElementById('admin-nav-button').textContent = 'Logout';
-        updateAdminUI();
-        showHomePage();
-        showMessage('Login successful.', false);
+        showLoading();
+        fetch(scriptURL, { method: 'POST', body: formData })
+          .then(res => res.json())
+          .then(data => {
+            if (data.error) throw new Error(data.error);
+            window.userRole = data.role;
+            document.getElementById('admin-nav-button').textContent = 'Logout';
+            updateAdminUI();
+            showHomePage();
+            showMessage('Login successful.');
+          })
+          .catch(error => {
+            showMessage(`Login failed: ${error.message}`);
+            window.userRole = null;
+          })
+          .finally(() => hideLoading());
       });
       document.getElementById('customMessageConfirm')?.addEventListener('click', () => {
         document.getElementById('customMessageBoxOverlay').classList.remove('active');
@@ -3052,18 +3126,25 @@
       const titleIndex = headers.indexOf('Title');
       const linkIndex = headers.indexOf('FileLink');
       const idIndex = headers.indexOf('UniqueID');
-      const nameIndex = headers.indexOf('DocName'); // Use the new column
+      const nameIndex = headers.indexOf('DocName');
+      const visibilityIndex = headers.indexOf('Visibility');
 
-      const uniqueTitles = [...new Set(rows.map(row => row[titleIndex]))];
+      const filteredRows = rows.filter(row => {
+        const visibility = row[visibilityIndex];
+        // Show public files always, or all files if a user is logged in
+        return visibility === 'Public' || window.userRole;
+      });
+
+      const uniqueTitles = [...new Set(filteredRows.map(row => row[titleIndex]))];
       datalist.innerHTML = uniqueTitles.map(title => `<option value="${title}"></option>`).join('');
 
-      const groupedByTitle = rows.reduce((acc, row) => {
+      const groupedByTitle = filteredRows.reduce((acc, row) => {
         const title = row[titleIndex] || 'Uncategorized';
         if (!acc[title]) acc[title] = [];
         acc[title].push({
           link: row[linkIndex],
           id: row[idIndex],
-          name: row[nameIndex] // Get the name from the sheet
+          name: row[nameIndex]
         });
         return acc;
       }, {});
@@ -3086,7 +3167,7 @@
       }
 
       displayArea.innerHTML = html;
-      updateAdminUI();
+      updateAdminUI(); // Re-apply visibility to delete buttons
     }
 
     function getIconForFile(link) {
@@ -3336,6 +3417,26 @@
 
       calculateAllPercentages();
     }
+
+    // Add this new function inside your main script tag
+    document.getElementById('create-user-form')?.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      formData.append('action', 'create_user');
+      formData.append('currentUserRole', window.userRole); // Pass the current user's role for verification
+
+      showLoading();
+      fetch(scriptURL, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) throw new Error(data.error);
+          showMessage('New user created successfully!', false);
+          this.reset();
+        })
+        .catch(error => showMessage(`Error: ${error.message}`, false))
+        .finally(() => hideLoading());
+    });
   </script>
 </body>
 
